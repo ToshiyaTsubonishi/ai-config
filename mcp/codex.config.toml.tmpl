@@ -1,0 +1,37 @@
+model = "gpt-5.3-codex"
+model_reasoning_effort = "xhigh"
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["@playwright/mcp@latest"]
+
+[mcp_servers.figma]
+url = "https://mcp.figma.com/mcp"
+
+[mcp_servers.github]
+command = "docker"
+args = ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server"]
+env = { GITHUB_PERSONAL_ACCESS_TOKEN = "{{GITHUB_PERSONAL_ACCESS_TOKEN}}" }
+
+[mcp_servers.codegraphcontext]
+command = "cgc"
+args = ["mcp", "start"]
+
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp"]
+env = { CONTEXT7_API_KEY = "{{CONTEXT7_API_KEY}}" }
+
+[mcp_servers.firecrawl]
+command = "npx"
+args = ["-y", "firecrawl-mcp"]
+env = { FIRECRAWL_API_KEY = "{{FIRECRAWL_API_KEY}}" }
+
+[mcp_servers.figma_context_mcp]
+command = "npx"
+args = ["-y", "figma-developer-mcp", "--stdio"]
+env = { FIGMA_API_KEY = "{{FIGMA_API_KEY}}" }
+
+[mcp_servers.jina_reader]
+command = "npx"
+args = ["-y", "mcp-remote", "https://mcp.jina.ai/v1"]
