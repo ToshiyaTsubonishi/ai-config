@@ -2,5 +2,6 @@
 .env.*
 !.env.example
 *.bak.*
+.tmp-test/
 Thumbs.db
 .DS_Store

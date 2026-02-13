@@ -1,31 +1,72 @@
 # ai-config
 
-MCP と Skills 設定を GitHub で一元管理するためのテンプレートです。
+Codex / Gemini / Antigravity の `MCP` と `Skills` を1つのリポジトリで管理・同期するための設定リポジトリです。
 
-## 含まれるもの
+## 方針
 
-- `mcp/codex.config.toml.tmpl`: Codex 用 MCP テンプレート
-- `mcp/antigravity.mcp_config.json.tmpl`: Antigravity 用 MCP テンプレート
-- `scripts/apply-mcp.ps1`: テンプレートを実ファイルへ反映
-- `skills/`: 共通 Skill を置くディレクトリ（必要に応じてシンボリックリンク/Junction 運用）
-- `.env.example`: 必要な環境変数のサンプル
+- MCPはテンプレート(`mcp/*.tmpl`)をGit管理し、`scripts/apply-mcp.ps1`で各ツールへ反映
+- Skillsは`skills/shared`を単一ソースにして、`scripts/sync-skills.ps1`で配布
+- 現在のローカル状態は`scripts/export-inventory.ps1`で`inventory/*.json`へスナップショット
 
-## 使い方
+## ディレクトリ
 
-1. `.env.example` を `.env` にコピーして値を設定
-2. 以下を実行
+- `mcp/codex.config.toml.tmpl`: Codex用MCPテンプレート
+- `mcp/antigravity.mcp_config.json.tmpl`: Gemini/Antigravity用MCPテンプレート
+- `skills/shared/`: 3ツールに同期する共通スキル
+- `inventory/`: 検出済み skills / mcp の一覧JSON
+- `scripts/apply-mcp.ps1`: MCPテンプレート反映
+- `scripts/sync-skills.ps1`: 共通スキル同期
+- `scripts/export-inventory.ps1`: 現在状態のインベントリ出力
+- `scripts/sync-all.ps1`: 一括実行
+
+## 初期セットアップ
+
+1. `.env.example` を `.env` にコピー
+2. 必要なAPIキーだけ `.env` に設定
+3. 必要なら `skills/shared` に共通スキルを追加
+4. 実行
 
 ```powershell
 cd $HOME/ai-config
-./scripts/apply-mcp.ps1
+./scripts/sync-all.ps1
 ```
 
-## 反映先
+## 個別実行
 
-- Codex: `~/.codex/config.toml`
-- Antigravity: `~/.gemini/antigravity/mcp_config.json`
+```powershell
+# MCPのみ反映（codex/gemini/antigravity）
+./scripts/apply-mcp.ps1
 
-## 補足
+# 既存の未管理スキルは保護。上書きしたい場合のみ -OverwriteExisting
+./scripts/sync-skills.ps1 -OverwriteExisting
 
-- 既存ファイルはデフォルトで `*.bak.<timestamp>` にバックアップされます。
-- `.env` は `.gitignore` で除外済みです。
+# 現在の状態を inventory/*.json に出力
+./scripts/export-inventory.ps1
+```
+
+## 既定の反映先
+
+- Codex MCP: `~/.codex/config.toml`
+- Gemini MCP: `~/.gemini/antigravity/mcp_config.json`
+- Antigravity MCP: `~/.antigravity/mcp_config.json`
+- Codex Skills: `~/.codex/skills`
+- Gemini Skills: `~/.gemini/skills`
+- Antigravity Skills: `~/.gemini/antigravity/skills`
+
+`.env` の `*_PATH` で上書き可能です。
+
+## GitHub Private Repo化
+
+```powershell
+# 1) GitHub認証
+# gh auth login
+
+# 2) Private repo作成してpush
+# gh repo create <repo-name> --private --source=. --remote=origin --push
+```
+
+## セキュリティ注意
+
+- `.env` はコミットしないでください（`.gitignore` 済み）
+- `inventory` にはキー値は保存せず、名前・件数のみを出力します
+- もし既存設定にトークン直書きを見つけた場合は、環境変数化してトークンをローテーションしてください

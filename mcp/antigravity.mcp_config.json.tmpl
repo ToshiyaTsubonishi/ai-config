@@ -1,5 +1,21 @@
 {
   "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ],
+      "env": {}
+    },
+    "figma": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.figma.com/mcp"
+      ],
+      "env": {}
+    },
     "github": {
       "command": "docker",
       "args": [
@@ -13,6 +29,14 @@
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "{{GITHUB_PERSONAL_ACCESS_TOKEN}}"
       }
+    },
+    "gemini_cloud_assist": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@google-cloud/gemini-cloud-assist-mcp@latest"
+      ],
+      "env": {}
     },
     "codegraphcontext": {
       "command": "cgc",

@@ -1,8 +1,9 @@
 [CmdletBinding()]
 param(
   [string]$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path,
-  [string[]]$Targets = @("codex", "antigravity"),
-  [switch]$NoBackup
+  [string[]]$Targets = @("codex", "gemini", "antigravity"),
+  [switch]$NoBackup,
+  [switch]$StrictVariables
 )
 
 Set-StrictMode -Version Latest
@@ -61,7 +62,7 @@ function Expand-Template {
         return [string]$Variables[$name]
       }
       $missing.Add($name) | Out-Null
-      return $m.Value
+      return ""
     }
   )
 
@@ -77,7 +78,8 @@ function Apply-Template {
     [Parameter(Mandatory = $true)][string]$TemplatePath,
     [Parameter(Mandatory = $true)][string]$TargetPath,
     [Parameter(Mandatory = $true)][hashtable]$Variables,
-    [Parameter(Mandatory = $true)][bool]$CreateBackup
+    [Parameter(Mandatory = $true)][bool]$CreateBackup,
+    [Parameter(Mandatory = $true)][bool]$Strict
   )
 
   if (-not (Test-Path $TemplatePath)) {
@@ -89,7 +91,10 @@ function Apply-Template {
 
   if ($result.Missing.Count -gt 0) {
     $missingList = ($result.Missing | Sort-Object -Unique) -join ", "
-    throw "[$Name] Missing variables: $missingList"
+    if ($Strict) {
+      throw "[$Name] Missing variables: $missingList"
+    }
+    Write-Warning "[$Name] Missing variables were set to empty: $missingList"
   }
 
   $targetDir = Split-Path -Path $TargetPath -Parent
@@ -106,6 +111,20 @@ function Apply-Template {
   Write-Host "[ok] $Name -> $TargetPath"
 }
 
+function Resolve-TargetPath {
+  param(
+    [Parameter(Mandatory = $true)][string]$DefaultPath,
+    [string]$PathVarName,
+    [Parameter(Mandatory = $true)][hashtable]$Variables
+  )
+
+  if ($PathVarName -and $Variables.ContainsKey($PathVarName) -and -not [string]::IsNullOrWhiteSpace([string]$Variables[$PathVarName])) {
+    return [System.Environment]::ExpandEnvironmentVariables([string]$Variables[$PathVarName])
+  }
+
+  return [System.Environment]::ExpandEnvironmentVariables($DefaultPath)
+}
+
 $dotenvPath = Join-Path $RepoRoot ".env"
 $fromDotEnv = Read-DotEnv -Path $dotenvPath
 
@@ -120,11 +139,18 @@ foreach ($entry in Get-ChildItem Env:) {
 $map = @{
   codex = @{
     Template = (Join-Path $RepoRoot "mcp/codex.config.toml.tmpl")
-    Target   = (Join-Path $HOME ".codex/config.toml")
+    DefaultTarget = (Join-Path $HOME ".codex/config.toml")
+    PathVar  = "CODEX_CONFIG_PATH"
+  }
+  gemini = @{
+    Template = (Join-Path $RepoRoot "mcp/antigravity.mcp_config.json.tmpl")
+    DefaultTarget = (Join-Path $HOME ".gemini/antigravity/mcp_config.json")
+    PathVar  = "GEMINI_MCP_CONFIG_PATH"
   }
   antigravity = @{
     Template = (Join-Path $RepoRoot "mcp/antigravity.mcp_config.json.tmpl")
-    Target   = (Join-Path $HOME ".gemini/antigravity/mcp_config.json")
+    DefaultTarget = (Join-Path $HOME ".antigravity/mcp_config.json")
+    PathVar  = "ANTIGRAVITY_MCP_CONFIG_PATH"
   }
 }
 
@@ -135,7 +161,8 @@ foreach ($target in $Targets) {
   }
 
   $item = $map[$target]
-  Apply-Template -Name $target -TemplatePath $item.Template -TargetPath $item.Target -Variables $vars -CreateBackup (-not $NoBackup)
+  $targetPath = Resolve-TargetPath -DefaultPath $item.DefaultTarget -PathVarName $item.PathVar -Variables $vars
+  Apply-Template -Name $target -TemplatePath $item.Template -TargetPath $targetPath -Variables $vars -CreateBackup (-not $NoBackup) -Strict $StrictVariables
 }
 
 Write-Host "Done."

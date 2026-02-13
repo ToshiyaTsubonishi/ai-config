@@ -1,0 +1,28 @@
+{
+  "configPath": "C:\\Users\\ttsub\\.gemini\\antigravity\\mcp_config.json",
+  "count": 3,
+  "servers": [
+    {
+      "name": "figma-dev-mode-mcp-server",
+      "command": "npx",
+      "argsCount": 2,
+      "envKeys": []
+    },
+    {
+      "name": "notion",
+      "command": "npx",
+      "argsCount": 2,
+      "envKeys": [
+        "NOTION_API_KEY"
+      ]
+    },
+    {
+      "name": "notion-mcp-server",
+      "command": "npx",
+      "argsCount": 2,
+      "envKeys": [
+        "OPENAPI_MCP_HEADERS"
+      ]
+    }
+  ]
+}

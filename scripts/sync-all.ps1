@@ -1,0 +1,45 @@
+[CmdletBinding()]
+param(
+  [string]$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path,
+  [string[]]$McpTargets = @("codex", "gemini", "antigravity"),
+  [string[]]$SkillTargets = @("codex", "gemini", "antigravity"),
+  [switch]$NoBackup,
+  [switch]$StrictVariables,
+  [switch]$OverwriteExistingSkills,
+  [switch]$PruneManagedSkills
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
+
+$applyScript = Join-Path $RepoRoot "scripts/apply-mcp.ps1"
+$syncSkillsScript = Join-Path $RepoRoot "scripts/sync-skills.ps1"
+$inventoryScript = Join-Path $RepoRoot "scripts/export-inventory.ps1"
+
+$applyArgs = @{
+  RepoRoot = $RepoRoot
+  Targets = $McpTargets
+}
+if ($NoBackup) {
+  $applyArgs["NoBackup"] = $true
+}
+if ($StrictVariables) {
+  $applyArgs["StrictVariables"] = $true
+}
+
+$syncArgs = @{
+  RepoRoot = $RepoRoot
+  Targets = $SkillTargets
+}
+if ($OverwriteExistingSkills) {
+  $syncArgs["OverwriteExisting"] = $true
+}
+if ($PruneManagedSkills) {
+  $syncArgs["PruneManaged"] = $true
+}
+
+& $applyScript @applyArgs
+& $syncSkillsScript @syncArgs
+& $inventoryScript -RepoRoot $RepoRoot
+
+Write-Host "All sync operations completed."
