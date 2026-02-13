@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:58:29.2879751+09:00",
+  "source": "simonwong/agent-skills",
+  "sourceKey": "simonwong__agent-skills",
+  "skillId": "code-simplifier",
+  "name": "code-simplifier",
+  "installs": 659,
+  "rank": 476,
+  "topN": 500
+}

@@ -1,0 +1,151 @@
+{
+  "generatedAt": "2026-02-14T01:40:25.0081801+09:00",
+  "sourceUrl": "https://skills.sh/",
+  "view": "all-time",
+  "totalSkills": 56872,
+  "allTimeTotal": 56872,
+  "topN": 20,
+  "count": 20,
+  "skills": [
+    {
+      "rank": 1,
+      "source": "vercel-labs/skills",
+      "skillId": "find-skills",
+      "name": "find-skills",
+      "installs": 209960
+    },
+    {
+      "rank": 2,
+      "source": "vercel-labs/agent-skills",
+      "skillId": "vercel-react-best-practices",
+      "name": "vercel-react-best-practices",
+      "installs": 128792
+    },
+    {
+      "rank": 3,
+      "source": "vercel-labs/agent-skills",
+      "skillId": "web-design-guidelines",
+      "name": "web-design-guidelines",
+      "installs": 96575
+    },
+    {
+      "rank": 4,
+      "source": "remotion-dev/skills",
+      "skillId": "remotion-best-practices",
+      "name": "remotion-best-practices",
+      "installs": 88357
+    },
+    {
+      "rank": 5,
+      "source": "anthropics/skills",
+      "skillId": "frontend-design",
+      "name": "frontend-design",
+      "installs": 66024
+    },
+    {
+      "rank": 6,
+      "source": "vercel-labs/agent-skills",
+      "skillId": "vercel-composition-patterns",
+      "name": "vercel-composition-patterns",
+      "installs": 38586
+    },
+    {
+      "rank": 7,
+      "source": "vercel-labs/agent-browser",
+      "skillId": "agent-browser",
+      "name": "agent-browser",
+      "installs": 33932
+    },
+    {
+      "rank": 8,
+      "source": "anthropics/skills",
+      "skillId": "skill-creator",
+      "name": "skill-creator",
+      "installs": 32716
+    },
+    {
+      "rank": 9,
+      "source": "browser-use/browser-use",
+      "skillId": "browser-use",
+      "name": "browser-use",
+      "installs": 28523
+    },
+    {
+      "rank": 10,
+      "source": "vercel-labs/agent-skills",
+      "skillId": "vercel-react-native-skills",
+      "name": "vercel-react-native-skills",
+      "installs": 27771
+    },
+    {
+      "rank": 11,
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "skillId": "ui-ux-pro-max",
+      "name": "ui-ux-pro-max",
+      "installs": 24283
+    },
+    {
+      "rank": 12,
+      "source": "squirrelscan/skills",
+      "skillId": "audit-website",
+      "name": "audit-website",
+      "installs": 18791
+    },
+    {
+      "rank": 13,
+      "source": "obra/superpowers",
+      "skillId": "brainstorming",
+      "name": "brainstorming",
+      "installs": 18517
+    },
+    {
+      "rank": 14,
+      "source": "coreyhaines31/marketingskills",
+      "skillId": "seo-audit",
+      "name": "seo-audit",
+      "installs": 17946
+    },
+    {
+      "rank": 15,
+      "source": "supabase/agent-skills",
+      "skillId": "supabase-postgres-best-practices",
+      "name": "supabase-postgres-best-practices",
+      "installs": 16795
+    },
+    {
+      "rank": 16,
+      "source": "anthropics/skills",
+      "skillId": "pdf",
+      "name": "pdf",
+      "installs": 13993
+    },
+    {
+      "rank": 17,
+      "source": "coreyhaines31/marketingskills",
+      "skillId": "copywriting",
+      "name": "copywriting",
+      "installs": 12998
+    },
+    {
+      "rank": 18,
+      "source": "anthropics/skills",
+      "skillId": "pptx",
+      "name": "pptx",
+      "installs": 11584
+    },
+    {
+      "rank": 19,
+      "source": "vercel-labs/next-skills",
+      "skillId": "next-best-practices",
+      "name": "next-best-practices",
+      "installs": 11296
+    },
+    {
+      "rank": 20,
+      "source": "better-auth/skills",
+      "skillId": "better-auth-best-practices",
+      "name": "better-auth-best-practices",
+      "installs": 10983
+    }
+  ]
+}

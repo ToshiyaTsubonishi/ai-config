@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:46:26.5848228+09:00",
+  "source": "anthropics/claude-plugins-official",
+  "sourceKey": "anthropics__claude-plugins-official",
+  "skillId": "claude-md-improver",
+  "name": "claude-md-improver",
+  "installs": 733,
+  "rank": 450,
+  "topN": 500
+}

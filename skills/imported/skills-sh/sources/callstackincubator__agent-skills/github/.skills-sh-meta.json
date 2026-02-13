@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:47:54.1863127+09:00",
+  "source": "callstackincubator/agent-skills",
+  "sourceKey": "callstackincubator__agent-skills",
+  "skillId": "github",
+  "name": "github",
+  "installs": 724,
+  "rank": 455,
+  "topN": 500
+}

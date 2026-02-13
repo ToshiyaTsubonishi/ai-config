@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:47:17.6759875+09:00",
+  "source": "anthropics/skills",
+  "sourceKey": "anthropics__skills",
+  "skillId": "xlsx",
+  "name": "xlsx",
+  "installs": 10666,
+  "rank": 22,
+  "topN": 500
+}

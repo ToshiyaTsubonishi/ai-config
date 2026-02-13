@@ -1,0 +1,3000 @@
+{
+  "updatedAt": "2026-02-14T02:09:14.5954598+09:00",
+  "topN": 500,
+  "completed": {
+    "composiohq/awesome-claude-skills::changelog-generator": {
+      "importedAt": "2026-02-14T01:48:57.3086859+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\composiohq__awesome-claude-skills\\changelog-generator",
+      "rank": 418,
+      "installs": 882
+    },
+    "blader/humanizer::humanizer": {
+      "importedAt": "2026-02-14T01:47:40.2858247+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\blader__humanizer\\humanizer",
+      "rank": 449,
+      "installs": 736
+    },
+    "antfu/skills::vue-testing-best-practices": {
+      "importedAt": "2026-02-14T01:45:57.1109003+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\vue-testing-best-practices",
+      "rank": 224,
+      "installs": 1629
+    },
+    "jimliu/baoyu-skills::baoyu-markdown-to-html": {
+      "importedAt": "2026-02-14T01:53:48.2246642+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jimliu__baoyu-skills\\baoyu-markdown-to-html",
+      "rank": 349,
+      "installs": 1311
+    },
+    "hyf0/vue-skills::vue-best-practices": {
+      "importedAt": "2026-02-14T01:51:20.6180034+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\hyf0__vue-skills\\vue-best-practices",
+      "rank": 58,
+      "installs": 6034
+    },
+    "jimliu/baoyu-skills::baoyu-url-to-markdown": {
+      "importedAt": "2026-02-14T01:53:48.0578363+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jimliu__baoyu-skills\\baoyu-url-to-markdown",
+      "rank": 155,
+      "installs": 2480
+    },
+    "wshobson/agents::python-observability": {
+      "importedAt": "2026-02-14T02:01:45.1793601+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\python-observability",
+      "rank": 416,
+      "installs": 897
+    },
+    "wshobson/agents::workflow-orchestration-patterns": {
+      "importedAt": "2026-02-14T02:01:42.7281701+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\workflow-orchestration-patterns",
+      "rank": 214,
+      "installs": 1685
+    },
+    "wshobson/agents::bash-defensive-patterns": {
+      "importedAt": "2026-02-14T02:01:43.3874502+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\bash-defensive-patterns",
+      "rank": 270,
+      "installs": 1492
+    },
+    "wshobson/agents::billing-automation": {
+      "importedAt": "2026-02-14T02:01:44.3241498+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\billing-automation",
+      "rank": 310,
+      "installs": 1402
+    },
+    "wshobson/agents::vector-index-tuning": {
+      "importedAt": "2026-02-14T02:01:43.7814959+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\vector-index-tuning",
+      "rank": 285,
+      "installs": 1453
+    },
+    "cloudflare/skills::cloudflare": {
+      "importedAt": "2026-02-14T01:48:30.8734736+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\cloudflare__skills\\cloudflare",
+      "rank": 414,
+      "installs": 907
+    },
+    "heroui-inc/heroui::heroui-native": {
+      "importedAt": "2026-02-14T01:51:12.2431545+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\heroui-inc__heroui\\heroui-native",
+      "rank": 460,
+      "installs": 705
+    },
+    "ibelick/ui-skills::fixing-accessibility": {
+      "importedAt": "2026-02-14T01:51:35.5865233+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\ibelick__ui-skills\\fixing-accessibility",
+      "rank": 317,
+      "installs": 1386
+    },
+    "anthropics/skills::webapp-testing": {
+      "importedAt": "2026-02-14T01:47:17.716734+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\webapp-testing",
+      "rank": 26,
+      "installs": 9522
+    },
+    "google-labs-code/stitch-skills::design-md": {
+      "importedAt": "2026-02-14T01:51:03.0180172+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\google-labs-code__stitch-skills\\design-md",
+      "rank": 86,
+      "installs": 4866
+    },
+    "analogjs/angular-skills::angular-di": {
+      "importedAt": "2026-02-14T01:45:02.5695947+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\analogjs__angular-skills\\angular-di",
+      "rank": 403,
+      "installs": 947
+    },
+    "wshobson/agents::temporal-python-testing": {
+      "importedAt": "2026-02-14T02:01:43.2629114+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\temporal-python-testing",
+      "rank": 263,
+      "installs": 1518
+    },
+    "sickn33/antigravity-awesome-skills::playwright-skill": {
+      "importedAt": "2026-02-14T01:58:26.0286538+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\sickn33__antigravity-awesome-skills\\playwright-skill",
+      "rank": 373,
+      "installs": 1113
+    },
+    "wshobson/agents::database-migration": {
+      "importedAt": "2026-02-14T02:01:42.5302776+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\database-migration",
+      "rank": 198,
+      "installs": 1802
+    },
+    "dimillian/skills::swiftui-liquid-glass": {
+      "importedAt": "2026-02-14T01:49:30.1125946+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\dimillian__skills\\swiftui-liquid-glass",
+      "rank": 405,
+      "installs": 937
+    },
+    "simonwong/agent-skills::code-simplifier": {
+      "importedAt": "2026-02-14T01:58:29.2889508+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\simonwong__agent-skills\\code-simplifier",
+      "rank": 476,
+      "installs": 659
+    },
+    "vercel/ai-elements::ai-elements": {
+      "importedAt": "2026-02-14T02:00:03.3935043+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel__ai-elements\\ai-elements",
+      "rank": 264,
+      "installs": 1517
+    },
+    "ibelick/ui-skills::fixing-metadata": {
+      "importedAt": "2026-02-14T01:51:35.6049047+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\ibelick__ui-skills\\fixing-metadata",
+      "rank": 354,
+      "installs": 1283
+    },
+    "coreyhaines31/marketingskills::onboarding-cro": {
+      "importedAt": "2026-02-14T01:49:03.205557+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\onboarding-cro",
+      "rank": 56,
+      "installs": 6052
+    },
+    "wshobson/agents::sast-configuration": {
+      "importedAt": "2026-02-14T02:01:44.6957671+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\sast-configuration",
+      "rank": 332,
+      "installs": 1353
+    },
+    "wshobson/agents::visual-design-foundations": {
+      "importedAt": "2026-02-14T02:01:42.278309+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\visual-design-foundations",
+      "rank": 187,
+      "installs": 1944
+    },
+    "subsy/ralph-tui::ralph-tui-create-beads-rust": {
+      "importedAt": "2026-02-14T01:58:58.5631237+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\subsy__ralph-tui\\ralph-tui-create-beads-rust",
+      "rank": 132,
+      "installs": 3095
+    },
+    "jeffallan/claude-skills::java-architect": {
+      "importedAt": "2026-02-14T01:52:01.2834615+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jeffallan__claude-skills\\java-architect",
+      "rank": 492,
+      "installs": 627
+    },
+    "wshobson/agents::ml-pipeline-workflow": {
+      "importedAt": "2026-02-14T02:01:44.2155683+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\ml-pipeline-workflow",
+      "rank": 304,
+      "installs": 1422
+    },
+    "coreyhaines31/marketingskills::popup-cro": {
+      "importedAt": "2026-02-14T01:49:03.4451237+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\popup-cro",
+      "rank": 78,
+      "installs": 5232
+    },
+    "wshobson/agents::api-design-principles": {
+      "importedAt": "2026-02-14T02:01:41.033987+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\api-design-principles",
+      "rank": 95,
+      "installs": 4386
+    },
+    "addyosmani/web-quality-skills::best-practices": {
+      "importedAt": "2026-02-14T01:44:07.5774411+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\addyosmani__web-quality-skills\\best-practices",
+      "rank": 496,
+      "installs": 620
+    },
+    "wshobson/agents::e2e-testing-patterns": {
+      "importedAt": "2026-02-14T02:01:41.5471008+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\e2e-testing-patterns",
+      "rank": 148,
+      "installs": 2671
+    },
+    "czlonkowski/n8n-skills::n8n-workflow-patterns": {
+      "importedAt": "2026-02-14T01:49:06.2185359+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\czlonkowski__n8n-skills\\n8n-workflow-patterns",
+      "rank": 453,
+      "installs": 732
+    },
+    "astrolicious/agent-skills::astro": {
+      "importedAt": "2026-02-14T01:47:25.9941005+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\astrolicious__agent-skills\\astro",
+      "rank": 451,
+      "installs": 733
+    },
+    "softaworks/agent-toolkit::ship-learn-next": {
+      "importedAt": "2026-02-14T01:58:41.1966205+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\ship-learn-next",
+      "rank": 247,
+      "installs": 1579
+    },
+    "hyf0/vue-skills::vue-debug-guides": {
+      "importedAt": "2026-02-14T01:51:25.6857495+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\hyf0__vue-skills\\vue-debug-guides",
+      "rank": 65,
+      "installs": 5807
+    },
+    "wshobson/agents::hybrid-cloud-networking": {
+      "importedAt": "2026-02-14T02:01:44.4878825+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\hybrid-cloud-networking",
+      "rank": 321,
+      "installs": 1370
+    },
+    "vuejs-ai/skills::vue-pinia-best-practices": {
+      "importedAt": "2026-02-14T02:01:03.8444694+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vuejs-ai__skills\\vue-pinia-best-practices",
+      "rank": 205,
+      "installs": 1738
+    },
+    "wshobson/agents::k8s-manifest-generator": {
+      "importedAt": "2026-02-14T02:01:44.0897316+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\k8s-manifest-generator",
+      "rank": 294,
+      "installs": 1435
+    },
+    "cloudai-x/threejs-skills::threejs-shaders": {
+      "importedAt": "2026-02-14T01:48:19.5716902+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\cloudai-x__threejs-skills\\threejs-shaders",
+      "rank": 374,
+      "installs": 1107
+    },
+    "wshobson/agents::startup-financial-modeling": {
+      "importedAt": "2026-02-14T02:01:43.2817805+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\startup-financial-modeling",
+      "rank": 265,
+      "installs": 1517
+    },
+    "google-labs-code/stitch-skills::enhance-prompt": {
+      "importedAt": "2026-02-14T01:51:03.1375673+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\google-labs-code__stitch-skills\\enhance-prompt",
+      "rank": 110,
+      "installs": 3575
+    },
+    "aaron-he-zhu/seo-geo-claude-skills::backlink-analyzer": {
+      "importedAt": "2026-02-14T01:43:52.0124806+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\aaron-he-zhu__seo-geo-claude-skills\\backlink-analyzer",
+      "rank": 193,
+      "installs": 1915
+    },
+    "upstash/context7::documentation-lookup": {
+      "importedAt": "2026-02-14T01:59:21.7502597+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\upstash__context7\\documentation-lookup",
+      "rank": 483,
+      "installs": 641
+    },
+    "langgenius/dify::web-design-guidelines": {
+      "importedAt": "2026-02-14T01:54:51.8458773+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\langgenius__dify\\web-design-guidelines",
+      "rank": 467,
+      "installs": 688
+    },
+    "anthropics/skills::xlsx": {
+      "importedAt": "2026-02-14T01:47:17.677859+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\xlsx",
+      "rank": 22,
+      "installs": 10666
+    },
+    "affaan-m/everything-claude-code::security-review": {
+      "importedAt": "2026-02-14T01:44:36.7669278+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\affaan-m__everything-claude-code\\security-review",
+      "rank": 442,
+      "installs": 781
+    },
+    "softaworks/agent-toolkit::command-creator": {
+      "importedAt": "2026-02-14T01:58:41.6458547+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\command-creator",
+      "rank": 250,
+      "installs": 1577
+    },
+    "kadajett/agent-nestjs-skills::nestjs-best-practices": {
+      "importedAt": "2026-02-14T01:53:51.5865049+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\kadajett__agent-nestjs-skills\\nestjs-best-practices",
+      "rank": 127,
+      "installs": 3158
+    },
+    "google-labs-code/stitch-skills::shadcn-ui": {
+      "importedAt": "2026-02-14T01:51:03.317452+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\google-labs-code__stitch-skills\\shadcn-ui",
+      "rank": 164,
+      "installs": 2220
+    },
+    "figma/mcp-server-guide::implement-design": {
+      "importedAt": "2026-02-14T01:50:17.7367234+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\figma__mcp-server-guide\\implement-design",
+      "rank": 197,
+      "installs": 1827
+    },
+    "jimliu/baoyu-skills::baoyu-danger-gemini-web": {
+      "importedAt": "2026-02-14T01:53:47.99248+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jimliu__baoyu-skills\\baoyu-danger-gemini-web",
+      "rank": 151,
+      "installs": 2621
+    },
+    "wshobson/agents::gitlab-ci-patterns": {
+      "importedAt": "2026-02-14T02:01:42.6887694+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\gitlab-ci-patterns",
+      "rank": 211,
+      "installs": 1702
+    },
+    "wshobson/agents::error-handling-patterns": {
+      "importedAt": "2026-02-14T02:01:41.4384307+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\error-handling-patterns",
+      "rank": 145,
+      "installs": 2689
+    },
+    "coreyhaines31/marketingskills::copy-editing": {
+      "importedAt": "2026-02-14T01:49:02.9397109+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\copy-editing",
+      "rank": 37,
+      "installs": 7362
+    },
+    "coinbase/agentic-wallet-skills::send-usdc": {
+      "importedAt": "2026-02-14T01:48:44.5940634+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coinbase__agentic-wallet-skills\\send-usdc",
+      "rank": 407,
+      "installs": 930
+    },
+    "antfu/skills::slidev": {
+      "importedAt": "2026-02-14T01:45:56.9653618+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\slidev",
+      "rank": 163,
+      "installs": 2226
+    },
+    "sveltejs/mcp::svelte-code-writer": {
+      "importedAt": "2026-02-14T01:59:08.8120169+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\sveltejs__mcp\\svelte-code-writer",
+      "rank": 486,
+      "installs": 633
+    },
+    "wshobson/agents::track-management": {
+      "importedAt": "2026-02-14T02:01:44.5099181+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\track-management",
+      "rank": 323,
+      "installs": 1367
+    },
+    "antfu/skills::vitest": {
+      "importedAt": "2026-02-14T01:45:53.1014412+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\vitest",
+      "rank": 101,
+      "installs": 4097
+    },
+    "jeffallan/claude-skills::kubernetes-specialist": {
+      "importedAt": "2026-02-14T01:52:01.0128501+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jeffallan__claude-skills\\kubernetes-specialist",
+      "rank": 347,
+      "installs": 1323
+    },
+    "wshobson/agents::python-resource-management": {
+      "importedAt": "2026-02-14T02:01:45.2439725+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\python-resource-management",
+      "rank": 430,
+      "installs": 848
+    },
+    "anthropics/skills::canvas-design": {
+      "importedAt": "2026-02-14T01:47:18.4417291+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\canvas-design",
+      "rank": 36,
+      "installs": 7456
+    },
+    "sickn33/antigravity-awesome-skills::nextjs-supabase-auth": {
+      "importedAt": "2026-02-14T01:58:26.075478+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\sickn33__antigravity-awesome-skills\\nextjs-supabase-auth",
+      "rank": 417,
+      "installs": 893
+    },
+    "obra/superpowers::test-driven-development": {
+      "importedAt": "2026-02-14T01:55:48.8779182+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\obra__superpowers\\test-driven-development",
+      "rank": 31,
+      "installs": 8477
+    },
+    "coreyhaines31/marketingskills::ab-test-setup": {
+      "importedAt": "2026-02-14T01:49:03.4793455+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\ab-test-setup",
+      "rank": 80,
+      "installs": 5202
+    },
+    "wshobson/agents::nft-standards": {
+      "importedAt": "2026-02-14T02:01:44.9618738+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\nft-standards",
+      "rank": 345,
+      "installs": 1329
+    },
+    "wshobson/agents::python-performance-optimization": {
+      "importedAt": "2026-02-14T02:01:41.08126+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\python-performance-optimization",
+      "rank": 105,
+      "installs": 3819
+    },
+    "softaworks/agent-toolkit::game-changing-features": {
+      "importedAt": "2026-02-14T01:58:42.2402434+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\game-changing-features",
+      "rank": 298,
+      "installs": 1431
+    },
+    "anthropics/skills::theme-factory": {
+      "importedAt": "2026-02-14T01:47:18.5229532+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\theme-factory",
+      "rank": 51,
+      "installs": 6121
+    },
+    "wshobson/agents::llm-evaluation": {
+      "importedAt": "2026-02-14T02:01:43.0267236+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\llm-evaluation",
+      "rank": 230,
+      "installs": 1598
+    },
+    "vercel-labs/agent-skills::web-design-guidelines": {
+      "importedAt": "2026-02-14T01:59:41.0422574+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__agent-skills\\web-design-guidelines",
+      "rank": 3,
+      "installs": 96576
+    },
+    "coreyhaines31/marketingskills::competitor-alternatives": {
+      "importedAt": "2026-02-14T01:49:03.2672048+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\competitor-alternatives",
+      "rank": 59,
+      "installs": 6000
+    },
+    "wshobson/agents::airflow-dag-patterns": {
+      "importedAt": "2026-02-14T02:01:44.3701098+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\airflow-dag-patterns",
+      "rank": 313,
+      "installs": 1399
+    },
+    "wshobson/agents::anti-reversing-techniques": {
+      "importedAt": "2026-02-14T02:01:44.745064+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\anti-reversing-techniques",
+      "rank": 334,
+      "installs": 1352
+    },
+    "tavily-ai/skills::search": {
+      "importedAt": "2026-02-14T01:59:15.8913103+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\tavily-ai__skills\\search",
+      "rank": 400,
+      "installs": 961
+    },
+    "wshobson/agents::event-store-design": {
+      "importedAt": "2026-02-14T02:01:43.0743741+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\event-store-design",
+      "rank": 256,
+      "installs": 1559
+    },
+    "onmax/nuxt-skills::document-writer": {
+      "importedAt": "2026-02-14T01:56:13.6799893+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\onmax__nuxt-skills\\document-writer",
+      "rank": 495,
+      "installs": 621
+    },
+    "vercel/ai::ai-sdk": {
+      "importedAt": "2026-02-14T01:59:58.8716734+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel__ai\\ai-sdk",
+      "rank": 91,
+      "installs": 4607
+    },
+    "wshobson/agents::backtesting-frameworks": {
+      "importedAt": "2026-02-14T02:01:43.3018212+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\backtesting-frameworks",
+      "rank": 266,
+      "installs": 1510
+    },
+    "cloudai-x/threejs-skills::threejs-animation": {
+      "importedAt": "2026-02-14T01:48:19.5230548+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\cloudai-x__threejs-skills\\threejs-animation",
+      "rank": 260,
+      "installs": 1528
+    },
+    "wshobson/agents::python-project-structure": {
+      "importedAt": "2026-02-14T02:01:45.073934+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\python-project-structure",
+      "rank": 378,
+      "installs": 1067
+    },
+    "cloudai-x/threejs-skills::threejs-fundamentals": {
+      "importedAt": "2026-02-14T01:48:19.5481139+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\cloudai-x__threejs-skills\\threejs-fundamentals",
+      "rank": 365,
+      "installs": 1200
+    },
+    "wshobson/agents::angular-migration": {
+      "importedAt": "2026-02-14T02:01:44.2815748+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\angular-migration",
+      "rank": 308,
+      "installs": 1407
+    },
+    "softaworks/agent-toolkit::qa-test-planner": {
+      "importedAt": "2026-02-14T01:58:40.8692301+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\qa-test-planner",
+      "rank": 237,
+      "installs": 1591
+    },
+    "addyosmani/web-quality-skills::accessibility": {
+      "importedAt": "2026-02-14T01:44:07.4498595+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\addyosmani__web-quality-skills\\accessibility",
+      "rank": 433,
+      "installs": 828
+    },
+    "letz-ai/letzai-skill::letzai-api": {
+      "importedAt": "2026-02-14T01:54:54.5271603+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\letz-ai__letzai-skill\\letzai-api",
+      "rank": 423,
+      "installs": 869
+    },
+    "obra/superpowers::receiving-code-review": {
+      "importedAt": "2026-02-14T01:55:49.0718849+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\obra__superpowers\\receiving-code-review",
+      "rank": 60,
+      "installs": 5981
+    },
+    "wshobson/agents::distributed-tracing": {
+      "importedAt": "2026-02-14T02:01:44.5366398+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\distributed-tracing",
+      "rank": 324,
+      "installs": 1367
+    },
+    "obra/episodic-memory::remembering-conversations": {
+      "importedAt": "2026-02-14T01:55:15.9634868+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\obra__episodic-memory\\remembering-conversations",
+      "rank": 87,
+      "installs": 4825
+    },
+    "jezweb/claude-skills::motion": {
+      "importedAt": "2026-02-14T01:52:44.4103834+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jezweb__claude-skills\\motion",
+      "rank": 500,
+      "installs": 616
+    },
+    "softaworks/agent-toolkit::dependency-updater": {
+      "importedAt": "2026-02-14T01:58:41.0371675+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\dependency-updater",
+      "rank": 243,
+      "installs": 1582
+    },
+    "resend/react-email::react-email": {
+      "importedAt": "2026-02-14T01:56:56.5019789+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\resend__react-email\\react-email",
+      "rank": 208,
+      "installs": 1710
+    },
+    "wshobson/agents::react-state-management": {
+      "importedAt": "2026-02-14T02:01:42.1306521+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\react-state-management",
+      "rank": 182,
+      "installs": 1990
+    },
+    "waynesutton/convexskills::convex-schema-validator": {
+      "importedAt": "2026-02-14T02:01:18.371716+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\waynesutton__convexskills\\convex-schema-validator",
+      "rank": 498,
+      "installs": 619
+    },
+    "anthropics/skills::brand-guidelines": {
+      "importedAt": "2026-02-14T01:47:18.6601657+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\brand-guidelines",
+      "rank": 71,
+      "installs": 5481
+    },
+    "wshobson/agents::code-review-excellence": {
+      "importedAt": "2026-02-14T02:01:41.1574215+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\code-review-excellence",
+      "rank": 122,
+      "installs": 3304
+    },
+    "wshobson/agents::python-error-handling": {
+      "importedAt": "2026-02-14T02:01:45.0969243+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\python-error-handling",
+      "rank": 389,
+      "installs": 1018
+    },
+    "wshobson/agents::mobile-ios-design": {
+      "importedAt": "2026-02-14T02:01:41.521691+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\mobile-ios-design",
+      "rank": 147,
+      "installs": 2673
+    },
+    "softaworks/agent-toolkit::gemini": {
+      "importedAt": "2026-02-14T01:58:40.9066534+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\gemini",
+      "rank": 240,
+      "installs": 1587
+    },
+    "google-gemini/gemini-cli::docs-writer": {
+      "importedAt": "2026-02-14T01:50:45.4153675+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\google-gemini__gemini-cli\\docs-writer",
+      "rank": 429,
+      "installs": 853
+    },
+    "affaan-m/everything-claude-code::golang-patterns": {
+      "importedAt": "2026-02-14T01:44:36.8242391+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\affaan-m__everything-claude-code\\golang-patterns",
+      "rank": 472,
+      "installs": 665
+    },
+    "wshobson/agents::python-type-safety": {
+      "importedAt": "2026-02-14T02:01:45.1406533+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\python-type-safety",
+      "rank": 406,
+      "installs": 935
+    },
+    "brianlovin/claude-config::simplify": {
+      "importedAt": "2026-02-14T01:47:44.9888671+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\brianlovin__claude-config\\simplify",
+      "rank": 212,
+      "installs": 1697
+    },
+    "github/awesome-copilot::gh-cli": {
+      "importedAt": "2026-02-14T01:50:30.5479268+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\github__awesome-copilot\\gh-cli",
+      "rank": 458,
+      "installs": 712
+    },
+    "wshobson/agents::incident-runbook-templates": {
+      "importedAt": "2026-02-14T02:01:44.5582382+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\incident-runbook-templates",
+      "rank": 325,
+      "installs": 1365
+    },
+    "analogjs/angular-skills::angular-tooling": {
+      "importedAt": "2026-02-14T01:45:02.6555487+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\analogjs__angular-skills\\angular-tooling",
+      "rank": 419,
+      "installs": 878
+    },
+    "jeffallan/claude-skills::sql-pro": {
+      "importedAt": "2026-02-14T01:52:01.0708089+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jeffallan__claude-skills\\sql-pro",
+      "rank": 384,
+      "installs": 1026
+    },
+    "railwayapp/railway-skills::service": {
+      "importedAt": "2026-02-14T01:56:37.8085872+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\railwayapp__railway-skills\\service",
+      "rank": 367,
+      "installs": 1181
+    },
+    "wshobson/agents::prometheus-configuration": {
+      "importedAt": "2026-02-14T02:01:43.5949369+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\prometheus-configuration",
+      "rank": 279,
+      "installs": 1467
+    },
+    "wshobson/agents::data-storytelling": {
+      "importedAt": "2026-02-14T02:01:42.6705921+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\data-storytelling",
+      "rank": 210,
+      "installs": 1703
+    },
+    "wshobson/agents::pci-compliance": {
+      "importedAt": "2026-02-14T02:01:44.9344535+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\pci-compliance",
+      "rank": 344,
+      "installs": 1330
+    },
+    "wshobson/agents::helm-chart-scaffolding": {
+      "importedAt": "2026-02-14T02:01:43.9644245+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\helm-chart-scaffolding",
+      "rank": 291,
+      "installs": 1436
+    },
+    "softaworks/agent-toolkit::codex": {
+      "importedAt": "2026-02-14T01:58:40.8882436+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\codex",
+      "rank": 238,
+      "installs": 1590
+    },
+    "supabase/agent-skills::skill-creator": {
+      "importedAt": "2026-02-14T01:59:03.6275671+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\supabase__agent-skills\\skill-creator",
+      "rank": 466,
+      "installs": 691
+    },
+    "wshobson/agents::changelog-automation": {
+      "importedAt": "2026-02-14T02:01:42.6481963+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\changelog-automation",
+      "rank": 203,
+      "installs": 1765
+    },
+    "coreyhaines31/marketingskills::social-content": {
+      "importedAt": "2026-02-14T01:49:02.9848437+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\social-content",
+      "rank": 38,
+      "installs": 7273
+    },
+    "wshobson/agents::saga-orchestration": {
+      "importedAt": "2026-02-14T02:01:44.1686995+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\saga-orchestration",
+      "rank": 302,
+      "installs": 1424
+    },
+    "coreyhaines31/marketingskills::pricing-strategy": {
+      "importedAt": "2026-02-14T01:49:03.0236494+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\pricing-strategy",
+      "rank": 39,
+      "installs": 7155
+    },
+    "sickn33/antigravity-awesome-skills::api-security-best-practices": {
+      "importedAt": "2026-02-14T01:58:26.0531034+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\sickn33__antigravity-awesome-skills\\api-security-best-practices",
+      "rank": 413,
+      "installs": 908
+    },
+    "resend/resend-skills::resend": {
+      "importedAt": "2026-02-14T01:56:59.3579171+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\resend__resend-skills\\resend",
+      "rank": 315,
+      "installs": 1395
+    },
+    "expo/skills::native-data-fetching": {
+      "importedAt": "2026-02-14T01:49:59.2523706+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\expo__skills\\native-data-fetching",
+      "rank": 48,
+      "installs": 6183
+    },
+    "wshobson/agents::python-resilience": {
+      "importedAt": "2026-02-14T02:01:45.2244742+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\python-resilience",
+      "rank": 424,
+      "installs": 867
+    },
+    "wshobson/agents::architecture-decision-records": {
+      "importedAt": "2026-02-14T02:01:42.5031034+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\architecture-decision-records",
+      "rank": 196,
+      "installs": 1854
+    },
+    "wshobson/agents::memory-forensics": {
+      "importedAt": "2026-02-14T02:01:44.4397349+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\memory-forensics",
+      "rank": 319,
+      "installs": 1371
+    },
+    "langgenius/dify::skill-creator": {
+      "importedAt": "2026-02-14T01:54:51.821967+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\langgenius__dify\\skill-creator",
+      "rank": 445,
+      "installs": 760
+    },
+    "antfu/skills::pnpm": {
+      "importedAt": "2026-02-14T01:45:54.5481206+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\pnpm",
+      "rank": 107,
+      "installs": 3651
+    },
+    "wshobson/agents::python-design-patterns": {
+      "importedAt": "2026-02-14T02:01:44.6277892+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\python-design-patterns",
+      "rank": 328,
+      "installs": 1360
+    },
+    "jeffallan/claude-skills::php-pro": {
+      "importedAt": "2026-02-14T01:52:01.2237587+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jeffallan__claude-skills\\php-pro",
+      "rank": 452,
+      "installs": 732
+    },
+    "composiohq/awesome-claude-skills::file-organizer": {
+      "importedAt": "2026-02-14T01:48:57.3619628+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\composiohq__awesome-claude-skills\\file-organizer",
+      "rank": 497,
+      "installs": 619
+    },
+    "sickn33/antigravity-awesome-skills::nextjs-best-practices": {
+      "importedAt": "2026-02-14T01:58:25.8048442+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\sickn33__antigravity-awesome-skills\\nextjs-best-practices",
+      "rank": 312,
+      "installs": 1401
+    },
+    "wshobson/agents::debugging-strategies": {
+      "importedAt": "2026-02-14T02:01:42.4146314+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\debugging-strategies",
+      "rank": 190,
+      "installs": 1937
+    },
+    "better-auth/skills::create-auth-skill": {
+      "importedAt": "2026-02-14T01:47:38.0707568+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\better-auth__skills\\create-auth-skill",
+      "rank": 90,
+      "installs": 4666
+    },
+    "wshobson/agents::gitops-workflow": {
+      "importedAt": "2026-02-14T02:01:43.8593628+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\gitops-workflow",
+      "rank": 289,
+      "installs": 1443
+    },
+    "wshobson/agents::bazel-build-optimization": {
+      "importedAt": "2026-02-14T02:01:45.0073594+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\bazel-build-optimization",
+      "rank": 348,
+      "installs": 1317
+    },
+    "wshobson/agents::workflow-patterns": {
+      "importedAt": "2026-02-14T02:01:43.6163758+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\workflow-patterns",
+      "rank": 280,
+      "installs": 1466
+    },
+    "jeffallan/claude-skills::golang-pro": {
+      "importedAt": "2026-02-14T01:52:00.7728573+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jeffallan__claude-skills\\golang-pro",
+      "rank": 169,
+      "installs": 2136
+    },
+    "antfu/skills::vite": {
+      "importedAt": "2026-02-14T01:45:53.0216007+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\vite",
+      "rank": 77,
+      "installs": 5246
+    },
+    "jezweb/claude-skills::zustand-state-management": {
+      "importedAt": "2026-02-14T01:52:43.6281974+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jezweb__claude-skills\\zustand-state-management",
+      "rank": 387,
+      "installs": 1021
+    },
+    "anthropics/skills::slack-gif-creator": {
+      "importedAt": "2026-02-14T01:47:18.756712+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\slack-gif-creator",
+      "rank": 88,
+      "installs": 4818
+    },
+    "jimliu/baoyu-skills::baoyu-xhs-images": {
+      "importedAt": "2026-02-14T01:53:47.0231948+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jimliu__baoyu-skills\\baoyu-xhs-images",
+      "rank": 130,
+      "installs": 3129
+    },
+    "antfu/skills::web-design-guidelines": {
+      "importedAt": "2026-02-14T01:45:56.0292237+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\web-design-guidelines",
+      "rank": 119,
+      "installs": 3387
+    },
+    "jeffallan/claude-skills::flutter-expert": {
+      "importedAt": "2026-02-14T01:52:00.7957836+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jeffallan__claude-skills\\flutter-expert",
+      "rank": 171,
+      "installs": 2110
+    },
+    "anthropics/claude-plugins-official::claude-md-improver": {
+      "importedAt": "2026-02-14T01:46:26.586247+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__claude-plugins-official\\claude-md-improver",
+      "rank": 450,
+      "installs": 733
+    },
+    "wshobson/agents::accessibility-compliance": {
+      "importedAt": "2026-02-14T02:01:42.2074332+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\accessibility-compliance",
+      "rank": 185,
+      "installs": 1960
+    },
+    "wshobson/agents::bats-testing-patterns": {
+      "importedAt": "2026-02-14T02:01:44.8283297+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\bats-testing-patterns",
+      "rank": 338,
+      "installs": 1337
+    },
+    "softaworks/agent-toolkit::database-schema-designer": {
+      "importedAt": "2026-02-14T01:58:42.1716227+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\database-schema-designer",
+      "rank": 290,
+      "installs": 1442
+    },
+    "softaworks/agent-toolkit::crafting-effective-readmes": {
+      "importedAt": "2026-02-14T01:58:40.6323844+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\crafting-effective-readmes",
+      "rank": 235,
+      "installs": 1592
+    },
+    "antfu/skills::vitepress": {
+      "importedAt": "2026-02-14T01:45:56.2989274+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\vitepress",
+      "rank": 135,
+      "installs": 3040
+    },
+    "wshobson/agents::screen-reader-testing": {
+      "importedAt": "2026-02-14T02:01:43.5537666+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\screen-reader-testing",
+      "rank": 277,
+      "installs": 1476
+    },
+    "nextlevelbuilder/ui-ux-pro-max-skill::ui-ux-pro-max": {
+      "importedAt": "2026-02-14T01:55:13.2935008+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\nextlevelbuilder__ui-ux-pro-max-skill\\ui-ux-pro-max",
+      "rank": 11,
+      "installs": 24283
+    },
+    "vuejs-ai/skills::vue-best-practices": {
+      "importedAt": "2026-02-14T02:01:03.6378275+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vuejs-ai__skills\\vue-best-practices",
+      "rank": 181,
+      "installs": 1991
+    },
+    "wshobson/agents::context-driven-development": {
+      "importedAt": "2026-02-14T02:01:43.4077681+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\context-driven-development",
+      "rank": 271,
+      "installs": 1491
+    },
+    "sickn33/antigravity-awesome-skills::prisma-expert": {
+      "importedAt": "2026-02-14T01:58:25.9288327+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\sickn33__antigravity-awesome-skills\\prisma-expert",
+      "rank": 371,
+      "installs": 1132
+    },
+    "wshobson/agents::sql-optimization-patterns": {
+      "importedAt": "2026-02-14T02:01:41.5905435+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\sql-optimization-patterns",
+      "rank": 156,
+      "installs": 2441
+    },
+    "cloudai-x/threejs-skills::threejs-postprocessing": {
+      "importedAt": "2026-02-14T01:48:19.7162978+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\cloudai-x__threejs-skills\\threejs-postprocessing",
+      "rank": 397,
+      "installs": 969
+    },
+    "wshobson/agents::secrets-management": {
+      "importedAt": "2026-02-14T02:01:42.7519801+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\secrets-management",
+      "rank": 215,
+      "installs": 1680
+    },
+    "emzod/speak-turbo::speakturbo-tts": {
+      "importedAt": "2026-02-14T01:49:38.3614999+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\emzod__speak-turbo\\speakturbo-tts",
+      "rank": 493,
+      "installs": 627
+    },
+    "wshobson/agents::startup-metrics-framework": {
+      "importedAt": "2026-02-14T02:01:44.1513594+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\startup-metrics-framework",
+      "rank": 300,
+      "installs": 1428
+    },
+    "vercel-labs/agent-skills::vercel-react-best-practices": {
+      "importedAt": "2026-02-14T01:59:41.0234342+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__agent-skills\\vercel-react-best-practices",
+      "rank": 2,
+      "installs": 128793
+    },
+    "coinbase/agentic-wallet-skills::monetize-service": {
+      "importedAt": "2026-02-14T01:48:44.5771181+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coinbase__agentic-wallet-skills\\monetize-service",
+      "rank": 401,
+      "installs": 960
+    },
+    "jimliu/baoyu-skills::baoyu-comic": {
+      "importedAt": "2026-02-14T01:53:47.1854319+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jimliu__baoyu-skills\\baoyu-comic",
+      "rank": 137,
+      "installs": 2959
+    },
+    "jimliu/baoyu-skills::baoyu-post-to-wechat": {
+      "importedAt": "2026-02-14T01:53:47.5757866+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jimliu__baoyu-skills\\baoyu-post-to-wechat",
+      "rank": 139,
+      "installs": 2882
+    },
+    "analogjs/angular-skills::angular-forms": {
+      "importedAt": "2026-02-14T01:45:02.3759052+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\analogjs__angular-skills\\angular-forms",
+      "rank": 381,
+      "installs": 1044
+    },
+    "dammyjay93/interface-design::interface-design": {
+      "importedAt": "2026-02-14T01:49:11.5555679+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\dammyjay93__interface-design\\interface-design",
+      "rank": 126,
+      "installs": 3172
+    },
+    "wshobson/agents::defi-protocol-templates": {
+      "importedAt": "2026-02-14T02:01:44.6762895+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\defi-protocol-templates",
+      "rank": 330,
+      "installs": 1357
+    },
+    "obra/superpowers::executing-plans": {
+      "importedAt": "2026-02-14T01:55:48.891806+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\obra__superpowers\\executing-plans",
+      "rank": 34,
+      "installs": 7725
+    },
+    "vercel/next.js::update-docs": {
+      "importedAt": "2026-02-14T02:00:28.9016429+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel__next.js\\update-docs",
+      "rank": 462,
+      "installs": 700
+    },
+    "napoleond/clawdirect::clawdirect-dev": {
+      "importedAt": "2026-02-14T01:55:08.1906366+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\napoleond__clawdirect\\clawdirect-dev",
+      "rank": 100,
+      "installs": 4213
+    },
+    "obra/superpowers::subagent-driven-development": {
+      "importedAt": "2026-02-14T01:55:48.9546208+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\obra__superpowers\\subagent-driven-development",
+      "rank": 41,
+      "installs": 6494
+    },
+    "affaan-m/everything-claude-code::coding-standards": {
+      "importedAt": "2026-02-14T01:44:36.7174168+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\affaan-m__everything-claude-code\\coding-standards",
+      "rank": 440,
+      "installs": 793
+    },
+    "adithya-s-k/manim_skill::manim-composer": {
+      "importedAt": "2026-02-14T01:44:13.8499894+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\adithya-s-k__manim_skill\\manim-composer",
+      "rank": 484,
+      "installs": 638
+    },
+    "vuejs-ai/skills::vue-debug-guides": {
+      "importedAt": "2026-02-14T02:01:08.9922844+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vuejs-ai__skills\\vue-debug-guides",
+      "rank": 361,
+      "installs": 1220
+    },
+    "wshobson/agents::binary-analysis-patterns": {
+      "importedAt": "2026-02-14T02:01:44.8711692+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\binary-analysis-patterns",
+      "rank": 341,
+      "installs": 1335
+    },
+    "pleaseprompto/notebooklm-skill::notebooklm": {
+      "importedAt": "2026-02-14T01:56:23.5307665+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\pleaseprompto__notebooklm-skill\\notebooklm",
+      "rank": 420,
+      "installs": 874
+    },
+    "wshobson/agents::python-background-jobs": {
+      "importedAt": "2026-02-14T02:01:45.199944+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\python-background-jobs",
+      "rank": 421,
+      "installs": 872
+    },
+    "wshobson/agents::on-call-handoff-patterns": {
+      "importedAt": "2026-02-14T02:01:44.7895437+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\on-call-handoff-patterns",
+      "rank": 336,
+      "installs": 1340
+    },
+    "obra/superpowers::requesting-code-review": {
+      "importedAt": "2026-02-14T01:55:48.9184856+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\obra__superpowers\\requesting-code-review",
+      "rank": 40,
+      "installs": 7110
+    },
+    "langgenius/dify::frontend-code-review": {
+      "importedAt": "2026-02-14T01:54:51.5271354+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\langgenius__dify\\frontend-code-review",
+      "rank": 234,
+      "installs": 1592
+    },
+    "obra/superpowers::dispatching-parallel-agents": {
+      "importedAt": "2026-02-14T01:55:49.0855076+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\obra__superpowers\\dispatching-parallel-agents",
+      "rank": 66,
+      "installs": 5667
+    },
+    "wshobson/agents::javascript-testing-patterns": {
+      "importedAt": "2026-02-14T02:01:41.7102315+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\javascript-testing-patterns",
+      "rank": 161,
+      "installs": 2244
+    },
+    "wshobson/agents::openapi-spec-generation": {
+      "importedAt": "2026-02-14T02:01:42.7093982+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\openapi-spec-generation",
+      "rank": 213,
+      "installs": 1689
+    },
+    "avdlee/swift-concurrency-agent-skill::swift-concurrency": {
+      "importedAt": "2026-02-14T01:47:28.5327709+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\avdlee__swift-concurrency-agent-skill\\swift-concurrency",
+      "rank": 218,
+      "installs": 1650
+    },
+    "obra/superpowers::writing-skills": {
+      "importedAt": "2026-02-14T01:55:49.058598+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\obra__superpowers\\writing-skills",
+      "rank": 54,
+      "installs": 6093
+    },
+    "resciencelab/opc-skills::seo-geo": {
+      "importedAt": "2026-02-14T01:56:46.7432481+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\resciencelab__opc-skills\\seo-geo",
+      "rank": 149,
+      "installs": 2645
+    },
+    "sickn33/antigravity-awesome-skills::security-review": {
+      "importedAt": "2026-02-14T01:58:25.8295921+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\sickn33__antigravity-awesome-skills\\security-review",
+      "rank": 351,
+      "installs": 1305
+    },
+    "softaworks/agent-toolkit::c4-architecture": {
+      "importedAt": "2026-02-14T01:58:41.9576981+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\c4-architecture",
+      "rank": 255,
+      "installs": 1565
+    },
+    "wshobson/agents::k8s-security-policies": {
+      "importedAt": "2026-02-14T02:01:43.5258325+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\k8s-security-policies",
+      "rank": 276,
+      "installs": 1477
+    },
+    "wshobson/agents::grafana-dashboards": {
+      "importedAt": "2026-02-14T02:01:42.8120237+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\grafana-dashboards",
+      "rank": 217,
+      "installs": 1662
+    },
+    "anthropics/skills::algorithmic-art": {
+      "importedAt": "2026-02-14T01:47:18.6393411+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\algorithmic-art",
+      "rank": 67,
+      "installs": 5658
+    },
+    "supabase/agent-skills::supabase-postgres-best-practices": {
+      "importedAt": "2026-02-14T01:59:03.6041665+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\supabase__agent-skills\\supabase-postgres-best-practices",
+      "rank": 15,
+      "installs": 16795
+    },
+    "better-auth/skills::better-auth-best-practices": {
+      "importedAt": "2026-02-14T01:47:38.0511801+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\better-auth__skills\\better-auth-best-practices",
+      "rank": 20,
+      "installs": 10983
+    },
+    "onmax/nuxt-skills::vueuse": {
+      "importedAt": "2026-02-14T01:56:13.3528059+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\onmax__nuxt-skills\\vueuse",
+      "rank": 422,
+      "installs": 871
+    },
+    "onmax/nuxt-skills::reka-ui": {
+      "importedAt": "2026-02-14T01:56:13.5193073+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\onmax__nuxt-skills\\reka-ui",
+      "rank": 441,
+      "installs": 782
+    },
+    "apollographql/skills::rust-best-practices": {
+      "importedAt": "2026-02-14T01:47:21.3157377+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\apollographql__skills\\rust-best-practices",
+      "rank": 473,
+      "installs": 662
+    },
+    "onmax/nuxt-skills::nuxt": {
+      "importedAt": "2026-02-14T01:56:11.995672+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\onmax__nuxt-skills\\nuxt",
+      "rank": 292,
+      "installs": 1436
+    },
+    "resend/email-best-practices::email-best-practices": {
+      "importedAt": "2026-02-14T01:56:49.0846588+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\resend__email-best-practices\\email-best-practices",
+      "rank": 174,
+      "installs": 2085
+    },
+    "wshobson/agents::wcag-audit-patterns": {
+      "importedAt": "2026-02-14T02:01:43.3241929+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\wcag-audit-patterns",
+      "rank": 267,
+      "installs": 1505
+    },
+    "wshobson/agents::mtls-configuration": {
+      "importedAt": "2026-02-14T02:01:44.9146209+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\mtls-configuration",
+      "rank": 343,
+      "installs": 1331
+    },
+    "ast-grep/agent-skill::ast-grep": {
+      "importedAt": "2026-02-14T01:47:23.712527+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\ast-grep__agent-skill\\ast-grep",
+      "rank": 480,
+      "installs": 646
+    },
+    "wshobson/agents::typescript-advanced-types": {
+      "importedAt": "2026-02-14T02:01:40.9527194+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\typescript-advanced-types",
+      "rank": 69,
+      "installs": 5586
+    },
+    "wshobson/agents::mobile-android-design": {
+      "importedAt": "2026-02-14T02:01:41.6826123+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\mobile-android-design",
+      "rank": 159,
+      "installs": 2277
+    },
+    "vercel-labs/add-skill::find-skills": {
+      "importedAt": "2026-02-14T01:59:24.1801278+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__add-skill\\find-skills",
+      "rank": 29,
+      "installs": 8678
+    },
+    "avdlee/swiftui-agent-skill::swiftui-expert-skill": {
+      "importedAt": "2026-02-14T01:47:31.0104172+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\avdlee__swiftui-agent-skill\\swiftui-expert-skill",
+      "rank": 106,
+      "installs": 3799
+    },
+    "remotion-dev/skills::remotion-best-practices": {
+      "importedAt": "2026-02-14T01:56:43.5804701+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\remotion-dev__skills\\remotion-best-practices",
+      "rank": 4,
+      "installs": 88358
+    },
+    "softaworks/agent-toolkit::session-handoff": {
+      "importedAt": "2026-02-14T01:58:40.7733597+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\session-handoff",
+      "rank": 236,
+      "installs": 1591
+    },
+    "coreyhaines31/marketingskills::product-marketing-context": {
+      "importedAt": "2026-02-14T01:49:02.8717263+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\product-marketing-context",
+      "rank": 33,
+      "installs": 8193
+    },
+    "obra/superpowers::using-git-worktrees": {
+      "importedAt": "2026-02-14T01:55:48.9858475+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\obra__superpowers\\using-git-worktrees",
+      "rank": 52,
+      "installs": 6103
+    },
+    "wshobson/agents::monorepo-management": {
+      "importedAt": "2026-02-14T02:01:41.9811048+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\monorepo-management",
+      "rank": 177,
+      "installs": 2041
+    },
+    "obra/superpowers::brainstorming": {
+      "importedAt": "2026-02-14T01:55:48.7602878+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\obra__superpowers\\brainstorming",
+      "rank": 13,
+      "installs": 18517
+    },
+    "antfu/skills::vue-router-best-practices": {
+      "importedAt": "2026-02-14T01:45:57.0386444+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\vue-router-best-practices",
+      "rank": 186,
+      "installs": 1950
+    },
+    "wshobson/agents::interaction-design": {
+      "importedAt": "2026-02-14T02:01:42.0653811+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\interaction-design",
+      "rank": 178,
+      "installs": 2018
+    },
+    "coreyhaines31/marketingskills::launch-strategy": {
+      "importedAt": "2026-02-14T01:49:03.0641146+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\launch-strategy",
+      "rank": 43,
+      "installs": 6382
+    },
+    "coreyhaines31/marketingskills::page-cro": {
+      "importedAt": "2026-02-14T01:49:03.046229+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\page-cro",
+      "rank": 42,
+      "installs": 6417
+    },
+    "wshobson/agents::langchain-architecture": {
+      "importedAt": "2026-02-14T02:01:42.0861961+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\langchain-architecture",
+      "rank": 179,
+      "installs": 1996
+    },
+    "sickn33/antigravity-awesome-skills::mobile-design": {
+      "importedAt": "2026-02-14T01:58:26.7032967+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\sickn33__antigravity-awesome-skills\\mobile-design",
+      "rank": 454,
+      "installs": 725
+    },
+    "coinbase/agentic-wallet-skills::trade": {
+      "importedAt": "2026-02-14T01:48:44.5137952+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coinbase__agentic-wallet-skills\\trade",
+      "rank": 383,
+      "installs": 1032
+    },
+    "elysiajs/skills::elysiajs": {
+      "importedAt": "2026-02-14T01:49:35.8993944+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\elysiajs__skills\\elysiajs",
+      "rank": 362,
+      "installs": 1218
+    },
+    "browser-use/browser-use::browser-use": {
+      "importedAt": "2026-02-14T01:47:47.9586414+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\browser-use__browser-use\\browser-use",
+      "rank": 9,
+      "installs": 28523
+    },
+    "wshobson/agents::postgresql-table-design": {
+      "importedAt": "2026-02-14T02:01:41.1771679+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\postgresql-table-design",
+      "rank": 125,
+      "installs": 3190
+    },
+    "railwayapp/railway-skills::railway-docs": {
+      "importedAt": "2026-02-14T01:56:37.8727996+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\railwayapp__railway-skills\\railway-docs",
+      "rank": 479,
+      "installs": 650
+    },
+    "wshobson/agents::architecture-patterns": {
+      "importedAt": "2026-02-14T02:01:41.1053268+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\architecture-patterns",
+      "rank": 111,
+      "installs": 3526
+    },
+    "jezweb/claude-skills::react-native-expo": {
+      "importedAt": "2026-02-14T01:52:44.2197672+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jezweb__claude-skills\\react-native-expo",
+      "rank": 481,
+      "installs": 644
+    },
+    "wshobson/agents::projection-patterns": {
+      "importedAt": "2026-02-14T02:01:43.4496948+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\projection-patterns",
+      "rank": 273,
+      "installs": 1483
+    },
+    "napoleond/clawdirect::clawdirect": {
+      "importedAt": "2026-02-14T01:55:08.1641405+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\napoleond__clawdirect\\clawdirect",
+      "rank": 96,
+      "installs": 4304
+    },
+    "jimliu/baoyu-skills::baoyu-slide-deck": {
+      "importedAt": "2026-02-14T01:53:46.4101399+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jimliu__baoyu-skills\\baoyu-slide-deck",
+      "rank": 120,
+      "installs": 3332
+    },
+    "jimliu/baoyu-skills::baoyu-infographic": {
+      "importedAt": "2026-02-14T01:53:47.8376222+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jimliu__baoyu-skills\\baoyu-infographic",
+      "rank": 150,
+      "installs": 2625
+    },
+    "wshobson/agents::hybrid-search-implementation": {
+      "importedAt": "2026-02-14T02:01:43.8061086+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\hybrid-search-implementation",
+      "rank": 287,
+      "installs": 1446
+    },
+    "tavily-ai/skills::research": {
+      "importedAt": "2026-02-14T01:59:15.9275373+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\tavily-ai__skills\\research",
+      "rank": 431,
+      "installs": 842
+    },
+    "callstackincubator/agent-skills::github": {
+      "importedAt": "2026-02-14T01:47:54.1873434+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\callstackincubator__agent-skills\\github",
+      "rank": 455,
+      "installs": 724
+    },
+    "analogjs/angular-skills::angular-ssr": {
+      "importedAt": "2026-02-14T01:45:02.7819512+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\analogjs__angular-skills\\angular-ssr",
+      "rank": 471,
+      "installs": 669
+    },
+    "antfu/skills::turborepo": {
+      "importedAt": "2026-02-14T01:45:56.7736481+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\turborepo",
+      "rank": 160,
+      "installs": 2271
+    },
+    "rivet-dev/skills::sandbox-agent": {
+      "importedAt": "2026-02-14T01:57:02.335097+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\rivet-dev__skills\\sandbox-agent",
+      "rank": 434,
+      "installs": 824
+    },
+    "vercel-labs/agent-skills::vercel-react-native-skills": {
+      "importedAt": "2026-02-14T01:59:41.7763373+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__agent-skills\\vercel-react-native-skills",
+      "rank": 10,
+      "installs": 27771
+    },
+    "antfu/skills::tsdown": {
+      "importedAt": "2026-02-14T01:45:56.6009415+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\tsdown",
+      "rank": 157,
+      "installs": 2359
+    },
+    "sickn33/antigravity-awesome-skills::docker-expert": {
+      "importedAt": "2026-02-14T01:58:25.7656543+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\sickn33__antigravity-awesome-skills\\docker-expert",
+      "rank": 172,
+      "installs": 2099
+    },
+    "vuejs-ai/skills::vue-testing-best-practices": {
+      "importedAt": "2026-02-14T02:01:04.3038202+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vuejs-ai__skills\\vue-testing-best-practices",
+      "rank": 274,
+      "installs": 1482
+    },
+    "anthropics/skills::web-artifacts-builder": {
+      "importedAt": "2026-02-14T01:47:18.5752178+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\web-artifacts-builder",
+      "rank": 63,
+      "installs": 5894
+    },
+    "wshobson/agents::shellcheck-configuration": {
+      "importedAt": "2026-02-14T02:01:44.4652309+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\shellcheck-configuration",
+      "rank": 320,
+      "installs": 1370
+    },
+    "antfu/skills::pinia": {
+      "importedAt": "2026-02-14T01:45:56.0151672+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\pinia",
+      "rank": 113,
+      "installs": 3497
+    },
+    "davila7/claude-code-templates::senior-backend": {
+      "importedAt": "2026-02-14T01:49:20.2658091+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\davila7__claude-code-templates\\senior-backend",
+      "rank": 490,
+      "installs": 630
+    },
+    "softaworks/agent-toolkit::marp-slide": {
+      "importedAt": "2026-02-14T01:58:41.5873816+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\marp-slide",
+      "rank": 249,
+      "installs": 1578
+    },
+    "anthropics/skills::internal-comms": {
+      "importedAt": "2026-02-14T01:47:18.7118981+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\internal-comms",
+      "rank": 81,
+      "installs": 5146
+    },
+    "adithya-s-k/manim_skill::manimce-best-practices": {
+      "importedAt": "2026-02-14T01:44:13.8252117+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\adithya-s-k__manim_skill\\manimce-best-practices",
+      "rank": 444,
+      "installs": 768
+    },
+    "jimliu/baoyu-skills::release-skills": {
+      "importedAt": "2026-02-14T01:53:47.6050395+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jimliu__baoyu-skills\\release-skills",
+      "rank": 141,
+      "installs": 2746
+    },
+    "wshobson/agents::python-configuration": {
+      "importedAt": "2026-02-14T02:01:45.1600611+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\python-configuration",
+      "rank": 415,
+      "installs": 905
+    },
+    "antfu/skills::nuxt": {
+      "importedAt": "2026-02-14T01:45:56.2103004+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\nuxt",
+      "rank": 133,
+      "installs": 3087
+    },
+    "deckardger/tanstack-agent-skills::tanstack-start-best-practices": {
+      "importedAt": "2026-02-14T01:49:23.0410642+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\deckardger__tanstack-agent-skills\\tanstack-start-best-practices",
+      "rank": 331,
+      "installs": 1355
+    },
+    "wshobson/agents::cost-optimization": {
+      "importedAt": "2026-02-14T02:01:43.0932066+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\cost-optimization",
+      "rank": 257,
+      "installs": 1554
+    },
+    "wshobson/agents::protocol-reverse-engineering": {
+      "importedAt": "2026-02-14T02:01:44.3461434+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\protocol-reverse-engineering",
+      "rank": 311,
+      "installs": 1401
+    },
+    "1nfsh/skills::agent-browser": {
+      "importedAt": "2026-02-14T01:43:49.1480652+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\1nfsh__skills\\agent-browser",
+      "rank": 239,
+      "installs": 1590
+    },
+    "coreyhaines31/marketingskills::email-sequence": {
+      "importedAt": "2026-02-14T01:49:03.3532818+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\email-sequence",
+      "rank": 64,
+      "installs": 5894
+    },
+    "antfu/skills::vueuse-functions": {
+      "importedAt": "2026-02-14T01:45:55.9749188+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\vueuse-functions",
+      "rank": 109,
+      "installs": 3616
+    },
+    "addyosmani/web-quality-skills::seo": {
+      "importedAt": "2026-02-14T01:44:07.411869+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\addyosmani__web-quality-skills\\seo",
+      "rank": 410,
+      "installs": 921
+    },
+    "coreyhaines31/marketingskills::schema-markup": {
+      "importedAt": "2026-02-14T01:49:03.1578644+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\schema-markup",
+      "rank": 50,
+      "installs": 6166
+    },
+    "anthropics/claude-code::frontend-design": {
+      "importedAt": "2026-02-14T01:46:23.835808+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__claude-code\\frontend-design",
+      "rank": 117,
+      "installs": 3419
+    },
+    "wshobson/agents::go-concurrency-patterns": {
+      "importedAt": "2026-02-14T02:01:43.1189156+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\go-concurrency-patterns",
+      "rank": 259,
+      "installs": 1545
+    },
+    "jimliu/baoyu-skills::baoyu-post-to-x": {
+      "importedAt": "2026-02-14T01:53:46.2667768+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jimliu__baoyu-skills\\baoyu-post-to-x",
+      "rank": 116,
+      "installs": 3449
+    },
+    "railwayapp/railway-skills::central-station": {
+      "importedAt": "2026-02-14T01:56:37.75862+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\railwayapp__railway-skills\\central-station",
+      "rank": 366,
+      "installs": 1188
+    },
+    "wshobson/agents::microservices-patterns": {
+      "importedAt": "2026-02-14T02:01:42.4345086+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\microservices-patterns",
+      "rank": 191,
+      "installs": 1929
+    },
+    "wshobson/agents::embedding-strategies": {
+      "importedAt": "2026-02-14T02:01:43.3649452+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\embedding-strategies",
+      "rank": 269,
+      "installs": 1495
+    },
+    "wshobson/agents::linkerd-patterns": {
+      "importedAt": "2026-02-14T02:01:45.0265619+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\linkerd-patterns",
+      "rank": 350,
+      "installs": 1307
+    },
+    "antfu/skills::vue-best-practices": {
+      "importedAt": "2026-02-14T01:45:54.4869796+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\vue-best-practices",
+      "rank": 103,
+      "installs": 3984
+    },
+    "coinbase/agentic-wallet-skills::x402": {
+      "importedAt": "2026-02-14T01:48:44.5357381+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coinbase__agentic-wallet-skills\\x402",
+      "rank": 395,
+      "installs": 973
+    },
+    "wshobson/agents::web-component-design": {
+      "importedAt": "2026-02-14T02:01:42.3914252+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\web-component-design",
+      "rank": 189,
+      "installs": 1939
+    },
+    "coreyhaines31/marketingskills::paid-ads": {
+      "importedAt": "2026-02-14T01:49:03.3022013+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\paid-ads",
+      "rank": 62,
+      "installs": 5900
+    },
+    "softaworks/agent-toolkit::writing-clearly-and-concisely": {
+      "importedAt": "2026-02-14T01:58:40.3045254+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\writing-clearly-and-concisely",
+      "rank": 227,
+      "installs": 1600
+    },
+    "langgenius/dify::component-refactoring": {
+      "importedAt": "2026-02-14T01:54:51.6187132+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\langgenius__dify\\component-refactoring",
+      "rank": 363,
+      "installs": 1216
+    },
+    "softaworks/agent-toolkit::reducing-entropy": {
+      "importedAt": "2026-02-14T01:58:41.1392296+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\reducing-entropy",
+      "rank": 245,
+      "installs": 1580
+    },
+    "wshobson/agents::kpi-dashboard-design": {
+      "importedAt": "2026-02-14T02:01:42.5990753+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\kpi-dashboard-design",
+      "rank": 201,
+      "installs": 1786
+    },
+    "wshobson/agents::nx-workspace-patterns": {
+      "importedAt": "2026-02-14T02:01:43.6411205+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\nx-workspace-patterns",
+      "rank": 282,
+      "installs": 1464
+    },
+    "wshobson/agents::react-native-design": {
+      "importedAt": "2026-02-14T02:01:41.9270189+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\react-native-design",
+      "rank": 173,
+      "installs": 2094
+    },
+    "wshobson/agents::market-sizing-analysis": {
+      "importedAt": "2026-02-14T02:01:43.6943379+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\market-sizing-analysis",
+      "rank": 283,
+      "installs": 1460
+    },
+    "jezweb/claude-skills::nextjs": {
+      "importedAt": "2026-02-14T01:52:43.9970974+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jezweb__claude-skills\\nextjs",
+      "rank": 412,
+      "installs": 909
+    },
+    "wshobson/agents::modern-javascript-patterns": {
+      "importedAt": "2026-02-14T02:01:41.9591011+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\modern-javascript-patterns",
+      "rank": 176,
+      "installs": 2076
+    },
+    "1nfsh/skills::agent-tools": {
+      "importedAt": "2026-02-14T01:43:48.9921846+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\1nfsh__skills\\agent-tools",
+      "rank": 115,
+      "installs": 3455
+    },
+    "jimliu/baoyu-skills::baoyu-cover-image": {
+      "importedAt": "2026-02-14T01:53:46.7122666+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jimliu__baoyu-skills\\baoyu-cover-image",
+      "rank": 123,
+      "installs": 3220
+    },
+    "sickn33/antigravity-awesome-skills::senior-architect": {
+      "importedAt": "2026-02-14T01:58:26.8040871+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\sickn33__antigravity-awesome-skills\\senior-architect",
+      "rank": 488,
+      "installs": 631
+    },
+    "onmax/nuxt-skills::motion": {
+      "importedAt": "2026-02-14T01:56:13.6634104+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\onmax__nuxt-skills\\motion",
+      "rank": 478,
+      "installs": 654
+    },
+    "softaworks/agent-toolkit::domain-name-brainstormer": {
+      "importedAt": "2026-02-14T01:58:40.9983302+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\domain-name-brainstormer",
+      "rank": 242,
+      "installs": 1582
+    },
+    "vercel/turborepo::turborepo": {
+      "importedAt": "2026-02-14T02:00:37.9169735+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel__turborepo\\turborepo",
+      "rank": 93,
+      "installs": 4472
+    },
+    "jeffallan/claude-skills::laravel-specialist": {
+      "importedAt": "2026-02-14T01:52:00.8741952+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jeffallan__claude-skills\\laravel-specialist",
+      "rank": 183,
+      "installs": 1965
+    },
+    "obra/superpowers::verification-before-completion": {
+      "importedAt": "2026-02-14T01:55:48.9753598+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\obra__superpowers\\verification-before-completion",
+      "rank": 49,
+      "installs": 6179
+    },
+    "waynesutton/convexskills::convex": {
+      "importedAt": "2026-02-14T02:01:18.2534534+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\waynesutton__convexskills\\convex",
+      "rank": 194,
+      "installs": 1870
+    },
+    "wshobson/agents::security-requirement-extraction": {
+      "importedAt": "2026-02-14T02:01:43.0508326+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\security-requirement-extraction",
+      "rank": 231,
+      "installs": 1598
+    },
+    "railwayapp/railway-skills::deployment": {
+      "importedAt": "2026-02-14T01:56:37.9025532+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\railwayapp__railway-skills\\deployment",
+      "rank": 489,
+      "installs": 630
+    },
+    "op7418/humanizer-zh::humanizer-zh": {
+      "importedAt": "2026-02-14T01:56:16.0014228+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\op7418__humanizer-zh\\humanizer-zh",
+      "rank": 143,
+      "installs": 2729
+    },
+    "tavily-ai/skills::extract": {
+      "importedAt": "2026-02-14T01:59:15.9681078+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\tavily-ai__skills\\extract",
+      "rank": 469,
+      "installs": 683
+    },
+    "wshobson/agents::service-mesh-observability": {
+      "importedAt": "2026-02-14T02:01:44.7695075+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\service-mesh-observability",
+      "rank": 335,
+      "installs": 1352
+    },
+    "analogjs/angular-skills::angular-testing": {
+      "importedAt": "2026-02-14T01:45:02.7154532+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\analogjs__angular-skills\\angular-testing",
+      "rank": 427,
+      "installs": 857
+    },
+    "coreyhaines31/marketingskills::analytics-tracking": {
+      "importedAt": "2026-02-14T01:49:03.1081067+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\analytics-tracking",
+      "rank": 46,
+      "installs": 6267
+    },
+    "composiohq/awesome-claude-skills::content-research-writer": {
+      "importedAt": "2026-02-14T01:48:57.3346393+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\composiohq__awesome-claude-skills\\content-research-writer",
+      "rank": 426,
+      "installs": 858
+    },
+    "coreyhaines31/marketingskills::paywall-upgrade-cro": {
+      "importedAt": "2026-02-14T01:49:03.4264733+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\paywall-upgrade-cro",
+      "rank": 72,
+      "installs": 5391
+    },
+    "anthropics/skills::template-skill": {
+      "importedAt": "2026-02-14T01:47:18.6696421+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\template-skill",
+      "rank": 76,
+      "installs": 5247
+    },
+    "subsy/ralph-tui::ralph-tui-create-json": {
+      "importedAt": "2026-02-14T01:58:58.5237703+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\subsy__ralph-tui\\ralph-tui-create-json",
+      "rank": 112,
+      "installs": 3522
+    },
+    "jimliu/baoyu-skills::baoyu-compress-image": {
+      "importedAt": "2026-02-14T01:53:47.7076275+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jimliu__baoyu-skills\\baoyu-compress-image",
+      "rank": 146,
+      "installs": 2682
+    },
+    "softaworks/agent-toolkit::react-useeffect": {
+      "importedAt": "2026-02-14T01:58:42.2998184+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\react-useeffect",
+      "rank": 301,
+      "installs": 1426
+    },
+    "wshobson/agents::async-python-patterns": {
+      "importedAt": "2026-02-14T02:01:41.5695582+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\async-python-patterns",
+      "rank": 152,
+      "installs": 2545
+    },
+    "othmanadi/planning-with-files::planning-with-files": {
+      "importedAt": "2026-02-14T01:56:20.9916068+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\othmanadi__planning-with-files\\planning-with-files",
+      "rank": 153,
+      "installs": 2532
+    },
+    "obra/superpowers::finishing-a-development-branch": {
+      "importedAt": "2026-02-14T01:55:49.0962522+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\obra__superpowers\\finishing-a-development-branch",
+      "rank": 79,
+      "installs": 5218
+    },
+    "ibelick/ui-skills::fixing-motion-performance": {
+      "importedAt": "2026-02-14T01:51:35.5678154+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\ibelick__ui-skills\\fixing-motion-performance",
+      "rank": 281,
+      "installs": 1465
+    },
+    "wshobson/agents::rust-async-patterns": {
+      "importedAt": "2026-02-14T02:01:42.5761383+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\rust-async-patterns",
+      "rank": 200,
+      "installs": 1789
+    },
+    "waynesutton/convexskills::convex-functions": {
+      "importedAt": "2026-02-14T02:01:18.3372485+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\waynesutton__convexskills\\convex-functions",
+      "rank": 482,
+      "installs": 644
+    },
+    "wshobson/agents::attack-tree-construction": {
+      "importedAt": "2026-02-14T02:01:44.7176984+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\attack-tree-construction",
+      "rank": 333,
+      "installs": 1353
+    },
+    "wshobson/agents::python-code-style": {
+      "importedAt": "2026-02-14T02:01:45.0492885+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\python-code-style",
+      "rank": 372,
+      "installs": 1115
+    },
+    "cloudai-x/threejs-skills::threejs-lighting": {
+      "importedAt": "2026-02-14T01:48:19.6675014+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\cloudai-x__threejs-skills\\threejs-lighting",
+      "rank": 394,
+      "installs": 977
+    },
+    "coreyhaines31/marketingskills::seo-audit": {
+      "importedAt": "2026-02-14T01:49:02.7611118+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\seo-audit",
+      "rank": 14,
+      "installs": 17947
+    },
+    "wshobson/agents::deployment-pipeline-design": {
+      "importedAt": "2026-02-14T02:01:42.6213516+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\deployment-pipeline-design",
+      "rank": 202,
+      "installs": 1766
+    },
+    "wshobson/agents::dotnet-backend-patterns": {
+      "importedAt": "2026-02-14T02:01:42.9096353+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\dotnet-backend-patterns",
+      "rank": 219,
+      "installs": 1640
+    },
+    "slidevjs/slidev::slidev": {
+      "importedAt": "2026-02-14T01:58:33.2043194+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\slidevjs__slidev\\slidev",
+      "rank": 457,
+      "installs": 718
+    },
+    "f/awesome-chatgpt-prompts::prompt-lookup": {
+      "importedAt": "2026-02-14T01:50:15.1105667+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\f__awesome-chatgpt-prompts\\prompt-lookup",
+      "rank": 408,
+      "installs": 929
+    },
+    "addyosmani/web-quality-skills::performance": {
+      "importedAt": "2026-02-14T01:44:07.387684+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\addyosmani__web-quality-skills\\performance",
+      "rank": 375,
+      "installs": 1093
+    },
+    "dimillian/skills::swiftui-performance-audit": {
+      "importedAt": "2026-02-14T01:49:30.4690042+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\dimillian__skills\\swiftui-performance-audit",
+      "rank": 448,
+      "installs": 744
+    },
+    "jimliu/baoyu-skills::baoyu-image-gen": {
+      "importedAt": "2026-02-14T01:53:47.6721071+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jimliu__baoyu-skills\\baoyu-image-gen",
+      "rank": 144,
+      "installs": 2692
+    },
+    "daleseo/korean-skills::humanizer": {
+      "importedAt": "2026-02-14T01:49:08.9995025+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\daleseo__korean-skills\\humanizer",
+      "rank": 477,
+      "installs": 656
+    },
+    "obra/superpowers::systematic-debugging": {
+      "importedAt": "2026-02-14T01:55:48.8225398+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\obra__superpowers\\systematic-debugging",
+      "rank": 23,
+      "installs": 10138
+    },
+    "wshobson/agents::stripe-integration": {
+      "importedAt": "2026-02-14T02:01:41.8196227+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\stripe-integration",
+      "rank": 165,
+      "installs": 2198
+    },
+    "cloudai-x/threejs-skills::threejs-materials": {
+      "importedAt": "2026-02-14T01:48:19.6438414+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\cloudai-x__threejs-skills\\threejs-materials",
+      "rank": 388,
+      "installs": 1020
+    },
+    "analogjs/angular-skills::angular-signals": {
+      "importedAt": "2026-02-14T01:45:02.3259823+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\analogjs__angular-skills\\angular-signals",
+      "rank": 360,
+      "installs": 1220
+    },
+    "wshobson/agents::design-system-patterns": {
+      "importedAt": "2026-02-14T02:01:41.7932628+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\design-system-patterns",
+      "rank": 162,
+      "installs": 2226
+    },
+    "cloudflare/skills::wrangler": {
+      "importedAt": "2026-02-14T01:48:27.1910151+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\cloudflare__skills\\wrangler",
+      "rank": 353,
+      "installs": 1286
+    },
+    "softaworks/agent-toolkit::react-dev": {
+      "importedAt": "2026-02-14T01:58:42.1223933+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\react-dev",
+      "rank": 288,
+      "installs": 1443
+    },
+    "f/awesome-chatgpt-prompts::skill-lookup": {
+      "importedAt": "2026-02-14T01:50:15.0930357+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\f__awesome-chatgpt-prompts\\skill-lookup",
+      "rank": 376,
+      "installs": 1089
+    },
+    "hashicorp/agent-skills::terraform-style-guide": {
+      "importedAt": "2026-02-14T01:51:06.7004553+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\hashicorp__agent-skills\\terraform-style-guide",
+      "rank": 491,
+      "installs": 630
+    },
+    "1nferencesh/s::agent-tools": {
+      "importedAt": "2026-02-14T01:43:43.4232121+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\1nferencesh__s\\agent-tools",
+      "rank": 175,
+      "installs": 2081
+    },
+    "cloudflare/skills::durable-objects": {
+      "importedAt": "2026-02-14T01:48:30.94892+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\cloudflare__skills\\durable-objects",
+      "rank": 470,
+      "installs": 676
+    },
+    "analogjs/angular-skills::angular-routing": {
+      "importedAt": "2026-02-14T01:45:02.4304606+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\analogjs__angular-skills\\angular-routing",
+      "rank": 386,
+      "installs": 1022
+    },
+    "vuejs-ai/skills::vue-router-best-practices": {
+      "importedAt": "2026-02-14T02:01:04.0889224+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vuejs-ai__skills\\vue-router-best-practices",
+      "rank": 207,
+      "installs": 1727
+    },
+    "vercel-labs/next-skills::next-upgrade": {
+      "importedAt": "2026-02-14T01:59:49.1583241+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__next-skills\\next-upgrade",
+      "rank": 154,
+      "installs": 2525
+    },
+    "vercel-labs/next-skills::next-cache-components": {
+      "importedAt": "2026-02-14T01:59:49.1401902+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__next-skills\\next-cache-components",
+      "rank": 118,
+      "installs": 3403
+    },
+    "wshobson/agents::cqrs-implementation": {
+      "importedAt": "2026-02-14T02:01:43.1741122+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\cqrs-implementation",
+      "rank": 262,
+      "installs": 1520
+    },
+    "wshobson/agents::slo-implementation": {
+      "importedAt": "2026-02-14T02:01:44.8477852+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\slo-implementation",
+      "rank": 340,
+      "installs": 1335
+    },
+    "affaan-m/everything-claude-code::backend-patterns": {
+      "importedAt": "2026-02-14T01:44:36.6897224+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\affaan-m__everything-claude-code\\backend-patterns",
+      "rank": 432,
+      "installs": 835
+    },
+    "anthropics/skills::doc-coauthoring": {
+      "importedAt": "2026-02-14T01:47:18.4622059+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\doc-coauthoring",
+      "rank": 47,
+      "installs": 6257
+    },
+    "wshobson/agents::git-advanced-workflows": {
+      "importedAt": "2026-02-14T02:01:42.1055517+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\git-advanced-workflows",
+      "rank": 180,
+      "installs": 1995
+    },
+    "wshobson/agents::godot-gdscript-patterns": {
+      "importedAt": "2026-02-14T02:01:42.9718292+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\godot-gdscript-patterns",
+      "rank": 221,
+      "installs": 1638
+    },
+    "trailofbits/skills::ask-questions-if-underspecified": {
+      "importedAt": "2026-02-14T01:59:18.7039923+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\trailofbits__skills\\ask-questions-if-underspecified",
+      "rank": 439,
+      "installs": 797
+    },
+    "wshobson/agents::gdpr-data-handling": {
+      "importedAt": "2026-02-14T02:01:43.4739079+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\gdpr-data-handling",
+      "rank": 275,
+      "installs": 1481
+    },
+    "jezweb/claude-skills::react-hook-form-zod": {
+      "importedAt": "2026-02-14T01:52:43.45825+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jezweb__claude-skills\\react-hook-form-zod",
+      "rank": 380,
+      "installs": 1050
+    },
+    "coreyhaines31/marketingskills::programmatic-seo": {
+      "importedAt": "2026-02-14T01:49:02.8364908+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\programmatic-seo",
+      "rank": 30,
+      "installs": 8539
+    },
+    "cloudai-x/threejs-skills::threejs-interaction": {
+      "importedAt": "2026-02-14T01:48:19.5965056+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\cloudai-x__threejs-skills\\threejs-interaction",
+      "rank": 382,
+      "installs": 1036
+    },
+    "vintasoftware/django-ai-plugins::django-expert": {
+      "importedAt": "2026-02-14T02:00:40.5216765+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vintasoftware__django-ai-plugins\\django-expert",
+      "rank": 487,
+      "installs": 632
+    },
+    "coreyhaines31/marketingskills::copywriting": {
+      "importedAt": "2026-02-14T01:49:02.7813839+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\copywriting",
+      "rank": 17,
+      "installs": 13000
+    },
+    "madteacher/mad-agents-skills::flutter-animations": {
+      "importedAt": "2026-02-14T01:54:57.1798631+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\madteacher__mad-agents-skills\\flutter-animations",
+      "rank": 61,
+      "installs": 5909
+    },
+    "wshobson/agents::stride-analysis-patterns": {
+      "importedAt": "2026-02-14T02:01:44.8926279+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\stride-analysis-patterns",
+      "rank": 342,
+      "installs": 1334
+    },
+    "expo/skills::expo-deployment": {
+      "importedAt": "2026-02-14T01:49:59.3196625+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\expo__skills\\expo-deployment",
+      "rank": 74,
+      "installs": 5307
+    },
+    "wshobson/agents::risk-metrics-calculation": {
+      "importedAt": "2026-02-14T02:01:44.3018753+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\risk-metrics-calculation",
+      "rank": 309,
+      "installs": 1407
+    },
+    "jezweb/claude-skills::tailwind-v4-shadcn": {
+      "importedAt": "2026-02-14T01:52:43.1502502+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jezweb__claude-skills\\tailwind-v4-shadcn",
+      "rank": 167,
+      "installs": 2184
+    },
+    "wshobson/agents::dependency-upgrade": {
+      "importedAt": "2026-02-14T02:01:43.4321028+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\dependency-upgrade",
+      "rank": 272,
+      "installs": 1484
+    },
+    "kepano/obsidian-skills::obsidian-bases": {
+      "importedAt": "2026-02-14T01:53:58.4470433+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\kepano__obsidian-skills\\obsidian-bases",
+      "rank": 356,
+      "installs": 1265
+    },
+    "superdesigndev/superdesign-skill::superdesign": {
+      "importedAt": "2026-02-14T01:59:05.9746533+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\superdesigndev__superdesign-skill\\superdesign",
+      "rank": 364,
+      "installs": 1204
+    },
+    "wshobson/agents::uv-package-manager": {
+      "importedAt": "2026-02-14T02:01:42.4551466+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\uv-package-manager",
+      "rank": 192,
+      "installs": 1925
+    },
+    "anthropics/skills::pdf": {
+      "importedAt": "2026-02-14T01:47:16.4385929+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\pdf",
+      "rank": 16,
+      "installs": 13993
+    },
+    "squirrelscan/skills::audit-website": {
+      "importedAt": "2026-02-14T01:58:44.7093363+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\squirrelscan__skills\\audit-website",
+      "rank": 12,
+      "installs": 18795
+    },
+    "wshobson/agents::python-testing-patterns": {
+      "importedAt": "2026-02-14T02:01:41.3195007+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\python-testing-patterns",
+      "rank": 136,
+      "installs": 3017
+    },
+    "sickn33/antigravity-awesome-skills::ui-ux-pro-max": {
+      "importedAt": "2026-02-14T01:58:26.4969031+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\sickn33__antigravity-awesome-skills\\ui-ux-pro-max",
+      "rank": 447,
+      "installs": 745
+    },
+    "kepano/obsidian-skills::obsidian-markdown": {
+      "importedAt": "2026-02-14T01:53:58.429035+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\kepano__obsidian-skills\\obsidian-markdown",
+      "rank": 206,
+      "installs": 1728
+    },
+    "google-labs-code/stitch-skills::stitch-loop": {
+      "importedAt": "2026-02-14T01:51:03.0992123+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\google-labs-code__stitch-skills\\stitch-loop",
+      "rank": 104,
+      "installs": 3889
+    },
+    "addyosmani/web-quality-skills::core-web-vitals": {
+      "importedAt": "2026-02-14T01:44:07.4929702+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\addyosmani__web-quality-skills\\core-web-vitals",
+      "rank": 475,
+      "installs": 659
+    },
+    "expo/skills::expo-cicd-workflows": {
+      "importedAt": "2026-02-14T01:49:59.3827302+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\expo__skills\\expo-cicd-workflows",
+      "rank": 94,
+      "installs": 4442
+    },
+    "google-gemini/gemini-cli::code-reviewer": {
+      "importedAt": "2026-02-14T01:50:45.4019404+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\google-gemini__gemini-cli\\code-reviewer",
+      "rank": 184,
+      "installs": 1961
+    },
+    "sickn33/antigravity-awesome-skills::clean-code": {
+      "importedAt": "2026-02-14T01:58:25.7864221+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\sickn33__antigravity-awesome-skills\\clean-code",
+      "rank": 261,
+      "installs": 1523
+    },
+    "ibelick/ui-skills::baseline-ui": {
+      "importedAt": "2026-02-14T01:51:35.5484716+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\ibelick__ui-skills\\baseline-ui",
+      "rank": 258,
+      "installs": 1553
+    },
+    "wshobson/agents::react-native-architecture": {
+      "importedAt": "2026-02-14T02:01:41.8441012+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\react-native-architecture",
+      "rank": 168,
+      "installs": 2156
+    },
+    "wshobson/agents::python-anti-patterns": {
+      "importedAt": "2026-02-14T02:01:45.119832+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\python-anti-patterns",
+      "rank": 392,
+      "installs": 989
+    },
+    "softaworks/agent-toolkit::daily-meeting-update": {
+      "importedAt": "2026-02-14T01:58:41.1781886+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\daily-meeting-update",
+      "rank": 246,
+      "installs": 1580
+    },
+    "cloudai-x/threejs-skills::threejs-loaders": {
+      "importedAt": "2026-02-14T01:48:19.7419596+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\cloudai-x__threejs-skills\\threejs-loaders",
+      "rank": 402,
+      "installs": 958
+    },
+    "sanyuan0704/code-review-expert::code-review-expert": {
+      "importedAt": "2026-02-14T01:57:04.9242811+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\sanyuan0704__code-review-expert\\code-review-expert",
+      "rank": 204,
+      "installs": 1755
+    },
+    "coreyhaines31/marketingskills::referral-program": {
+      "importedAt": "2026-02-14T01:49:03.2430505+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\referral-program",
+      "rank": 57,
+      "installs": 6042
+    },
+    "mastra-ai/skills::mastra": {
+      "importedAt": "2026-02-14T01:55:02.6569263+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\mastra-ai__skills\\mastra",
+      "rank": 286,
+      "installs": 1452
+    },
+    "antfu/skills::antfu": {
+      "importedAt": "2026-02-14T01:45:54.571877+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\antfu",
+      "rank": 108,
+      "installs": 3636
+    },
+    "obra/superpowers::writing-plans": {
+      "importedAt": "2026-02-14T01:55:48.8348759+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\obra__superpowers\\writing-plans",
+      "rank": 27,
+      "installs": 8770
+    },
+    "jimliu/baoyu-skills::baoyu-article-illustrator": {
+      "importedAt": "2026-02-14T01:53:46.5453821+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jimliu__baoyu-skills\\baoyu-article-illustrator",
+      "rank": 121,
+      "installs": 3306
+    },
+    "boristane/agent-skills::logging-best-practices": {
+      "importedAt": "2026-02-14T01:47:42.657391+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\boristane__agent-skills\\logging-best-practices",
+      "rank": 318,
+      "installs": 1378
+    },
+    "wshobson/agents::unity-ecs-patterns": {
+      "importedAt": "2026-02-14T02:01:44.1105493+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\unity-ecs-patterns",
+      "rank": 297,
+      "installs": 1431
+    },
+    "benjitaylor/agentation::agentation": {
+      "importedAt": "2026-02-14T01:47:33.5139235+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\benjitaylor__agentation\\agentation",
+      "rank": 131,
+      "installs": 3125
+    },
+    "wshobson/agents::multi-cloud-architecture": {
+      "importedAt": "2026-02-14T02:01:44.2585076+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\multi-cloud-architecture",
+      "rank": 306,
+      "installs": 1414
+    },
+    "softaworks/agent-toolkit::meme-factory": {
+      "importedAt": "2026-02-14T01:58:40.9795006+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\meme-factory",
+      "rank": 241,
+      "installs": 1586
+    },
+    "intellectronica/agent-skills::context7": {
+      "importedAt": "2026-02-14T01:51:38.0147343+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\intellectronica__agent-skills\\context7",
+      "rank": 170,
+      "installs": 2112
+    },
+    "softaworks/agent-toolkit::commit-work": {
+      "importedAt": "2026-02-14T01:58:40.4677699+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\commit-work",
+      "rank": 233,
+      "installs": 1593
+    },
+    "onmax/nuxt-skills::ts-library": {
+      "importedAt": "2026-02-14T01:56:13.5888892+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\onmax__nuxt-skills\\ts-library",
+      "rank": 456,
+      "installs": 720
+    },
+    "wshobson/agents::fastapi-templates": {
+      "importedAt": "2026-02-14T02:01:41.4177571+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\fastapi-templates",
+      "rank": 140,
+      "installs": 2821
+    },
+    "wshobson/agents::prompt-engineering-patterns": {
+      "importedAt": "2026-02-14T02:01:41.2945655+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\prompt-engineering-patterns",
+      "rank": 129,
+      "installs": 3129
+    },
+    "addyosmani/web-quality-skills::web-quality-audit": {
+      "importedAt": "2026-02-14T01:44:07.5304916+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\addyosmani__web-quality-skills\\web-quality-audit",
+      "rank": 494,
+      "installs": 624
+    },
+    "wshobson/agents::threat-mitigation-mapping": {
+      "importedAt": "2026-02-14T02:01:44.580999+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\threat-mitigation-mapping",
+      "rank": 326,
+      "installs": 1364
+    },
+    "wshobson/agents::competitive-landscape": {
+      "importedAt": "2026-02-14T02:01:43.9878029+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\competitive-landscape",
+      "rank": 293,
+      "installs": 1435
+    },
+    "wshobson/agents::react-modernization": {
+      "importedAt": "2026-02-14T02:01:42.937216+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\react-modernization",
+      "rank": 220,
+      "installs": 1638
+    },
+    "github/awesome-copilot::git-commit": {
+      "importedAt": "2026-02-14T01:50:30.5043422+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\github__awesome-copilot\\git-commit",
+      "rank": 225,
+      "installs": 1625
+    },
+    "dimillian/skills::swiftui-ui-patterns": {
+      "importedAt": "2026-02-14T01:49:30.4123296+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\dimillian__skills\\swiftui-ui-patterns",
+      "rank": 425,
+      "installs": 863
+    },
+    "wshobson/agents::terraform-module-library": {
+      "importedAt": "2026-02-14T02:01:42.7931091+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\terraform-module-library",
+      "rank": 216,
+      "installs": 1667
+    },
+    "vuejs-ai/skills::vue-jsx-best-practices": {
+      "importedAt": "2026-02-14T02:01:04.5244585+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vuejs-ai__skills\\vue-jsx-best-practices",
+      "rank": 322,
+      "installs": 1369
+    },
+    "coinbase/agentic-wallet-skills::pay-for-service": {
+      "importedAt": "2026-02-14T01:48:44.5552905+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coinbase__agentic-wallet-skills\\pay-for-service",
+      "rank": 398,
+      "installs": 968
+    },
+    "pluginagentmarketplace/custom-plugin-java::java-spring-boot": {
+      "importedAt": "2026-02-14T01:56:26.1383652+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\pluginagentmarketplace__custom-plugin-java\\java-spring-boot",
+      "rank": 438,
+      "installs": 810
+    },
+    "softaworks/agent-toolkit::skill-judge": {
+      "importedAt": "2026-02-14T01:58:41.0554769+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\skill-judge",
+      "rank": 244,
+      "installs": 1582
+    },
+    "wshobson/agents::paypal-integration": {
+      "importedAt": "2026-02-14T02:01:44.4132096+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\paypal-integration",
+      "rank": 316,
+      "installs": 1394
+    },
+    "vuejs-ai/skills::create-adaptable-composable": {
+      "importedAt": "2026-02-14T02:01:04.1094962+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vuejs-ai__skills\\create-adaptable-composable",
+      "rank": 222,
+      "installs": 1631
+    },
+    "coreyhaines31/marketingskills::signup-flow-cro": {
+      "importedAt": "2026-02-14T01:49:03.3946716+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\signup-flow-cro",
+      "rank": 70,
+      "installs": 5503
+    },
+    "wshobson/agents::data-quality-frameworks": {
+      "importedAt": "2026-02-14T02:01:43.5752033+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\data-quality-frameworks",
+      "rank": 278,
+      "installs": 1470
+    },
+    "jezweb/claude-skills::tanstack-query": {
+      "importedAt": "2026-02-14T01:52:43.0635585+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jezweb__claude-skills\\tanstack-query",
+      "rank": 166,
+      "installs": 2187
+    },
+    "kepano/obsidian-skills::json-canvas": {
+      "importedAt": "2026-02-14T01:53:58.4696509+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\kepano__obsidian-skills\\json-canvas",
+      "rank": 377,
+      "installs": 1076
+    },
+    "expo/skills::expo-dev-client": {
+      "importedAt": "2026-02-14T01:49:59.2863639+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\expo__skills\\expo-dev-client",
+      "rank": 73,
+      "installs": 5363
+    },
+    "jimliu/baoyu-skills::baoyu-danger-x-to-markdown": {
+      "importedAt": "2026-02-14T01:53:46.9352084+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jimliu__baoyu-skills\\baoyu-danger-x-to-markdown",
+      "rank": 124,
+      "installs": 3211
+    },
+    "giuseppe-trisciuoglio/developer-kit::shadcn-ui": {
+      "importedAt": "2026-02-14T01:50:36.9526523+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\giuseppe-trisciuoglio__developer-kit\\shadcn-ui",
+      "rank": 89,
+      "installs": 4741
+    },
+    "obra/superpowers::using-superpowers": {
+      "importedAt": "2026-02-14T01:55:48.9649743+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\obra__superpowers\\using-superpowers",
+      "rank": 45,
+      "installs": 6341
+    },
+    "remorses/playwriter::playwriter": {
+      "importedAt": "2026-02-14T01:56:40.7197772+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\remorses__playwriter\\playwriter",
+      "rank": 443,
+      "installs": 774
+    },
+    "antfu/skills::vue": {
+      "importedAt": "2026-02-14T01:45:53.0458551+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\vue",
+      "rank": 92,
+      "installs": 4559
+    },
+    "wshobson/agents::similarity-search-patterns": {
+      "importedAt": "2026-02-14T02:01:43.7560582+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\similarity-search-patterns",
+      "rank": 284,
+      "installs": 1456
+    },
+    "coinbase/agentic-wallet-skills::search-for-service": {
+      "importedAt": "2026-02-14T01:48:44.6114454+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coinbase__agentic-wallet-skills\\search-for-service",
+      "rank": 428,
+      "installs": 857
+    },
+    "softaworks/agent-toolkit::professional-communication": {
+      "importedAt": "2026-02-14T01:58:41.2725212+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\professional-communication",
+      "rank": 248,
+      "installs": 1579
+    },
+    "expo/skills::use-dom": {
+      "importedAt": "2026-02-14T01:49:59.4045376+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\expo__skills\\use-dom",
+      "rank": 99,
+      "installs": 4229
+    },
+    "wshobson/agents::team-composition-analysis": {
+      "importedAt": "2026-02-14T02:01:44.6499802+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\team-composition-analysis",
+      "rank": 329,
+      "installs": 1358
+    },
+    "onmax/nuxt-skills::vue": {
+      "importedAt": "2026-02-14T01:56:12.065606+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\onmax__nuxt-skills\\vue",
+      "rank": 339,
+      "installs": 1336
+    },
+    "wshobson/agents::nextjs-app-router-patterns": {
+      "importedAt": "2026-02-14T02:01:41.1349081+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\nextjs-app-router-patterns",
+      "rank": 114,
+      "installs": 3455
+    },
+    "coreyhaines31/marketingskills::content-strategy": {
+      "importedAt": "2026-02-14T01:49:02.8588966+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\content-strategy",
+      "rank": 32,
+      "installs": 8417
+    },
+    "google-labs-code/stitch-skills::remotion": {
+      "importedAt": "2026-02-14T01:51:03.4562795+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\google-labs-code__stitch-skills\\remotion",
+      "rank": 226,
+      "installs": 1610
+    },
+    "wshobson/agents::dbt-transformation-patterns": {
+      "importedAt": "2026-02-14T02:01:44.132891+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\dbt-transformation-patterns",
+      "rank": 299,
+      "installs": 1429
+    },
+    "coreyhaines31/marketingskills::marketing-psychology": {
+      "importedAt": "2026-02-14T01:49:02.8013219+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\marketing-psychology",
+      "rank": 24,
+      "installs": 9902
+    },
+    "anthropics/skills::mcp-builder": {
+      "importedAt": "2026-02-14T01:47:17.8308338+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\mcp-builder",
+      "rank": 28,
+      "installs": 8711
+    },
+    "wshobson/agents::spark-optimization": {
+      "importedAt": "2026-02-14T02:01:44.6047175+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\spark-optimization",
+      "rank": 327,
+      "installs": 1363
+    },
+    "wshobson/agents::turborepo-caching": {
+      "importedAt": "2026-02-14T02:01:44.1964966+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\turborepo-caching",
+      "rank": 303,
+      "installs": 1423
+    },
+    "coreyhaines31/marketingskills::form-cro": {
+      "importedAt": "2026-02-14T01:49:03.1754946+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\form-cro",
+      "rank": 53,
+      "installs": 6096
+    },
+    "softaworks/agent-toolkit::openapi-to-typescript": {
+      "importedAt": "2026-02-14T01:58:42.2211571+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\openapi-to-typescript",
+      "rank": 296,
+      "installs": 1431
+    },
+    "sickn33/antigravity-awesome-skills::bun-development": {
+      "importedAt": "2026-02-14T01:58:26.8406481+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\sickn33__antigravity-awesome-skills\\bun-development",
+      "rank": 499,
+      "installs": 618
+    },
+    "wshobson/agents::solidity-security": {
+      "importedAt": "2026-02-14T02:01:42.9984949+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\solidity-security",
+      "rank": 223,
+      "installs": 1631
+    },
+    "waynesutton/convexskills::convex-best-practices": {
+      "importedAt": "2026-02-14T02:01:18.2938323+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\waynesutton__convexskills\\convex-best-practices",
+      "rank": 399,
+      "installs": 963
+    },
+    "vercel-labs/agent-skills::vercel-composition-patterns": {
+      "importedAt": "2026-02-14T01:59:41.2103129+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__agent-skills\\vercel-composition-patterns",
+      "rank": 6,
+      "installs": 38586
+    },
+    "forrestchang/andrej-karpathy-skills::karpathy-guidelines": {
+      "importedAt": "2026-02-14T01:50:22.7405378+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\forrestchang__andrej-karpathy-skills\\karpathy-guidelines",
+      "rank": 359,
+      "installs": 1224
+    },
+    "expo/skills::expo-tailwind-setup": {
+      "importedAt": "2026-02-14T01:49:59.3401165+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\expo__skills\\expo-tailwind-setup",
+      "rank": 75,
+      "installs": 5297
+    },
+    "anthropics/skills::pptx": {
+      "importedAt": "2026-02-14T01:47:16.8963747+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\pptx",
+      "rank": 18,
+      "installs": 11584
+    },
+    "wshobson/agents::python-packaging": {
+      "importedAt": "2026-02-14T02:01:42.5518281+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\python-packaging",
+      "rank": 199,
+      "installs": 1799
+    },
+    "wshobson/agents::istio-traffic-management": {
+      "importedAt": "2026-02-14T02:01:44.9816969+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\istio-traffic-management",
+      "rank": 346,
+      "installs": 1323
+    },
+    "softaworks/agent-toolkit::agent-md-refactor": {
+      "importedAt": "2026-02-14T01:58:40.4388317+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\agent-md-refactor",
+      "rank": 229,
+      "installs": 1600
+    },
+    "wshobson/agents::rag-implementation": {
+      "importedAt": "2026-02-14T02:01:42.3001093+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\rag-implementation",
+      "rank": 188,
+      "installs": 1939
+    },
+    "softaworks/agent-toolkit::difficult-workplace-conversations": {
+      "importedAt": "2026-02-14T01:58:41.7261261+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\difficult-workplace-conversations",
+      "rank": 251,
+      "installs": 1576
+    },
+    "coreyhaines31/marketingskills::marketing-ideas": {
+      "importedAt": "2026-02-14T01:49:02.905879+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\marketing-ideas",
+      "rank": 35,
+      "installs": 7704
+    },
+    "anthropics/skills::docx": {
+      "importedAt": "2026-02-14T01:47:17.3316938+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\docx",
+      "rank": 21,
+      "installs": 10798
+    },
+    "affaan-m/everything-claude-code::tdd-workflow": {
+      "importedAt": "2026-02-14T01:44:36.8458236+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\affaan-m__everything-claude-code\\tdd-workflow",
+      "rank": 485,
+      "installs": 637
+    },
+    "wshobson/agents::employment-contract-templates": {
+      "importedAt": "2026-02-14T02:01:44.8085705+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\employment-contract-templates",
+      "rank": 337,
+      "installs": 1340
+    },
+    "subsy/ralph-tui::ralph-tui-create-beads": {
+      "importedAt": "2026-02-14T01:58:58.543282+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\subsy__ralph-tui\\ralph-tui-create-beads",
+      "rank": 128,
+      "installs": 3134
+    },
+    "wshobson/agents::memory-safety-patterns": {
+      "importedAt": "2026-02-14T02:01:43.3442978+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\memory-safety-patterns",
+      "rank": 268,
+      "installs": 1495
+    },
+    "jimliu/baoyu-skills::baoyu-format-markdown": {
+      "importedAt": "2026-02-14T01:53:48.2663682+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jimliu__baoyu-skills\\baoyu-format-markdown",
+      "rank": 352,
+      "installs": 1293
+    },
+    "magicseek/nblm::nblm": {
+      "importedAt": "2026-02-14T01:55:00.183814+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\magicseek__nblm\\nblm",
+      "rank": 82,
+      "installs": 5057
+    },
+    "anthropics/skills::frontend-design": {
+      "importedAt": "2026-02-14T01:47:16.2894243+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\frontend-design",
+      "rank": 5,
+      "installs": 66025
+    },
+    "callstackincubator/agent-skills::react-native-best-practices": {
+      "importedAt": "2026-02-14T01:47:54.1465186+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\callstackincubator__agent-skills\\react-native-best-practices",
+      "rank": 84,
+      "installs": 5019
+    },
+    "jezweb/claude-skills::fastapi": {
+      "importedAt": "2026-02-14T01:52:44.0906915+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jezweb__claude-skills\\fastapi",
+      "rank": 461,
+      "installs": 701
+    },
+    "giuseppe-trisciuoglio/developer-kit::tailwind-css-patterns": {
+      "importedAt": "2026-02-14T01:50:37.0110466+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\giuseppe-trisciuoglio__developer-kit\\tailwind-css-patterns",
+      "rank": 435,
+      "installs": 822
+    },
+    "wshobson/agents::auth-implementation-patterns": {
+      "importedAt": "2026-02-14T02:01:42.4805348+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\auth-implementation-patterns",
+      "rank": 195,
+      "installs": 1861
+    },
+    "vercel-labs/skills::find-skills": {
+      "importedAt": "2026-02-14T01:59:51.4780648+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__skills\\find-skills",
+      "rank": 1,
+      "installs": 209964
+    },
+    "cloudai-x/threejs-skills::threejs-geometry": {
+      "importedAt": "2026-02-14T01:48:19.6214103+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\cloudai-x__threejs-skills\\threejs-geometry",
+      "rank": 385,
+      "installs": 1025
+    },
+    "onmax/nuxt-skills::nuxt-ui": {
+      "importedAt": "2026-02-14T01:56:12.5021641+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\onmax__nuxt-skills\\nuxt-ui",
+      "rank": 358,
+      "installs": 1232
+    },
+    "vercel-labs/agent-browser::skill-creator": {
+      "importedAt": "2026-02-14T01:59:29.9535747+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__agent-browser\\skill-creator",
+      "rank": 209,
+      "installs": 1708
+    },
+    "softaworks/agent-toolkit::mermaid-diagrams": {
+      "importedAt": "2026-02-14T01:58:40.4172942+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\mermaid-diagrams",
+      "rank": 228,
+      "installs": 1600
+    },
+    "softaworks/agent-toolkit::humanizer": {
+      "importedAt": "2026-02-14T01:58:41.8862371+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\humanizer",
+      "rank": 254,
+      "installs": 1566
+    },
+    "railwayapp/railway-skills::status": {
+      "importedAt": "2026-02-14T01:56:37.8399409+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\railwayapp__railway-skills\\status",
+      "rank": 370,
+      "installs": 1137
+    },
+    "wshobson/agents::web3-testing": {
+      "importedAt": "2026-02-14T02:01:44.2400803+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\web3-testing",
+      "rank": 305,
+      "installs": 1416
+    },
+    "vercel-labs/agent-browser::agent-browser": {
+      "importedAt": "2026-02-14T01:59:29.8525152+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__agent-browser\\agent-browser",
+      "rank": 7,
+      "installs": 33932
+    },
+    "anthropics/skills::skill-creator": {
+      "importedAt": "2026-02-14T01:47:16.3479827+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\skill-creator",
+      "rank": 8,
+      "installs": 32716
+    },
+    "softaworks/agent-toolkit::plugin-forge": {
+      "importedAt": "2026-02-14T01:58:41.812904+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\plugin-forge",
+      "rank": 252,
+      "installs": 1576
+    },
+    "vercel-labs/next-skills::next-best-practices": {
+      "importedAt": "2026-02-14T01:59:49.113165+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__next-skills\\next-best-practices",
+      "rank": 19,
+      "installs": 11297
+    },
+    "coreyhaines31/marketingskills::free-tool-strategy": {
+      "importedAt": "2026-02-14T01:49:03.3746823+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\free-tool-strategy",
+      "rank": 68,
+      "installs": 5586
+    },
+    "cloudai-x/threejs-skills::threejs-textures": {
+      "importedAt": "2026-02-14T01:48:19.69296+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\cloudai-x__threejs-skills\\threejs-textures",
+      "rank": 396,
+      "installs": 973
+    },
+    "subsy/ralph-tui::ralph-tui-prd": {
+      "importedAt": "2026-02-14T01:58:58.4999399+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\subsy__ralph-tui\\ralph-tui-prd",
+      "rank": 102,
+      "installs": 3997
+    },
+    "wshobson/agents::responsive-design": {
+      "importedAt": "2026-02-14T02:01:41.3948759+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\responsive-design",
+      "rank": 138,
+      "installs": 2959
+    },
+    "clerk/skills::clerk": {
+      "importedAt": "2026-02-14T01:47:56.5606167+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\clerk__skills\\clerk",
+      "rank": 459,
+      "installs": 708
+    },
+    "sickn33/antigravity-awesome-skills::typescript-expert": {
+      "importedAt": "2026-02-14T01:58:25.9059766+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\sickn33__antigravity-awesome-skills\\typescript-expert",
+      "rank": 368,
+      "installs": 1178
+    },
+    "vuejs-ai/skills::vue-options-api-best-practices": {
+      "importedAt": "2026-02-14T02:01:04.4902093+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vuejs-ai__skills\\vue-options-api-best-practices",
+      "rank": 307,
+      "installs": 1410
+    },
+    "wshobson/agents::github-actions-templates": {
+      "importedAt": "2026-02-14T02:01:41.6108767+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\github-actions-templates",
+      "rank": 158,
+      "installs": 2356
+    },
+    "langgenius/dify::frontend-testing": {
+      "importedAt": "2026-02-14T01:54:51.7974482+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\langgenius__dify\\frontend-testing",
+      "rank": 379,
+      "installs": 1059
+    },
+    "expo/skills::expo-api-routes": {
+      "importedAt": "2026-02-14T01:49:59.3652477+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\expo__skills\\expo-api-routes",
+      "rank": 85,
+      "installs": 4939
+    },
+    "softaworks/agent-toolkit::gepetto": {
+      "importedAt": "2026-02-14T01:58:42.3702609+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\gepetto",
+      "rank": 411,
+      "installs": 913
+    },
+    "analogjs/angular-skills::angular-directives": {
+      "importedAt": "2026-02-14T01:45:02.633131+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\analogjs__angular-skills\\angular-directives",
+      "rank": 404,
+      "installs": 944
+    },
+    "softaworks/agent-toolkit::feedback-mastery": {
+      "importedAt": "2026-02-14T01:58:41.8659379+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\feedback-mastery",
+      "rank": 253,
+      "installs": 1575
+    },
+    "wshobson/agents::postmortem-writing": {
+      "importedAt": "2026-02-14T02:01:44.3895959+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\postmortem-writing",
+      "rank": 314,
+      "installs": 1399
+    },
+    "expo/skills::building-native-ui": {
+      "importedAt": "2026-02-14T01:49:59.2298417+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\expo__skills\\building-native-ui",
+      "rank": 25,
+      "installs": 9562
+    },
+    "wshobson/agents::tailwind-design-system": {
+      "importedAt": "2026-02-14T02:01:40.9270406+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\tailwind-design-system",
+      "rank": 44,
+      "installs": 6359
+    },
+    "firecrawl/cli::firecrawl": {
+      "importedAt": "2026-02-14T01:50:20.3178259+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\firecrawl__cli\\firecrawl",
+      "rank": 134,
+      "installs": 3081
+    },
+    "analogjs/angular-skills::angular-component": {
+      "importedAt": "2026-02-14T01:45:02.2896199+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\analogjs__angular-skills\\angular-component",
+      "rank": 355,
+      "installs": 1277
+    },
+    "analogjs/angular-skills::angular-http": {
+      "importedAt": "2026-02-14T01:45:02.4902433+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\analogjs__angular-skills\\angular-http",
+      "rank": 391,
+      "installs": 1001
+    },
+    "antfu/skills::unocss": {
+      "importedAt": "2026-02-14T01:45:56.3879356+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\antfu__skills\\unocss",
+      "rank": 142,
+      "installs": 2737
+    },
+    "elevenlabs/skills::text-to-speech": {
+      "importedAt": "2026-02-14T01:49:32.7994071+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\elevenlabs__skills\\text-to-speech",
+      "rank": 474,
+      "installs": 662
+    },
+    "napoleond/instaclaw::instaclaw": {
+      "importedAt": "2026-02-14T01:55:10.519093+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\napoleond__instaclaw\\instaclaw",
+      "rank": 97,
+      "installs": 4275
+    },
+    "expo/skills::upgrading-expo": {
+      "importedAt": "2026-02-14T01:49:59.2770418+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\expo__skills\\upgrading-expo",
+      "rank": 55,
+      "installs": 6087
+    },
+    "softaworks/agent-toolkit::naming-analyzer": {
+      "importedAt": "2026-02-14T01:58:42.19674+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\softaworks__agent-toolkit\\naming-analyzer",
+      "rank": 295,
+      "installs": 1433
+    },
+    "jezweb/claude-skills::tailwind-patterns": {
+      "importedAt": "2026-02-14T01:52:43.794828+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\jezweb__claude-skills\\tailwind-patterns",
+      "rank": 393,
+      "installs": 983
+    },
+    "wshobson/agents::nodejs-backend-patterns": {
+      "importedAt": "2026-02-14T02:01:41.0605537+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\wshobson__agents\\nodejs-backend-patterns",
+      "rank": 98,
+      "installs": 4243
+    },
+    "op7418/youtube-clipper-skill::youtube-clipper": {
+      "importedAt": "2026-02-14T01:56:18.4652339+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\op7418__youtube-clipper-skill\\youtube-clipper",
+      "rank": 357,
+      "installs": 1234
+    },
+    "affaan-m/everything-claude-code::frontend-patterns": {
+      "importedAt": "2026-02-14T01:44:36.8005063+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\affaan-m__everything-claude-code\\frontend-patterns",
+      "rank": 465,
+      "installs": 692
+    },
+    "cloudflare/skills::web-perf": {
+      "importedAt": "2026-02-14T02:03:21.5663372+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\cloudflare__skills\\web-perf",
+      "rank": 500,
+      "installs": 617
+    },
+    "anthropics/claude-code::skill-development": {
+      "importedAt": "2026-02-14T02:05:09.1450586+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__claude-code\\skill-development",
+      "rank": 369,
+      "installs": 1139
+    },
+    "anthropics/claude-code::agent-development": {
+      "importedAt": "2026-02-14T02:05:12.3851913+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__claude-code\\agent-development",
+      "rank": 390,
+      "installs": 1012
+    },
+    "anthropics/claude-code::mcp-integration": {
+      "importedAt": "2026-02-14T02:05:15.6719653+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__claude-code\\mcp-integration",
+      "rank": 409,
+      "installs": 925
+    },
+    "anthropics/claude-code::hook-development": {
+      "importedAt": "2026-02-14T02:05:18.9405119+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__claude-code\\hook-development",
+      "rank": 436,
+      "installs": 820
+    },
+    "anthropics/claude-code::command-development": {
+      "importedAt": "2026-02-14T02:05:22.4387328+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__claude-code\\command-development",
+      "rank": 437,
+      "installs": 820
+    },
+    "anthropics/claude-code::writing-hookify-rules": {
+      "importedAt": "2026-02-14T02:05:25.9861991+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__claude-code\\writing-hookify-rules",
+      "rank": 464,
+      "installs": 699
+    },
+    "anthropics/claude-code::plugin-structure": {
+      "importedAt": "2026-02-14T02:05:29.393637+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__claude-code\\plugin-structure",
+      "rank": 465,
+      "installs": 695
+    },
+    "anthropics/claude-code::plugin-settings": {
+      "importedAt": "2026-02-14T02:05:32.6484542+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__claude-code\\plugin-settings",
+      "rank": 468,
+      "installs": 688
+    },
+    "google-labs-code/stitch-skills::react:components": {
+      "importedAt": "2026-02-14T02:05:35.5214917+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\google-labs-code__stitch-skills\\react-components",
+      "rank": 83,
+      "installs": 5051
+    }
+  }
+}

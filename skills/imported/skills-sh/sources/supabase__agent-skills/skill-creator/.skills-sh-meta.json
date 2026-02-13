@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:59:03.6261782+09:00",
+  "source": "supabase/agent-skills",
+  "sourceKey": "supabase__agent-skills",
+  "skillId": "skill-creator",
+  "name": "skill-creator",
+  "installs": 691,
+  "rank": 466,
+  "topN": 500
+}

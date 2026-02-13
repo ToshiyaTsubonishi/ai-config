@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:48:44.5930883+09:00",
+  "source": "coinbase/agentic-wallet-skills",
+  "sourceKey": "coinbase__agentic-wallet-skills",
+  "skillId": "send-usdc",
+  "name": "send-usdc",
+  "installs": 930,
+  "rank": 407,
+  "topN": 500
+}

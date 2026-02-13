@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:44.7685179+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "service-mesh-observability",
+  "name": "service-mesh-observability",
+  "installs": 1352,
+  "rank": 335,
+  "topN": 500
+}

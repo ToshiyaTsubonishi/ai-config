@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:47:17.3302463+09:00",
+  "source": "anthropics/skills",
+  "sourceKey": "anthropics__skills",
+  "skillId": "docx",
+  "name": "docx",
+  "installs": 10798,
+  "rank": 21,
+  "topN": 500
+}

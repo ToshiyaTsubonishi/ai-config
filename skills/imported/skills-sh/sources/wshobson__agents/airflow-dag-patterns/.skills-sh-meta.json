@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:44.3691621+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "airflow-dag-patterns",
+  "name": "airflow-dag-patterns",
+  "installs": 1399,
+  "rank": 313,
+  "topN": 500
+}

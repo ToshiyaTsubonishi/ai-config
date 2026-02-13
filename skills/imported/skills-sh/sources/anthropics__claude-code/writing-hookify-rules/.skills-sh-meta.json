@@ -1,0 +1,11 @@
+{
+  "importedAt": "2026-02-14T02:05:25.9831335+09:00",
+  "source": "anthropics/claude-code",
+  "sourceKey": "anthropics__claude-code",
+  "skillId": "writing-hookify-rules",
+  "directoryName": "writing-hookify-rules",
+  "name": "writing hookify rules",
+  "installs": 699,
+  "rank": 464,
+  "topN": 500
+}

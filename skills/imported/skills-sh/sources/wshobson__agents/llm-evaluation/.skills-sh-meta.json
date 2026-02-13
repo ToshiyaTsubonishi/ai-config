@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:43.0256127+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "llm-evaluation",
+  "name": "llm-evaluation",
+  "installs": 1598,
+  "rank": 230,
+  "topN": 500
+}

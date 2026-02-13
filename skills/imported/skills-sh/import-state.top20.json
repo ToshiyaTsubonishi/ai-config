@@ -1,0 +1,126 @@
+{
+  "updatedAt": "2026-02-14T01:41:31.0054567+09:00",
+  "topN": 20,
+  "completed": {
+    "anthropics/skills::frontend-design": {
+      "importedAt": "2026-02-14T01:40:38.1057923+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\frontend-design",
+      "rank": 5,
+      "installs": 66024
+    },
+    "anthropics/skills::skill-creator": {
+      "importedAt": "2026-02-14T01:40:38.1679674+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\skill-creator",
+      "rank": 8,
+      "installs": 32716
+    },
+    "anthropics/skills::pdf": {
+      "importedAt": "2026-02-14T01:40:38.2431604+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\pdf",
+      "rank": 16,
+      "installs": 13993
+    },
+    "anthropics/skills::pptx": {
+      "importedAt": "2026-02-14T01:40:38.6631211+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\anthropics__skills\\pptx",
+      "rank": 18,
+      "installs": 11584
+    },
+    "better-auth/skills::better-auth-best-practices": {
+      "importedAt": "2026-02-14T01:40:41.6493522+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\better-auth__skills\\better-auth-best-practices",
+      "rank": 20,
+      "installs": 10983
+    },
+    "browser-use/browser-use::browser-use": {
+      "importedAt": "2026-02-14T01:40:45.1628102+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\browser-use__browser-use\\browser-use",
+      "rank": 9,
+      "installs": 28523
+    },
+    "coreyhaines31/marketingskills::seo-audit": {
+      "importedAt": "2026-02-14T01:40:51.6181592+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\seo-audit",
+      "rank": 14,
+      "installs": 17946
+    },
+    "coreyhaines31/marketingskills::copywriting": {
+      "importedAt": "2026-02-14T01:40:51.6749367+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\coreyhaines31__marketingskills\\copywriting",
+      "rank": 17,
+      "installs": 12998
+    },
+    "nextlevelbuilder/ui-ux-pro-max-skill::ui-ux-pro-max": {
+      "importedAt": "2026-02-14T01:40:55.6258251+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\nextlevelbuilder__ui-ux-pro-max-skill\\ui-ux-pro-max",
+      "rank": 11,
+      "installs": 24283
+    },
+    "obra/superpowers::brainstorming": {
+      "importedAt": "2026-02-14T01:40:58.6879700+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\obra__superpowers\\brainstorming",
+      "rank": 13,
+      "installs": 18517
+    },
+    "remotion-dev/skills::remotion-best-practices": {
+      "importedAt": "2026-02-14T01:41:02.2418499+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\remotion-dev__skills\\remotion-best-practices",
+      "rank": 4,
+      "installs": 88357
+    },
+    "squirrelscan/skills::audit-website": {
+      "importedAt": "2026-02-14T01:41:05.3931829+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\squirrelscan__skills\\audit-website",
+      "rank": 12,
+      "installs": 18791
+    },
+    "supabase/agent-skills::supabase-postgres-best-practices": {
+      "importedAt": "2026-02-14T01:41:08.7892511+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\supabase__agent-skills\\supabase-postgres-best-practices",
+      "rank": 15,
+      "installs": 16795
+    },
+    "vercel-labs/agent-browser::agent-browser": {
+      "importedAt": "2026-02-14T01:41:11.8465773+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__agent-browser\\agent-browser",
+      "rank": 7,
+      "installs": 33932
+    },
+    "vercel-labs/agent-skills::vercel-react-best-practices": {
+      "importedAt": "2026-02-14T01:41:24.2376482+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__agent-skills\\vercel-react-best-practices",
+      "rank": 2,
+      "installs": 128792
+    },
+    "vercel-labs/agent-skills::web-design-guidelines": {
+      "importedAt": "2026-02-14T01:41:24.2562355+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__agent-skills\\web-design-guidelines",
+      "rank": 3,
+      "installs": 96575
+    },
+    "vercel-labs/agent-skills::vercel-composition-patterns": {
+      "importedAt": "2026-02-14T01:41:24.4188340+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__agent-skills\\vercel-composition-patterns",
+      "rank": 6,
+      "installs": 38586
+    },
+    "vercel-labs/agent-skills::vercel-react-native-skills": {
+      "importedAt": "2026-02-14T01:41:24.9801287+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__agent-skills\\vercel-react-native-skills",
+      "rank": 10,
+      "installs": 27771
+    },
+    "vercel-labs/next-skills::next-best-practices": {
+      "importedAt": "2026-02-14T01:41:28.0803063+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__next-skills\\next-best-practices",
+      "rank": 19,
+      "installs": 11296
+    },
+    "vercel-labs/skills::find-skills": {
+      "importedAt": "2026-02-14T01:41:31.0053788+09:00",
+      "targetPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\sources\\vercel-labs__skills\\find-skills",
+      "rank": 1,
+      "installs": 209960
+    }
+  }
+}

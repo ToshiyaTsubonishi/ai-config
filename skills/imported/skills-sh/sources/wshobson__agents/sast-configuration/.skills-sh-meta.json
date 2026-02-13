@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:44.6947675+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "sast-configuration",
+  "name": "sast-configuration",
+  "installs": 1353,
+  "rank": 332,
+  "topN": 500
+}

@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-02-14T02:09:14.6190535+09:00",
+  "topN": 500,
+  "requested": 500,
+  "installed": 0,
+  "skipped": 498,
+  "failedCount": 2,
+  "failed": [
+    {
+      "source": "stripe/ai",
+      "skillId": "stripe-best-practices",
+      "error": "Skill directory not found in stage after install"
+    },
+    {
+      "source": "vuejs-ai/skills",
+      "skillId": "vue-development-guides",
+      "error": "Skill directory not found in stage after install"
+    }
+  ],
+  "topUniqueCount": 500,
+  "completedInTopCount": 498,
+  "unresolvedInTopCount": 2,
+  "completedCount": 499,
+  "unresolvedCount": 2,
+  "manifestPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\manifest.top500.json",
+  "statePath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\import-state.top500.json",
+  "importRoot": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh"
+}

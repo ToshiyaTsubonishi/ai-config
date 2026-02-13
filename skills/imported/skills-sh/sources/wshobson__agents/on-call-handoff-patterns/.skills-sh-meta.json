@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:44.7885291+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "on-call-handoff-patterns",
+  "name": "on-call-handoff-patterns",
+  "installs": 1340,
+  "rank": 336,
+  "topN": 500
+}

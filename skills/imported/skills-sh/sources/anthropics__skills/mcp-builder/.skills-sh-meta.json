@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:47:17.8290328+09:00",
+  "source": "anthropics/skills",
+  "sourceKey": "anthropics__skills",
+  "skillId": "mcp-builder",
+  "name": "mcp-builder",
+  "installs": 8711,
+  "rank": 28,
+  "topN": 500
+}

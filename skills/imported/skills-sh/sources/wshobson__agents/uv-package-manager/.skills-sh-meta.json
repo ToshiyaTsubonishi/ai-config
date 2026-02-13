@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:42.4541368+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "uv-package-manager",
+  "name": "uv-package-manager",
+  "installs": 1925,
+  "rank": 192,
+  "topN": 500
+}

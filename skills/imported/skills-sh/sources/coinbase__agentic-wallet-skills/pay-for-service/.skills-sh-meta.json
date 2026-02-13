@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:48:44.5542081+09:00",
+  "source": "coinbase/agentic-wallet-skills",
+  "sourceKey": "coinbase__agentic-wallet-skills",
+  "skillId": "pay-for-service",
+  "name": "pay-for-service",
+  "installs": 968,
+  "rank": 398,
+  "topN": 500
+}

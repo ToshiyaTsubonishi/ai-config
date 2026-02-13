@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:48:27.1893395+09:00",
+  "source": "cloudflare/skills",
+  "sourceKey": "cloudflare__skills",
+  "skillId": "wrangler",
+  "name": "wrangler",
+  "installs": 1286,
+  "rank": 353,
+  "topN": 500
+}

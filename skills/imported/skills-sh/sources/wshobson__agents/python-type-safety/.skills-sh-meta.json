@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:45.1395915+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "python-type-safety",
+  "name": "python-type-safety",
+  "installs": 935,
+  "rank": 406,
+  "topN": 500
+}

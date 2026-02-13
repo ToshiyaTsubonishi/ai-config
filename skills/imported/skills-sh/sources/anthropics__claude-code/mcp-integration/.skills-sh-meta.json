@@ -1,0 +1,11 @@
+{
+  "importedAt": "2026-02-14T02:05:15.6704563+09:00",
+  "source": "anthropics/claude-code",
+  "sourceKey": "anthropics__claude-code",
+  "skillId": "mcp-integration",
+  "directoryName": "mcp-integration",
+  "name": "mcp integration",
+  "installs": 925,
+  "rank": 409,
+  "topN": 500
+}

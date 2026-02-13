@@ -1,0 +1,11 @@
+{
+  "importedAt": "2026-02-14T02:05:22.4301969+09:00",
+  "source": "anthropics/claude-code",
+  "sourceKey": "anthropics__claude-code",
+  "skillId": "command-development",
+  "directoryName": "command-development",
+  "name": "command development",
+  "installs": 820,
+  "rank": 437,
+  "topN": 500
+}

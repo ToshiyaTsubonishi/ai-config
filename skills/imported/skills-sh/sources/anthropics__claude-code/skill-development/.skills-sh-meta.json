@@ -1,0 +1,11 @@
+{
+  "importedAt": "2026-02-14T02:05:09.1430712+09:00",
+  "source": "anthropics/claude-code",
+  "sourceKey": "anthropics__claude-code",
+  "skillId": "skill-development",
+  "directoryName": "skill-development",
+  "name": "skill development",
+  "installs": 1139,
+  "rank": 369,
+  "topN": 500
+}

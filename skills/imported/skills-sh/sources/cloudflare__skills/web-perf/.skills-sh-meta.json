@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:03:21.5645569+09:00",
+  "source": "cloudflare/skills",
+  "sourceKey": "cloudflare__skills",
+  "skillId": "web-perf",
+  "name": "web-perf",
+  "installs": 617,
+  "rank": 500,
+  "topN": 500
+}

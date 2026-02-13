@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:47:17.7153160+09:00",
+  "source": "anthropics/skills",
+  "sourceKey": "anthropics__skills",
+  "skillId": "webapp-testing",
+  "name": "webapp-testing",
+  "installs": 9522,
+  "rank": 26,
+  "topN": 500
+}

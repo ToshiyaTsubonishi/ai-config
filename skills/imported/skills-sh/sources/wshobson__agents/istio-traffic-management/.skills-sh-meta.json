@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:44.9807396+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "istio-traffic-management",
+  "name": "istio-traffic-management",
+  "installs": 1323,
+  "rank": 346,
+  "topN": 500
+}

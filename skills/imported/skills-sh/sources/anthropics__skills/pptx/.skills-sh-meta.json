@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:47:16.8944313+09:00",
+  "source": "anthropics/skills",
+  "sourceKey": "anthropics__skills",
+  "skillId": "pptx",
+  "name": "pptx",
+  "installs": 11584,
+  "rank": 18,
+  "topN": 500
+}

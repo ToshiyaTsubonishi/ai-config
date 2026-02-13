@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:47:23.7115022+09:00",
+  "source": "ast-grep/agent-skill",
+  "sourceKey": "ast-grep__agent-skill",
+  "skillId": "ast-grep",
+  "name": "ast-grep",
+  "installs": 646,
+  "rank": 480,
+  "topN": 500
+}

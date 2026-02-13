@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:47:16.3460108+09:00",
+  "source": "anthropics/skills",
+  "sourceKey": "anthropics__skills",
+  "skillId": "skill-creator",
+  "name": "skill-creator",
+  "installs": 32716,
+  "rank": 8,
+  "topN": 500
+}

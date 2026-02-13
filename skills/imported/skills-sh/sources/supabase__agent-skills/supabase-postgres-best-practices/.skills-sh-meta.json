@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:59:03.6030666+09:00",
+  "source": "supabase/agent-skills",
+  "sourceKey": "supabase__agent-skills",
+  "skillId": "supabase-postgres-best-practices",
+  "name": "supabase-postgres-best-practices",
+  "installs": 16795,
+  "rank": 15,
+  "topN": 500
+}

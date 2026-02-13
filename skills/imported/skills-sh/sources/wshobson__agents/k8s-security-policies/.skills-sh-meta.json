@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:43.5212357+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "k8s-security-policies",
+  "name": "k8s-security-policies",
+  "installs": 1477,
+  "rank": 276,
+  "topN": 500
+}

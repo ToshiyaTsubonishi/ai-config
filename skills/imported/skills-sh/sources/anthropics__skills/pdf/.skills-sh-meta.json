@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:47:16.4371723+09:00",
+  "source": "anthropics/skills",
+  "sourceKey": "anthropics__skills",
+  "skillId": "pdf",
+  "name": "pdf",
+  "installs": 13993,
+  "rank": 16,
+  "topN": 500
+}

@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:43.9593915+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "helm-chart-scaffolding",
+  "name": "helm-chart-scaffolding",
+  "installs": 1436,
+  "rank": 291,
+  "topN": 500
+}

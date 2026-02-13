@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:47:18.4610861+09:00",
+  "source": "anthropics/skills",
+  "sourceKey": "anthropics__skills",
+  "skillId": "doc-coauthoring",
+  "name": "doc-coauthoring",
+  "installs": 6257,
+  "rank": 47,
+  "topN": 500
+}

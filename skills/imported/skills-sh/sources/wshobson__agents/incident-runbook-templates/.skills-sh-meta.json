@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:44.5572184+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "incident-runbook-templates",
+  "name": "incident-runbook-templates",
+  "installs": 1365,
+  "rank": 325,
+  "topN": 500
+}

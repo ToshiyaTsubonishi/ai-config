@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:43.3231973+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "wcag-audit-patterns",
+  "name": "wcag-audit-patterns",
+  "installs": 1505,
+  "rank": 267,
+  "topN": 500
+}

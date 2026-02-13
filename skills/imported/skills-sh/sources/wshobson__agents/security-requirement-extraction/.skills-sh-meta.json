@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:43.0497465+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "security-requirement-extraction",
+  "name": "security-requirement-extraction",
+  "installs": 1598,
+  "rank": 231,
+  "topN": 500
+}

@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:47:16.2863809+09:00",
+  "source": "anthropics/skills",
+  "sourceKey": "anthropics__skills",
+  "skillId": "frontend-design",
+  "name": "frontend-design",
+  "installs": 66025,
+  "rank": 5,
+  "topN": 500
+}

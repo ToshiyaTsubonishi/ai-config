@@ -1,0 +1,11 @@
+{
+  "importedAt": "2026-02-14T02:05:32.6466557+09:00",
+  "source": "anthropics/claude-code",
+  "sourceKey": "anthropics__claude-code",
+  "skillId": "plugin-settings",
+  "directoryName": "plugin-settings",
+  "name": "plugin settings",
+  "installs": 688,
+  "rank": 468,
+  "topN": 500
+}

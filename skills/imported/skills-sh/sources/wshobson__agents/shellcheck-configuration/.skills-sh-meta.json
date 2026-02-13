@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:44.4640521+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "shellcheck-configuration",
+  "name": "shellcheck-configuration",
+  "installs": 1370,
+  "rank": 320,
+  "topN": 500
+}

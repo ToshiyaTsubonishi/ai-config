@@ -1,0 +1,11 @@
+{
+  "importedAt": "2026-02-14T02:05:12.3835644+09:00",
+  "source": "anthropics/claude-code",
+  "sourceKey": "anthropics__claude-code",
+  "skillId": "agent-development",
+  "directoryName": "agent-development",
+  "name": "agent development",
+  "installs": 1012,
+  "rank": 390,
+  "topN": 500
+}

@@ -73,27 +73,40 @@ $targetsMap = @{
   codex = @{
     DefaultTarget = (Join-Path $HOME ".codex/skills")
     PathVar = "CODEX_SKILLS_PATH"
+    SourceDir = "skills/codex"
   }
   gemini = @{
     DefaultTarget = (Join-Path $HOME ".gemini/skills")
     PathVar = "GEMINI_SKILLS_PATH"
+    SourceDir = "skills/gemini"
   }
   antigravity = @{
     DefaultTarget = (Join-Path $HOME ".gemini/antigravity/skills")
     PathVar = "ANTIGRAVITY_SKILLS_PATH"
+    SourceDir = "skills/antigravity"
   }
 }
 
-$sharedRoot = Join-Path $RepoRoot "skills/shared"
-if (-not (Test-Path $sharedRoot)) {
-  throw "Shared skills directory not found: $sharedRoot"
-}
+function Get-SourceLayers {
+  param(
+    [Parameter(Mandatory = $true)][string]$RepoRootPath,
+    [Parameter(Mandatory = $true)][string]$TargetName,
+    [Parameter(Mandatory = $true)][hashtable]$TargetConfig
+  )
 
-$sourceSkills = @(Get-ChildItem -Path $sharedRoot -Directory | Sort-Object Name)
-$sourceSkillNames = @($sourceSkills | ForEach-Object { $_.Name })
+  $sharedPath = Join-Path $RepoRootPath "skills/shared"
+  $specificPath = Join-Path $RepoRootPath $TargetConfig.SourceDir
 
-if ($sourceSkills.Count -eq 0) {
-  Write-Warning "No shared skills found under $sharedRoot"
+  return @(
+    @{
+      Name = "shared"
+      Path = $sharedPath
+    },
+    @{
+      Name = $TargetName
+      Path = $specificPath
+    }
+  )
 }
 
 foreach ($target in $Targets) {
@@ -109,23 +122,50 @@ foreach ($target in $Targets) {
     New-Item -ItemType Directory -Force -Path $targetRoot | Out-Null
   }
 
-  foreach ($skill in $sourceSkills) {
-    $dest = Join-Path $targetRoot $skill.Name
+  $layers = Get-SourceLayers -RepoRootPath $RepoRoot -TargetName $target -TargetConfig $item
+  $resolvedSkillMap = @{}
+
+  foreach ($layer in $layers) {
+    if (-not (Test-Path $layer.Path)) {
+      Write-Host "[info:$target] Source layer not found, skipping: $($layer.Path)"
+      continue
+    }
+
+    $layerSkills = @(Get-ChildItem -Path $layer.Path -Directory | Sort-Object Name)
+    foreach ($skillDir in $layerSkills) {
+      $resolvedSkillMap[$skillDir.Name] = [pscustomobject]@{
+        SkillName = $skillDir.Name
+        SourcePath = $skillDir.FullName
+        SourceLayer = $layer.Name
+      }
+    }
+  }
+
+  $resolvedSkills = @($resolvedSkillMap.Values | Sort-Object SkillName)
+  $sourceSkillNames = @($resolvedSkills | ForEach-Object { $_.SkillName })
+
+  if ($resolvedSkills.Count -eq 0) {
+    Write-Warning "[skip:$target] No source skills found in shared or target-specific layers."
+    continue
+  }
+
+  foreach ($skill in $resolvedSkills) {
+    $dest = Join-Path $targetRoot $skill.SkillName
     $markerPath = Join-Path $dest $ManagedMarker
 
     if (Test-Path $dest) {
       $isManaged = Test-Path $markerPath
       if (-not $isManaged -and -not $OverwriteExisting) {
-        Write-Warning "[skip:$target] Existing unmanaged skill: $($skill.Name). Use -OverwriteExisting to replace."
+        Write-Warning "[skip:$target] Existing unmanaged skill: $($skill.SkillName). Use -OverwriteExisting to replace."
         continue
       }
 
       Remove-Item -Path $dest -Recurse -Force
     }
 
-    Copy-Item -Path $skill.FullName -Destination $dest -Recurse -Force
-    Set-Content -Path (Join-Path $dest $ManagedMarker) -Value "Managed by ai-config sync-skills.ps1" -Encoding utf8NoBOM
-    Write-Host "[ok:$target] $($skill.Name)"
+    Copy-Item -Path $skill.SourcePath -Destination $dest -Recurse -Force
+    Set-Content -Path (Join-Path $dest $ManagedMarker) -Value "Managed by ai-config sync-skills.ps1 (`"$($skill.SourceLayer)`" layer)" -Encoding utf8NoBOM
+    Write-Host "[ok:$target][$($skill.SourceLayer)] $($skill.SkillName)"
   }
 
   if ($PruneManaged) {

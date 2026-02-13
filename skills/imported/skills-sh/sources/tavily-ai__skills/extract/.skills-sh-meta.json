@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:59:15.9671354+09:00",
+  "source": "tavily-ai/skills",
+  "sourceKey": "tavily-ai__skills",
+  "skillId": "extract",
+  "name": "extract",
+  "installs": 683,
+  "rank": 469,
+  "topN": 500
+}

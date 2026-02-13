@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:47:18.5739934+09:00",
+  "source": "anthropics/skills",
+  "sourceKey": "anthropics__skills",
+  "skillId": "web-artifacts-builder",
+  "name": "web-artifacts-builder",
+  "installs": 5894,
+  "rank": 63,
+  "topN": 500
+}

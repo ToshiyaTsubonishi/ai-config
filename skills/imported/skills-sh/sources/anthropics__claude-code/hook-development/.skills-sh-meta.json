@@ -1,0 +1,11 @@
+{
+  "importedAt": "2026-02-14T02:05:18.9349965+09:00",
+  "source": "anthropics/claude-code",
+  "sourceKey": "anthropics__claude-code",
+  "skillId": "hook-development",
+  "directoryName": "hook-development",
+  "name": "hook development",
+  "installs": 820,
+  "rank": 436,
+  "topN": 500
+}

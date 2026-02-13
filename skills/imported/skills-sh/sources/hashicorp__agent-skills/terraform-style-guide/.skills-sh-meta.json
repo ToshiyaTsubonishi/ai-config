@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:51:06.6987958+09:00",
+  "source": "hashicorp/agent-skills",
+  "sourceKey": "hashicorp__agent-skills",
+  "skillId": "terraform-style-guide",
+  "name": "terraform-style-guide",
+  "installs": 630,
+  "rank": 491,
+  "topN": 500
+}

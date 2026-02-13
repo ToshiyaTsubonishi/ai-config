@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:42.5292634+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "database-migration",
+  "name": "database-migration",
+  "installs": 1802,
+  "rank": 198,
+  "topN": 500
+}

@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:45.0254172+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "linkerd-patterns",
+  "name": "linkerd-patterns",
+  "installs": 1307,
+  "rank": 350,
+  "topN": 500
+}

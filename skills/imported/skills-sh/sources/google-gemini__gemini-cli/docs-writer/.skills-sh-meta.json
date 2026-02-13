@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:50:45.4142746+09:00",
+  "source": "google-gemini/gemini-cli",
+  "sourceKey": "google-gemini__gemini-cli",
+  "skillId": "docs-writer",
+  "name": "docs-writer",
+  "installs": 853,
+  "rank": 429,
+  "topN": 500
+}

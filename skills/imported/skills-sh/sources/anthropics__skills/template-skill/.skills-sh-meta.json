@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:47:18.6685712+09:00",
+  "source": "anthropics/skills",
+  "sourceKey": "anthropics__skills",
+  "skillId": "template-skill",
+  "name": "template-skill",
+  "installs": 5247,
+  "rank": 76,
+  "topN": 500
+}

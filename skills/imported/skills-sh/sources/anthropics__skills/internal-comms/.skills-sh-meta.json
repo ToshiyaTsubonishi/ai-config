@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:47:18.7106562+09:00",
+  "source": "anthropics/skills",
+  "sourceKey": "anthropics__skills",
+  "skillId": "internal-comms",
+  "name": "internal-comms",
+  "installs": 5146,
+  "rank": 81,
+  "topN": 500
+}

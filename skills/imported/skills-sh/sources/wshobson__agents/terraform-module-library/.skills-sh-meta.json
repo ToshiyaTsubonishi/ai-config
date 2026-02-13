@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:42.7884911+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "terraform-module-library",
+  "name": "terraform-module-library",
+  "installs": 1667,
+  "rank": 216,
+  "topN": 500
+}

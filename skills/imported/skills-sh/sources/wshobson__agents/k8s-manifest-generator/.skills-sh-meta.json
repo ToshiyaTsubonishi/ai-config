@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:44.0884702+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "k8s-manifest-generator",
+  "name": "k8s-manifest-generator",
+  "installs": 1435,
+  "rank": 294,
+  "topN": 500
+}

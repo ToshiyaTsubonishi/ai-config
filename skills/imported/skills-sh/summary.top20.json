@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-02-14T01:41:31.0066265+09:00",
+  "topN": 20,
+  "requested": 20,
+  "installed": 20,
+  "skipped": 0,
+  "failedCount": 0,
+  "failed": [],
+  "manifestPath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\manifest.top20.json",
+  "statePath": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh\\import-state.top20.json",
+  "importRoot": "c:\\Users\\ttsub\\ai-config\\skills\\imported\\skills-sh"
+}

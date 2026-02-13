@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:42.7084490+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "openapi-spec-generation",
+  "name": "openapi-spec-generation",
+  "installs": 1689,
+  "rank": 213,
+  "topN": 500
+}

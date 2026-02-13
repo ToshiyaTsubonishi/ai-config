@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:43.4311218+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "dependency-upgrade",
+  "name": "dependency-upgrade",
+  "installs": 1484,
+  "rank": 272,
+  "topN": 500
+}

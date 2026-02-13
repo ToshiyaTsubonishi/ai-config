@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:47:18.7543055+09:00",
+  "source": "anthropics/skills",
+  "sourceKey": "anthropics__skills",
+  "skillId": "slack-gif-creator",
+  "name": "slack-gif-creator",
+  "installs": 4818,
+  "rank": 88,
+  "topN": 500
+}

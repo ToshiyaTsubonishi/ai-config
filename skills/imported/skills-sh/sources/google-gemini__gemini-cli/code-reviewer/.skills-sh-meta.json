@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:50:45.4006785+09:00",
+  "source": "google-gemini/gemini-cli",
+  "sourceKey": "google-gemini__gemini-cli",
+  "skillId": "code-reviewer",
+  "name": "code-reviewer",
+  "installs": 1961,
+  "rank": 184,
+  "topN": 500
+}

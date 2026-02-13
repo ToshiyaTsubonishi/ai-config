@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T01:46:23.8345392+09:00",
+  "source": "anthropics/claude-code",
+  "sourceKey": "anthropics__claude-code",
+  "skillId": "frontend-design",
+  "name": "frontend-design",
+  "installs": 3419,
+  "rank": 117,
+  "topN": 500
+}

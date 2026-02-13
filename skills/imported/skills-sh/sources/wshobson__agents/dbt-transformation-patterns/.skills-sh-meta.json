@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:44.1319278+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "dbt-transformation-patterns",
+  "name": "dbt-transformation-patterns",
+  "installs": 1429,
+  "rank": 299,
+  "topN": 500
+}

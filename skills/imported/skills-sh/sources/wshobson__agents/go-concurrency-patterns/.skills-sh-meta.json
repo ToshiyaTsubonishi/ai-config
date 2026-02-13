@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:43.1179418+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "go-concurrency-patterns",
+  "name": "go-concurrency-patterns",
+  "installs": 1545,
+  "rank": 259,
+  "topN": 500
+}

@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:43.7804505+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "vector-index-tuning",
+  "name": "vector-index-tuning",
+  "installs": 1453,
+  "rank": 285,
+  "topN": 500
+}

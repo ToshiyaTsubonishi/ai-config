@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:44.4387446+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "memory-forensics",
+  "name": "memory-forensics",
+  "installs": 1371,
+  "rank": 319,
+  "topN": 500
+}

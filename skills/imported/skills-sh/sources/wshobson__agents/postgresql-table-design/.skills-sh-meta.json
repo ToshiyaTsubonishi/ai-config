@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:41.1761744+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "postgresql-table-design",
+  "name": "postgresql-table-design",
+  "installs": 3190,
+  "rank": 125,
+  "topN": 500
+}

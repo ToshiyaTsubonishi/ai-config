@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:44.5799900+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "threat-mitigation-mapping",
+  "name": "threat-mitigation-mapping",
+  "installs": 1364,
+  "rank": 326,
+  "topN": 500
+}

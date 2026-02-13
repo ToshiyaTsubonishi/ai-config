@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:44.8701059+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "binary-analysis-patterns",
+  "name": "binary-analysis-patterns",
+  "installs": 1335,
+  "rank": 341,
+  "topN": 500
+}

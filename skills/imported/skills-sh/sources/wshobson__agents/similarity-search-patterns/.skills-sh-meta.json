@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:43.7543608+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "similarity-search-patterns",
+  "name": "similarity-search-patterns",
+  "installs": 1456,
+  "rank": 284,
+  "topN": 500
+}

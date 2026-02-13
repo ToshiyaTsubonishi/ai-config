@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:42.7507642+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "secrets-management",
+  "name": "secrets-management",
+  "installs": 1680,
+  "rank": 215,
+  "topN": 500
+}

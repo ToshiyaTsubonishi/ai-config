@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:45.0064033+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "bazel-build-optimization",
+  "name": "bazel-build-optimization",
+  "installs": 1317,
+  "rank": 348,
+  "topN": 500
+}

@@ -1,0 +1,10 @@
+{
+  "importedAt": "2026-02-14T02:01:43.8583028+09:00",
+  "source": "wshobson/agents",
+  "sourceKey": "wshobson__agents",
+  "skillId": "gitops-workflow",
+  "name": "gitops-workflow",
+  "installs": 1443,
+  "rank": 289,
+  "topN": 500
+}

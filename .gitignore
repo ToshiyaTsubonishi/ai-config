@@ -3,5 +3,7 @@
 !.env.example
 *.bak.*
 .tmp-test/
+.skills-import-stage/
+.agents/
 Thumbs.db
 .DS_Store
