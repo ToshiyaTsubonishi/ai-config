@@ -14,6 +14,7 @@ Codex / Gemini / Antigravity の `MCP` と `Skills` を1つのリポジトリで
 
 - `mcp/codex.config.toml.tmpl`: Codex用MCPテンプレート
 - `mcp/antigravity.mcp_config.json.tmpl`: Gemini/Antigravity用MCPテンプレート
+- `mcp/weekly-report.bigquery_toolbox.prompt.md`: `bigquery_toolbox` 用の週次レポートプロンプトテンプレート
 - `skills/shared/`: 全ツール共通スキル
 - `skills/codex/`: Codex専用スキル
 - `skills/gemini/`: Gemini専用スキル
@@ -26,6 +27,13 @@ Codex / Gemini / Antigravity の `MCP` と `Skills` を1つのリポジトリで
 - `scripts/sync-all.ps1`: 一括実行
 - `scripts/import-skills-sh-top.ps1`: skills.sh all-time上位を取り込み
 - `scripts/audit-skill-duplicates.ps1`: 重複スキル棚卸し
+- `scripts/fetch-repos.ps1`: 依存リポジトリのclone/pull
+- `scripts/setup-env-interactive.ps1`: `.env` を対話式で作成/更新
+- `scripts/sync-open-webui-export.ps1`: Open WebUIエクスポートをAPI反映
+- `scripts/export-antigravity.ps1`: Antigravityの設定・拡張マニフェストをエクスポート
+- `scripts/import-antigravity.ps1`: Antigravityの設定・拡張マニフェストをインポート
+- `scripts/restore-ai-workspace.ps1`: 新環境のゼロから復元（fetch -> env -> sync -> build -> test -> import）
+- `scripts/run-ga4-last7d-sessions-cvr.ps1`: GA4「直近7日セッション/CVR」定型クエリ
 
 ## 初期セットアップ
 
@@ -58,7 +66,65 @@ cd $HOME/ai-config
 
 # 重複スキル棚卸しレポート生成
 ./scripts/audit-skill-duplicates.ps1
+
+# 依存リポジトリを取得/更新
+./scripts/fetch-repos.ps1
+
+# .env を対話式セットアップ
+./scripts/setup-env-interactive.ps1
+
+# Open WebUIエクスポートを反映（最新ファイル自動選択）
+./scripts/sync-open-webui-export.ps1 -ExportDir <export-folder> -UseLatestFiles
+
+# GA4: 直近7日セッション/CVRを取得
+./scripts/run-ga4-last7d-sessions-cvr.ps1
+
+# Antigravity設定をエクスポート（snapshot + latest）
+./scripts/export-antigravity.ps1
+
+# Antigravity設定をインポート
+./scripts/import-antigravity.ps1
+
+# 新環境の復元を一括実行
+./scripts/restore-ai-workspace.ps1 -WorkspaceRoot $HOME -AiPlatformProfile core -ApplyOpenWebUiExport
+
+# Open WebUI importの一部だけスキップしたい場合
+./scripts/restore-ai-workspace.ps1 -WorkspaceRoot $HOME -ApplyOpenWebUiExport -SkipOpenWebUiConfig
+
+# 復元時にAntigravity設定も同時インポート
+./scripts/restore-ai-workspace.ps1 -WorkspaceRoot $HOME -ApplyAntigravityImport
 ```
+
+## 新PCへの最短復元
+
+`ai-config` だけ先にcloneできれば、以下の1コマンドで復元できます。
+
+```powershell
+cd $HOME/ai-config
+pwsh ./scripts/restore-ai-workspace.ps1 -WorkspaceRoot $HOME -AiPlatformProfile core -ApplyOpenWebUiExport
+```
+
+- `core`: Open WebUI + mcp-router を優先して起動（GPU必須構成を回避）
+- `full`: `-AiPlatformProfile full` で `ai-full` プロファイルを起動
+- Antigravity設定も同時復元したい場合は `-ApplyAntigravityImport` を付与
+- Open WebUIエクスポートを後で反映する場合は `sync-open-webui-export.ps1` を単体実行
+
+## Antigravity の同期
+
+```powershell
+# 現在のAntigravity設定を ai-config に保存
+pwsh ./scripts/export-antigravity.ps1
+
+# 必要なら globalStorage も含める（機密情報が入りうるため通常は非推奨）
+pwsh ./scripts/export-antigravity.ps1 -IncludeGlobalStorage
+
+# 新環境で復元
+pwsh ./scripts/import-antigravity.ps1
+```
+
+- エクスポート先は既定で `inventory/antigravity/` です
+- `latest/` は復元用の最新スナップショット、`snapshot-YYYYMMDD-HHmmss/` は履歴です
+- 拡張は `extensions-manifest.txt`（`publisher.name@version`）から再インストールします
 
 ## Mac / Linuxで再現
 

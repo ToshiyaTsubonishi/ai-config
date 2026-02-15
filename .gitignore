@@ -7,3 +7,11 @@
 .agents/
 Thumbs.db
 .DS_Store
+
+# Antigravity inventory: keep only reproducible minimal baseline
+inventory/antigravity/**
+!inventory/antigravity/
+!inventory/antigravity/latest/
+!inventory/antigravity/latest/extensions-manifest.txt
+!inventory/antigravity/latest/user/
+!inventory/antigravity/latest/user/settings.json
