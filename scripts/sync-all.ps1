@@ -3,6 +3,7 @@ param(
   [string]$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path,
   [string[]]$McpTargets = @("codex", "gemini", "antigravity"),
   [string[]]$SkillTargets = @("codex", "gemini", "antigravity"),
+  [switch]$SkipEnvSync,
   [switch]$NoBackup,
   [switch]$StrictVariables,
   [switch]$OverwriteExistingSkills,
@@ -15,6 +16,7 @@ $ErrorActionPreference = "Stop"
 $applyScript = Join-Path $RepoRoot "scripts/apply-mcp.ps1"
 $syncSkillsScript = Join-Path $RepoRoot "scripts/sync-skills.ps1"
 $inventoryScript = Join-Path $RepoRoot "scripts/export-inventory.ps1"
+$syncEnvScript = Join-Path $RepoRoot "scripts/sync-env-files.ps1"
 
 $applyArgs = @{
   RepoRoot = $RepoRoot
@@ -36,6 +38,10 @@ if ($OverwriteExistingSkills) {
 }
 if ($PruneManagedSkills) {
   $syncArgs["PruneManaged"] = $true
+}
+
+if (-not $SkipEnvSync) {
+  & $syncEnvScript -RepoRoot $RepoRoot
 }
 
 & $applyScript @applyArgs

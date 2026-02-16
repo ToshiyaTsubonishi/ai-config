@@ -6,6 +6,7 @@ Codex / Gemini / Antigravity の `MCP` と `Skills` を1つのリポジトリで
 
 - MCPはテンプレート(`mcp/*.tmpl`)をGit管理し、`scripts/apply-mcp.ps1`で各ツールへ反映
 - Skillsは`shared + agent-specific`のレイヤーで管理し、`scripts/sync-skills.ps1`で配布
+- 環境変数は`ai-config/.env`に集約し、`scripts/sync-env-files.ps1`で各プロジェクトへ配布
 - 現在のローカル状態は`scripts/export-inventory.ps1`で`inventory/*.json`へスナップショット
 - `skills.sh`のランキング上位は`scripts/import-skills-sh-top.ps1`で取り込み
 - 重複棚卸しは`scripts/audit-skill-duplicates.ps1`でレポート化
@@ -23,6 +24,7 @@ Codex / Gemini / Antigravity の `MCP` と `Skills` を1つのリポジトリで
 - `inventory/`: 検出済み skills / mcp の一覧JSON
 - `scripts/apply-mcp.ps1`: MCPテンプレート反映
 - `scripts/sync-skills.ps1`: レイヤー合成してスキル同期
+- `scripts/sync-env-files.ps1`: `ai-config/.env` の値を他プロジェクト `.env` へ同期
 - `scripts/export-inventory.ps1`: 現在状態のインベントリ出力
 - `scripts/sync-all.ps1`: 一括実行
 - `scripts/import-skills-sh-top.ps1`: skills.sh all-time上位を取り込み
@@ -35,10 +37,19 @@ Codex / Gemini / Antigravity の `MCP` と `Skills` を1つのリポジトリで
 - `scripts/restore-ai-workspace.ps1`: 新環境のゼロから復元（fetch -> env -> sync -> build -> test -> import）
 - `scripts/run-ga4-last7d-sessions-cvr.ps1`: GA4「直近7日セッション/CVR」定型クエリ
 
+## MCP→Skills 移行メモ（現行）
+
+- `ai-agent-collection` の mcp-router は Whisper/Yomitoku 推論（`inference-proxy-mcp`）のみ接続
+- 業務系は以下 Skills を共有配布
+  - `art-loan-workflow-design-lite`
+  - `customer-risk-screening-lite`
+  - `data-normalization-playbook`
+  - `deep-research`
+
 ## 初期セットアップ
 
 1. `.env.example` を `.env` にコピー
-2. 必要なAPIキーだけ `.env` に設定
+2. 必要なAPIキーと共有ポートを `.env` に設定（`GOOGLE_API_KEY` は必須）
 3. 必要なら `skills/shared` / `skills/<agent>` にスキルを追加
 4. 実行
 
@@ -52,6 +63,9 @@ cd $HOME/ai-config
 ```powershell
 # MCPのみ反映（codex/gemini/antigravity）
 ./scripts/apply-mcp.ps1
+
+# 中央 .env から ai-agent-collection などへ配布
+./scripts/sync-env-files.ps1
 
 # shared + agent-specific を合成して同期
 # 優先順位: agent-specific > shared
@@ -108,6 +122,7 @@ pwsh ./scripts/restore-ai-workspace.ps1 -WorkspaceRoot $HOME -AiPlatformProfile 
 - `full`: `-AiPlatformProfile full` で `ai-full` プロファイルを起動
 - Antigravity設定も同時復元したい場合は `-ApplyAntigravityImport` を付与
 - Open WebUIエクスポートを後で反映する場合は `sync-open-webui-export.ps1` を単体実行
+- `.env` の同期は `sync-all.ps1` / `setup-env-interactive.ps1` 内で自動実行されます
 
 ## Antigravity の同期
 
@@ -136,7 +151,7 @@ pwsh ./scripts/sync-all.ps1
 ```
 
 - 反映先は `$HOME` 基準で解決されます
-- 必要なら `.env` の `*_PATH` で上書きしてください
+- 必要なら `.env` の `*_PATH` と `AI_AGENT_COLLECTION_ENV_PATH` で上書きしてください
 - `TopN 500` 取り込みはネットワークとディスクを使うため、初回は時間がかかります
 
 ## skills.sh 上位導入フロー
@@ -167,8 +182,9 @@ pwsh ./scripts/sync-all.ps1
 - Codex Skills: `~/.codex/skills`
 - Gemini Skills: `~/.gemini/skills`
 - Antigravity Skills: `~/.gemini/antigravity/skills`
+- ai-agent-collection `.env`: `~/ai-agent-collection/docker-infrastructure/.env`
 
-`.env` の `*_PATH` で上書き可能です。
+`.env` の `*_PATH` と `AI_AGENT_COLLECTION_ENV_PATH` で上書き可能です。
 
 ## GitHub Private Repo化
 

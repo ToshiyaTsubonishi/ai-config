@@ -1,28 +1,68 @@
 {
   "configPath": "C:\\Users\\ttsub\\.gemini\\antigravity\\mcp_config.json",
-  "count": 3,
+  "count": 9,
   "servers": [
     {
-      "name": "figma-dev-mode-mcp-server",
+      "name": "codegraphcontext",
+      "command": "cgc",
+      "argsCount": 2,
+      "envKeys": []
+    },
+    {
+      "name": "context7",
+      "command": "npx",
+      "argsCount": 2,
+      "envKeys": [
+        "CONTEXT7_API_KEY"
+      ]
+    },
+    {
+      "name": "figma",
+      "command": "npx",
+      "argsCount": 3,
+      "envKeys": []
+    },
+    {
+      "name": "figma_context_mcp",
+      "command": "npx",
+      "argsCount": 3,
+      "envKeys": [
+        "FIGMA_API_KEY"
+      ]
+    },
+    {
+      "name": "firecrawl",
+      "command": "npx",
+      "argsCount": 2,
+      "envKeys": [
+        "FIRECRAWL_API_KEY"
+      ]
+    },
+    {
+      "name": "gemini_cloud_assist",
       "command": "npx",
       "argsCount": 2,
       "envKeys": []
     },
     {
-      "name": "notion",
-      "command": "npx",
-      "argsCount": 2,
+      "name": "github",
+      "command": "docker",
+      "argsCount": 6,
       "envKeys": [
-        "NOTION_API_KEY"
+        "GITHUB_PERSONAL_ACCESS_TOKEN"
       ]
     },
     {
-      "name": "notion-mcp-server",
+      "name": "jina_reader",
       "command": "npx",
-      "argsCount": 2,
-      "envKeys": [
-        "OPENAPI_MCP_HEADERS"
-      ]
+      "argsCount": 3,
+      "envKeys": []
+    },
+    {
+      "name": "playwright",
+      "command": "npx",
+      "argsCount": 1,
+      "envKeys": []
     }
   ]
 }

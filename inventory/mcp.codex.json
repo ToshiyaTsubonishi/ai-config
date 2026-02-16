@@ -12,7 +12,9 @@
       "name": "context7",
       "hasCommand": true,
       "hasUrl": false,
-      "envKeys": []
+      "envKeys": [
+        "CONTEXT7_API_KEY"
+      ]
     },
     {
       "name": "figma",
@@ -24,13 +26,17 @@
       "name": "figma_context_mcp",
       "hasCommand": true,
       "hasUrl": false,
-      "envKeys": []
+      "envKeys": [
+        "FIGMA_API_KEY"
+      ]
     },
     {
       "name": "firecrawl",
       "hasCommand": true,
       "hasUrl": false,
-      "envKeys": []
+      "envKeys": [
+        "FIRECRAWL_API_KEY"
+      ]
     },
     {
       "name": "gemini_cloud_assist",
@@ -42,7 +48,9 @@
       "name": "github",
       "hasCommand": true,
       "hasUrl": false,
-      "envKeys": []
+      "envKeys": [
+        "GITHUB_PERSONAL_ACCESS_TOKEN"
+      ]
     },
     {
       "name": "jina_reader",

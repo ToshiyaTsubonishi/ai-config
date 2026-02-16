@@ -11,3 +11,11 @@ Then run:
 ```powershell
 ./scripts/sync-skills.ps1
 ```
+
+Current shared baseline:
+
+- `restore-ai-dev-workspace`
+- `art-loan-workflow-design-lite`
+- `customer-risk-screening-lite`
+- `data-normalization-playbook`
+- `deep-research`

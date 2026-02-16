@@ -1,6 +1,6 @@
 {
   "rootPath": "C:\\Users\\ttsub\\.codex\\skills",
-  "count": 404,
+  "count": 408,
   "skills": [
     ".system/skill-creator",
     ".system/skill-installer",
@@ -17,6 +17,7 @@
     "android",
     "android-java",
     "android-kotlin",
+    "art-loan-workflow-design-lite",
     "ask-questions-if-underspecified",
     "audit-context-building",
     "aws-agentic-ai",
@@ -178,6 +179,8 @@
     "create-pr",
     "creating-skills",
     "credentials",
+    "customer-risk-screening-lite",
+    "data-normalization-playbook",
     "database-driver-design",
     "database-schema",
     "deep-research",
@@ -303,6 +306,7 @@
     "refactor-module",
     "remotion",
     "requesting-code-review",
+    "restore-ai-dev-workspace",
     "robius-app-architecture",
     "robius-event-action",
     "robius-matrix-integration",

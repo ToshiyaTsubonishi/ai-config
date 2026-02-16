@@ -179,6 +179,14 @@ function Apply-EnvSpec {
     [switch]$UseNonInteractive
   )
 
+  if (-not (Test-Path $Spec.TemplatePath)) {
+    if ([bool]$Spec.Optional) {
+      Write-Host "[skip] $($Spec.Name): template not found ($($Spec.TemplatePath))"
+      return
+    }
+    throw "Template not found: $($Spec.TemplatePath)"
+  }
+
   Ensure-EnvFile -EnvPath $Spec.EnvPath -TemplatePath $Spec.TemplatePath
   Write-Host "[env] $($Spec.Name): $($Spec.EnvPath)"
 
@@ -206,27 +214,40 @@ $root = (Resolve-Path $WorkspaceRoot).Path
 $specs = @(
   [pscustomobject]@{
     Name = "ai-config"
+    Optional = $false
     EnvPath = (Join-Path $root "ai-config/.env")
     TemplatePath = (Join-Path $root "ai-config/.env.example")
     Variables = @(
+      [pscustomobject]@{ Key = "GOOGLE_API_KEY"; Required = $true; Secret = $true; Prompt = "Google API key (shared)" },
+      [pscustomobject]@{ Key = "HF_TOKEN"; Required = $false; Secret = $true; Prompt = "HuggingFace token (shared)" },
       [pscustomobject]@{ Key = "GITHUB_PERSONAL_ACCESS_TOKEN"; Required = $false; Secret = $true; Prompt = "GitHub PAT for github-mcp" },
       [pscustomobject]@{ Key = "CONTEXT7_API_KEY"; Required = $false; Secret = $true; Prompt = "Context7 API key" },
       [pscustomobject]@{ Key = "FIRECRAWL_API_KEY"; Required = $false; Secret = $true; Prompt = "Firecrawl API key" },
       [pscustomobject]@{ Key = "FIGMA_API_KEY"; Required = $false; Secret = $true; Prompt = "Figma API key" },
-      [pscustomobject]@{ Key = "JINA_API_KEY"; Required = $false; Secret = $true; Prompt = "Jina API key" }
-    )
-  },
-  [pscustomobject]@{
-    Name = "ai-agent-collection/docker-infrastructure"
-    EnvPath = (Join-Path $root "ai-agent-collection/docker-infrastructure/.env")
-    TemplatePath = (Join-Path $root "ai-agent-collection/docker-infrastructure/.env.template")
-    Variables = @(
-      [pscustomobject]@{ Key = "GOOGLE_API_KEY"; Required = $true; Secret = $true; Prompt = "Google API key" },
-      [pscustomobject]@{ Key = "HF_TOKEN"; Required = $false; Secret = $true; Prompt = "HuggingFace token" }
+      [pscustomobject]@{ Key = "JINA_API_KEY"; Required = $false; Secret = $true; Prompt = "Jina API key" },
+      [pscustomobject]@{ Key = "WORKSPACE_ROOT"; Required = $false; Secret = $false; Prompt = "Workspace root override (optional)" },
+      [pscustomobject]@{ Key = "AI_AGENT_COLLECTION_ENV_PATH"; Required = $false; Secret = $false; Prompt = "ai-agent-collection .env path override (optional)" },
+      [pscustomobject]@{ Key = "AI_AGENT_COLLECTION_ENV_TEMPLATE_PATH"; Required = $false; Secret = $false; Prompt = "ai-agent-collection .env template path override (optional)" },
+      [pscustomobject]@{ Key = "COMPOSE_PROJECT_NAME"; Required = $false; Secret = $false; Prompt = "Compose project name (default: ai-workspace)" },
+      [pscustomobject]@{ Key = "PORT_OPEN_WEBUI"; Required = $false; Secret = $false; Prompt = "Open WebUI port" },
+      [pscustomobject]@{ Key = "PORT_WHISPER_UI"; Required = $false; Secret = $false; Prompt = "Whisper UI port" },
+      [pscustomobject]@{ Key = "PORT_YOMITOKU_GUI"; Required = $false; Secret = $false; Prompt = "Yomitoku GUI port" },
+      [pscustomobject]@{ Key = "PORT_WHISPER_INFERENCE"; Required = $false; Secret = $false; Prompt = "Whisper inference port" },
+      [pscustomobject]@{ Key = "PORT_YOMITOKU_INFERENCE"; Required = $false; Secret = $false; Prompt = "Yomitoku inference port" },
+      [pscustomobject]@{ Key = "PORT_MCPO"; Required = $false; Secret = $false; Prompt = "MCPO port" },
+      [pscustomobject]@{ Key = "PORT_MCP_ROUTER"; Required = $false; Secret = $false; Prompt = "MCP Router port" },
+      [pscustomobject]@{ Key = "PORT_INFERENCE_PROXY_MCP"; Required = $false; Secret = $false; Prompt = "Inference Proxy MCP port" },
+      [pscustomobject]@{ Key = "CODEX_CONFIG_PATH"; Required = $false; Secret = $false; Prompt = "Codex MCP config path override (optional)" },
+      [pscustomobject]@{ Key = "GEMINI_MCP_CONFIG_PATH"; Required = $false; Secret = $false; Prompt = "Gemini MCP config path override (optional)" },
+      [pscustomobject]@{ Key = "ANTIGRAVITY_MCP_CONFIG_PATH"; Required = $false; Secret = $false; Prompt = "Antigravity MCP config path override (optional)" },
+      [pscustomobject]@{ Key = "CODEX_SKILLS_PATH"; Required = $false; Secret = $false; Prompt = "Codex skills path override (optional)" },
+      [pscustomobject]@{ Key = "GEMINI_SKILLS_PATH"; Required = $false; Secret = $false; Prompt = "Gemini skills path override (optional)" },
+      [pscustomobject]@{ Key = "ANTIGRAVITY_SKILLS_PATH"; Required = $false; Secret = $false; Prompt = "Antigravity skills path override (optional)" }
     )
   },
   [pscustomobject]@{
     Name = "ModernGallery"
+    Optional = $true
     EnvPath = (Join-Path $root "ModernGallery/.env")
     TemplatePath = (Join-Path $root "ModernGallery/.env.template")
     Variables = @(
@@ -240,6 +261,15 @@ $specs = @(
 
 foreach ($spec in $specs) {
   Apply-EnvSpec -Spec $spec -UseNonInteractive:$NonInteractive
+}
+
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$syncEnvScript = Join-Path $repoRoot "scripts/sync-env-files.ps1"
+
+if (Test-Path $syncEnvScript) {
+  & $syncEnvScript -RepoRoot $repoRoot -WorkspaceRoot $root -DryRun:$DryRun
+} else {
+  Write-Warning "sync-env-files script not found: $syncEnvScript"
 }
 
 Write-Host "Environment setup finished."

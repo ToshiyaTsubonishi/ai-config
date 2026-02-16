@@ -1,10 +1,14 @@
 {
   "rootPath": "C:\\Users\\ttsub\\.gemini\\antigravity\\skills",
-  "count": 16,
+  "count": 21,
   "skills": [
     "algorithmic-art",
+    "art-loan-workflow-design-lite",
     "brand-guidelines",
     "canvas-design",
+    "customer-risk-screening-lite",
+    "data-normalization-playbook",
+    "deep-research",
     "doc-coauthoring",
     "docx",
     "frontend-design",
@@ -12,6 +16,7 @@
     "mcp-builder",
     "pdf",
     "pptx",
+    "restore-ai-dev-workspace",
     "skill-creator",
     "slack-gif-creator",
     "theme-factory",
