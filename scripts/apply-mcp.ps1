@@ -141,7 +141,7 @@ $defaultWebflowMcpArgs = '["-y", "mcp-remote", "https://mcp.webflow.com/mcp"]'
 
 if ($IsWindows) {
   $defaultWebflowMcpCommand = "C:/Windows/System32/cmd.exe"
-  $defaultWebflowMcpArgs = '["/d", "/c", "set PATH=C:/Progra~1/nodejs;%PATH% && C:/Progra~1/nodejs/npx.cmd -y mcp-remote https://mcp.webflow.com/mcp"]'
+  $defaultWebflowMcpArgs = '["/d", "/c", "set PATH=C:/Progra~1/nodejs;%PATH% ^&^& C:/Progra~1/nodejs/npx.cmd -y mcp-remote https://mcp.webflow.com/mcp"]'
 }
 
 if (-not $vars.ContainsKey("WEBFLOW_MCP_COMMAND") -or [string]::IsNullOrWhiteSpace([string]$vars["WEBFLOW_MCP_COMMAND"])) {
