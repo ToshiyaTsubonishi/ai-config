@@ -62,6 +62,8 @@ cd $HOME/ai-config
 
 - Windowsでは `../windows-env-sync/scripts/sync-windows-env.ps1` が存在する場合に自動実行され、`git/node/npx/pwsh/winget` 周辺の前提を同期します
 - スキップしたい場合は `./scripts/sync-all.ps1 -SkipWindowsEnvSync`
+- Webflow MCP は OAuth 方式（`mcp-remote https://mcp.webflow.com/mcp`）を使用します
+- `WEBFLOW_MCP_COMMAND` を `.env` で指定すると、Webflow MCP の起動コマンドを上書きできます（未指定時は Windows で `nodejs\\npx.cmd` を自動検出）
 
 ## 個別実行
 

@@ -58,7 +58,7 @@ function Expand-Template {
     {
       param($m)
       $name = $m.Groups[1].Value
-      if ($Variables.ContainsKey($name) -and -not [string]::IsNullOrWhiteSpace([string]$Variables[$name])) {
+      if ($Variables.ContainsKey($name)) {
         return [string]$Variables[$name]
       }
       $missing.Add($name) | Out-Null
@@ -134,6 +134,31 @@ foreach ($entry in $fromDotEnv.GetEnumerator()) {
 }
 foreach ($entry in Get-ChildItem Env:) {
   $vars[$entry.Name] = $entry.Value
+}
+
+if (-not $vars.ContainsKey("WEBFLOW_MCP_COMMAND") -or [string]::IsNullOrWhiteSpace([string]$vars["WEBFLOW_MCP_COMMAND"])) {
+  $defaultWebflowCommand = "npx"
+
+  if ($IsWindows) {
+    $shortNpxCandidate = "C:\Progra~1\nodejs\npx.cmd"
+    $longNpxCandidate = Join-Path $env:ProgramFiles "nodejs/npx.cmd"
+
+    if (Test-Path $shortNpxCandidate) {
+      $defaultWebflowCommand = $shortNpxCandidate
+    } elseif (-not [string]::IsNullOrWhiteSpace($longNpxCandidate) -and (Test-Path $longNpxCandidate)) {
+      $defaultWebflowCommand = $longNpxCandidate
+    }
+  }
+
+  $vars["WEBFLOW_MCP_COMMAND"] = $defaultWebflowCommand
+}
+
+if ($vars.ContainsKey("WEBFLOW_MCP_COMMAND") -and -not [string]::IsNullOrWhiteSpace([string]$vars["WEBFLOW_MCP_COMMAND"])) {
+  $normalizedWebflowCommand = [string]$vars["WEBFLOW_MCP_COMMAND"]
+  if ($IsWindows) {
+    $normalizedWebflowCommand = $normalizedWebflowCommand -replace "\\", "/"
+  }
+  $vars["WEBFLOW_MCP_COMMAND"] = $normalizedWebflowCommand
 }
 
 $map = @{

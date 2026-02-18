@@ -242,6 +242,7 @@ $specs = @(
       [pscustomobject]@{ Key = "CLARITY_API_KEY"; Required = $false; Secret = $true; Prompt = "Microsoft Clarity API key" },
       [pscustomobject]@{ Key = "MDB_MCP_CONNECTION_STRING"; Required = $false; Secret = $true; Prompt = "MongoDB MCP connection string" },
       [pscustomobject]@{ Key = "NOTION_API_KEY"; Required = $false; Secret = $true; Prompt = "Notion API key" },
+      [pscustomobject]@{ Key = "WEBFLOW_MCP_COMMAND"; Required = $false; Secret = $false; Prompt = "Webflow MCP command override (optional, default: auto npx path)" },
       [pscustomobject]@{ Key = "SLACK_BOT_TOKEN"; Required = $false; Secret = $true; Prompt = "Slack bot token" },
       [pscustomobject]@{ Key = "SLACK_TEAM_ID"; Required = $false; Secret = $true; Prompt = "Slack team ID" },
       [pscustomobject]@{ Key = "POSTGRES_CONNECTION_STRING"; Required = $false; Secret = $true; Prompt = "Postgres connection string for MCP" },
