@@ -6,6 +6,7 @@ Codex / Gemini / Antigravity の `MCP` と `Skills` を1つのリポジトリで
 
 - MCPはテンプレート(`mcp/*.tmpl`)をGit管理し、`scripts/apply-mcp.ps1`で各ツールへ反映
 - Skillsは`shared + agent-specific`のレイヤーで管理し、`scripts/sync-skills.ps1`で配布
+- `sync-skills.ps1`はローカル配布専用（同期時にGitHubから各Skillを自動ダウンロードしない）
 - 環境変数は`ai-config/.env`に集約し、`scripts/sync-env-files.ps1`で各プロジェクトへ配布
 - 現在のローカル状態は`scripts/export-inventory.ps1`で`inventory/*.json`へスナップショット
 - `skills.sh`のランキング上位は`scripts/import-skills-sh-top.ps1`で取り込み
@@ -30,6 +31,7 @@ Codex / Gemini / Antigravity の `MCP` と `Skills` を1つのリポジトリで
 - `scripts/import-skills-sh-top.ps1`: skills.sh all-time上位を取り込み
 - `scripts/audit-skill-duplicates.ps1`: 重複スキル棚卸し
 - `scripts/fetch-repos.ps1`: 依存リポジトリのclone/pull
+- `windows-env-sync`: Windows向けのインストール/PATH同期リポジトリ（`fetch-repos.ps1`で取得）
 - `scripts/setup-env-interactive.ps1`: `.env` を対話式で作成/更新
 - `scripts/sync-open-webui-export.ps1`: Open WebUIエクスポートをAPI反映
 - `scripts/export-antigravity.ps1`: Antigravityの設定・拡張マニフェストをエクスポート
@@ -57,6 +59,9 @@ Codex / Gemini / Antigravity の `MCP` と `Skills` を1つのリポジトリで
 cd $HOME/ai-config
 ./scripts/sync-all.ps1
 ```
+
+- Windowsでは `../windows-env-sync/scripts/sync-windows-env.ps1` が存在する場合に自動実行され、`git/node/npx/pwsh/winget` 周辺の前提を同期します
+- スキップしたい場合は `./scripts/sync-all.ps1 -SkipWindowsEnvSync`
 
 ## 個別実行
 
@@ -161,6 +166,14 @@ pwsh ./scripts/sync-all.ps1
 3. `inventory/skill-duplicates.md` を見て統合作業  
 4. 採用するものだけ `skills/shared` または `skills/<agent>` に昇格  
 5. `./scripts/sync-skills.ps1` で各ツールへ配布
+
+## Skills更新ポリシー（重要）
+
+- `sync-all.ps1` / `sync-skills.ps1` は **配布のみ**（`ai-config/skills/*` の内容を各ツール配下へコピー）
+- 外部更新の取得は明示的に実行:
+  - 依存リポジトリ更新: `./scripts/fetch-repos.ps1`
+  - skills.sh 由来更新: `./scripts/import-skills-sh-top.ps1`
+- つまり「同期するたびに公式Skillを都度フェッチ」は現状しません（必要時に pull/import する運用）
 
 現状メモ:
 - `TopN 500` の取り込み実績は `498/500`（未解決: `stripe-best-practices`, `vue-development-guides`）

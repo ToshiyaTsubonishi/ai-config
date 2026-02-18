@@ -4,6 +4,7 @@ param(
   [string]$AiConfigRepoUrl = "https://github.com/ToshiyaTsubonishi/ai-config-sync.git",
   [string]$AiAgentCollectionRepoUrl = "https://github.com/ToshiyaTsubonishi/ai-agent-collection.git",
   [string]$ModernGalleryRepoUrl = "https://github.com/ToshiyaTsubonishi/ModernGallery.git",
+  [string]$WindowsEnvSyncRepoUrl = "https://github.com/ToshiyaTsubonishi/windows-env-sync.git",
   [string]$GitPath = "git",
   [switch]$NoPull,
   [switch]$DryRun
@@ -74,7 +75,8 @@ $root = (Resolve-Path $WorkspaceRoot).Path
 $repos = @(
   [pscustomobject]@{ Name = "ai-config"; Url = $AiConfigRepoUrl; Path = (Join-Path $root "ai-config") },
   [pscustomobject]@{ Name = "ai-agent-collection"; Url = $AiAgentCollectionRepoUrl; Path = (Join-Path $root "ai-agent-collection") },
-  [pscustomobject]@{ Name = "ModernGallery"; Url = $ModernGalleryRepoUrl; Path = (Join-Path $root "ModernGallery") }
+  [pscustomobject]@{ Name = "ModernGallery"; Url = $ModernGalleryRepoUrl; Path = (Join-Path $root "ModernGallery") },
+  [pscustomobject]@{ Name = "windows-env-sync"; Url = $WindowsEnvSyncRepoUrl; Path = (Join-Path $root "windows-env-sync") }
 )
 
 foreach ($repo in $repos) {

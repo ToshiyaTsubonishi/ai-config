@@ -4,6 +4,7 @@ param(
   [string]$AiConfigRepoUrl = "https://github.com/ToshiyaTsubonishi/ai-config-sync.git",
   [string]$AiAgentCollectionRepoUrl = "https://github.com/ToshiyaTsubonishi/ai-agent-collection.git",
   [string]$ModernGalleryRepoUrl = "https://github.com/ToshiyaTsubonishi/ModernGallery.git",
+  [string]$WindowsEnvSyncRepoUrl = "https://github.com/ToshiyaTsubonishi/windows-env-sync.git",
   [ValidateSet("core", "full")][string]$AiPlatformProfile = "core",
   [switch]$SkipFetch,
   [switch]$SkipEnvSetup,
@@ -139,6 +140,7 @@ if (-not $SkipFetch) {
     -AiConfigRepoUrl $AiConfigRepoUrl `
     -AiAgentCollectionRepoUrl $AiAgentCollectionRepoUrl `
     -ModernGalleryRepoUrl $ModernGalleryRepoUrl `
+    -WindowsEnvSyncRepoUrl $WindowsEnvSyncRepoUrl `
     -DryRun:$DryRun
 }
 
