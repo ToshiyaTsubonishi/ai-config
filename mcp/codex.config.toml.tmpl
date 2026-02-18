@@ -110,7 +110,7 @@ command = "terraform-mcp-server"
 
 [mcp_servers.webflow]
 command = "{{WEBFLOW_MCP_COMMAND}}"
-args = ["-y", "mcp-remote", "https://mcp.webflow.com/mcp"]
+args = {{WEBFLOW_MCP_ARGS}}
 
 [mcp_servers.davinci_resolve]
 command = "npx"
