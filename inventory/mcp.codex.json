@@ -1,7 +1,49 @@
 {
   "configPath": "C:\\Users\\ttsub\\.codex\\config.toml",
-  "count": 9,
+  "count": 33,
   "servers": [
+    {
+      "name": "apify",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": [
+        "APIFY_TOKEN"
+      ]
+    },
+    {
+      "name": "box",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": [
+        "BOX_ACCESS_TOKEN",
+        "BOX_APP_SETTINGS_JSON",
+        "BOX_CLIENT_ID",
+        "BOX_CLIENT_SECRET",
+        "BOX_ENTERPRISE_ID",
+        "BOX_PASSPHRASE",
+        "BOX_PRIVATE_KEY",
+        "BOX_PUBLIC_KEY_ID",
+        "BOX_USER_ID"
+      ]
+    },
+    {
+      "name": "canva",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
+      "name": "chrome_devtools",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
+      "name": "cloud_run",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
     {
       "name": "codegraphcontext",
       "hasCommand": true,
@@ -15,6 +57,18 @@
       "envKeys": [
         "CONTEXT7_API_KEY"
       ]
+    },
+    {
+      "name": "davinci_resolve",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
+      "name": "fetch",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
     },
     {
       "name": "figma",
@@ -31,6 +85,14 @@
       ]
     },
     {
+      "name": "firebase",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": [
+        "FIREBASE_TOKEN"
+      ]
+    },
+    {
       "name": "firecrawl",
       "hasCommand": true,
       "hasUrl": false,
@@ -39,7 +101,19 @@
       ]
     },
     {
+      "name": "gdrive",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
       "name": "gemini_cloud_assist",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
+      "name": "git",
       "hasCommand": true,
       "hasUrl": false,
       "envKeys": []
@@ -53,13 +127,109 @@
       ]
     },
     {
+      "name": "google_maps",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": [
+        "GOOGLE_MAPS_API_KEY"
+      ]
+    },
+    {
+      "name": "googlemaps_code_assist",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
       "name": "jina_reader",
       "hasCommand": true,
       "hasUrl": false,
       "envKeys": []
     },
     {
+      "name": "line_bot",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": [
+        "LINE_CHANNEL_ACCESS_TOKEN",
+        "LINE_DESTINATION_USER_ID"
+      ]
+    },
+    {
+      "name": "memory",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
+      "name": "microsoft_clarity",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
+      "name": "mongodb",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": [
+        "MDB_MCP_CONNECTION_STRING"
+      ]
+    },
+    {
+      "name": "notion",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": [
+        "NOTION_API_KEY"
+      ]
+    },
+    {
       "name": "playwright",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
+      "name": "postgres",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
+      "name": "sequential_thinking",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
+      "name": "slack",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": [
+        "SLACK_BOT_TOKEN",
+        "SLACK_TEAM_ID"
+      ]
+    },
+    {
+      "name": "sqlite",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
+      "name": "terraform",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
+      "name": "time",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
+      "name": "webflow",
       "hasCommand": true,
       "hasUrl": false,
       "envKeys": []
