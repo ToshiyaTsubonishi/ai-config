@@ -1,218 +1,109 @@
 # ai-config
 
-Codex / Gemini / Antigravity の `MCP` と `Skills` を1つのリポジトリで管理・同期するための設定リポジトリです。
+Codex / Antigravity / Gemini CLI の `MCP` と `Skills` を一元管理して同期するリポジトリです。
 
-## 方針
+## 対象ツール
 
-- MCPはテンプレート(`mcp/*.tmpl`)をGit管理し、`scripts/apply-mcp.ps1`で各ツールへ反映
-- Skillsは`shared + agent-specific`のレイヤーで管理し、`scripts/sync-skills.ps1`で配布
-- `sync-skills.ps1`はローカル配布専用（同期時にGitHubから各Skillを自動ダウンロードしない）
-- 環境変数は`ai-config/.env`に集約し、`scripts/sync-env-files.ps1`で各プロジェクトへ配布
-- 現在のローカル状態は`scripts/export-inventory.ps1`で`inventory/*.json`へスナップショット
-- `skills.sh`のランキング上位は`scripts/import-skills-sh-top.ps1`で取り込み
-- 重複棚卸しは`scripts/audit-skill-duplicates.ps1`でレポート化
+- `codex`
+- `antigravity`
+- `gemini_cli`（Gemini Shell ではなく Gemini CLI）
 
-## ディレクトリ
+デフォルト同期対象から Anthropic 系は外しています（`config/master/ai-sync.yaml` の `defaults.excluded_toolchains`）。
 
-- `mcp/codex.config.toml.tmpl`: Codex用MCPテンプレート
-- `mcp/antigravity.mcp_config.json.tmpl`: Gemini/Antigravity用MCPテンプレート
-- `mcp/weekly-report.bigquery_toolbox.prompt.md`: `bigquery_toolbox` 用の週次レポートプロンプトテンプレート
-- `skills/shared/`: 全ツール共通スキル
-- `skills/codex/`: Codex専用スキル
-- `skills/gemini/`: Gemini専用スキル
-- `skills/antigravity/`: Antigravity専用スキル
-- `skills/imported/skills-sh/`: skills.sh から導入したスキル保管領域
-- `inventory/`: 検出済み skills / mcp の一覧JSON
-- `scripts/apply-mcp.ps1`: MCPテンプレート反映
-- `scripts/sync-skills.ps1`: レイヤー合成してスキル同期
-- `scripts/sync-env-files.ps1`: `ai-config/.env` の値を他プロジェクト `.env` へ同期
-- `scripts/export-inventory.ps1`: 現在状態のインベントリ出力
-- `scripts/sync-all.ps1`: 一括実行
-- `scripts/import-skills-sh-top.ps1`: skills.sh all-time上位を取り込み
-- `scripts/audit-skill-duplicates.ps1`: 重複スキル棚卸し
-- `scripts/fetch-repos.ps1`: 依存リポジトリのclone/pull
-- `windows-env-sync`: Windows向けのインストール/PATH同期リポジトリ（`fetch-repos.ps1`で取得）
-- `scripts/setup-env-interactive.ps1`: `.env` を対話式で作成/更新
-- `scripts/sync-open-webui-export.ps1`: Open WebUIエクスポートをAPI反映
-- `scripts/export-antigravity.ps1`: Antigravityの設定・拡張マニフェストをエクスポート
-- `scripts/import-antigravity.ps1`: Antigravityの設定・拡張マニフェストをインポート
-- `scripts/restore-ai-workspace.ps1`: 新環境のゼロから復元（fetch -> env -> sync -> build -> test -> import）
-- `scripts/run-ga4-last7d-sessions-cvr.ps1`: GA4「直近7日セッション/CVR」定型クエリ
+## 現在の構成
 
-## MCP→Skills 移行メモ（現行）
+- マスター設定: `config/master/ai-sync.yaml`
+- スキーマ: `schemas/ai-sync.schema.json`
+- ターゲット別テンプレート:
+  - `config/targets/codex/config.toml.tmpl`
+  - `config/targets/antigravity/mcp_config.json.tmpl`
+  - `config/targets/gemini-cli/settings.json.tmpl`
+- コア同期スクリプト:
+  - `scripts/sync/sync-mcp.ps1`
+  - `scripts/sync/sync-skills.ps1`
+- 互換ラッパー:
+  - `scripts/apply-mcp.ps1`
+  - `scripts/sync-skills.ps1`
+  - `scripts/sync-all.ps1`
 
-- `ai-agent-collection` の mcp-router は Whisper/Yomitoku 推論（`inference-proxy-mcp`）のみ接続
-- 業務系は以下 Skills を共有配布
-  - `art-loan-workflow-design-lite`
-  - `customer-risk-screening-lite`
-  - `data-normalization-playbook`
-  - `deep-research`
+## 同期ロジック
 
-## 初期セットアップ
+### MCP
 
-1. `.env.example` を `.env` にコピー
-2. 必要なAPIキーと共有ポートを `.env` に設定（`GOOGLE_API_KEY` は必須）
-3. 必要なら `skills/shared` / `skills/<agent>` にスキルを追加
-4. 実行
+- 設定ソースは `ai-sync.yaml` の `targets.*.templates` と `path_profiles`
+- `mcp_mode`
+  - `replace`: テンプレートで完全置換
+  - `merge`: JSON の `mcpServers` だけ既存設定へマージ（Gemini CLI 向け）
+
+### Skills
+
+- `skill_layers: ["shared", "target"]` の順で適用
+- `skills_mode: "overlay"` の場合:
+  - 同名ファイルは上書き
+  - ターゲット側にしかないファイルは削除しない
+- `skills_mode: "replace"` の場合:
+  - ターゲット側をクリアしてから再配置
+
+## 実行
 
 ```powershell
 cd $HOME/ai-config
 ./scripts/sync-all.ps1
 ```
 
-- Windowsでは `../windows-env-sync/scripts/sync-windows-env.ps1` が存在する場合に自動実行され、`git/node/npx/pwsh/winget` 周辺の前提を同期します
-- スキップしたい場合は `./scripts/sync-all.ps1 -SkipWindowsEnvSync`
-- Webflow MCP は OAuth 方式（`mcp-remote https://mcp.webflow.com/mcp`）を使用します
-- `WEBFLOW_MCP_COMMAND` / `WEBFLOW_MCP_ARGS` を `.env` で指定すると、Webflow MCP の起動方法を上書きできます
-
-## 個別実行
+### 個別実行
 
 ```powershell
-# MCPのみ反映（codex/gemini/antigravity）
-./scripts/apply-mcp.ps1
+# MCPのみ
+./scripts/sync/sync-mcp.ps1 -RepoRoot $HOME/ai-config
 
-# 中央 .env から ai-agent-collection などへ配布
-./scripts/sync-env-files.ps1
+# Skillsのみ
+./scripts/sync/sync-skills.ps1 -RepoRoot $HOME/ai-config
 
-# shared + agent-specific を合成して同期
-# 優先順位: agent-specific > shared
-# 既存の未管理スキルは保護。上書きしたい場合のみ -OverwriteExisting
-./scripts/sync-skills.ps1 -OverwriteExisting
-
-# 現在の状態を inventory/*.json に出力
-./scripts/export-inventory.ps1
-
-# skills.sh all-time上位500を導入（再実行でレジューム）
-./scripts/import-skills-sh-top.ps1 -TopN 500
-
-# 重複スキル棚卸しレポート生成
-./scripts/audit-skill-duplicates.ps1
-
-# 依存リポジトリを取得/更新
-./scripts/fetch-repos.ps1
-
-# .env を対話式セットアップ
-./scripts/setup-env-interactive.ps1
-
-# Open WebUIエクスポートを反映（最新ファイル自動選択）
-./scripts/sync-open-webui-export.ps1 -ExportDir <export-folder> -UseLatestFiles
-
-# GA4: 直近7日セッション/CVRを取得
-./scripts/run-ga4-last7d-sessions-cvr.ps1
-
-# Antigravity設定をエクスポート（snapshot + latest）
-./scripts/export-antigravity.ps1
-
-# Antigravity設定をインポート
-./scripts/import-antigravity.ps1
-
-# 新環境の復元を一括実行
-./scripts/restore-ai-workspace.ps1 -WorkspaceRoot $HOME -AiPlatformProfile core -ApplyOpenWebUiExport
-
-# Open WebUI importの一部だけスキップしたい場合
-./scripts/restore-ai-workspace.ps1 -WorkspaceRoot $HOME -ApplyOpenWebUiExport -SkipOpenWebUiConfig
-
-# 復元時にAntigravity設定も同時インポート
-./scripts/restore-ai-workspace.ps1 -WorkspaceRoot $HOME -ApplyAntigravityImport
+# DryRun
+./scripts/sync/sync-mcp.ps1 -RepoRoot $HOME/ai-config -DryRun
+./scripts/sync/sync-skills.ps1 -RepoRoot $HOME/ai-config -DryRun
 ```
 
-## 新PCへの最短復元
+### 互換エイリアス
 
-`ai-config` だけ先にcloneできれば、以下の1コマンドで復元できます。
+旧ターゲット名 `gemini` / `gemini_shell` / `gemini-cli` は自動的に `gemini_cli` へ変換されます。
 
-```powershell
-cd $HOME/ai-config
-pwsh ./scripts/restore-ai-workspace.ps1 -WorkspaceRoot $HOME -AiPlatformProfile core -ApplyOpenWebUiExport
-```
+## 既定パス（ai-sync.yaml）
 
-- `core`: Open WebUI + mcp-router を優先して起動（GPU必須構成を回避）
-- `full`: `-AiPlatformProfile full` で `ai-full` プロファイルを起動
-- Antigravity設定も同時復元したい場合は `-ApplyAntigravityImport` を付与
-- Open WebUIエクスポートを後で反映する場合は `sync-open-webui-export.ps1` を単体実行
-- `.env` の同期は `sync-all.ps1` / `setup-env-interactive.ps1` 内で自動実行されます
+- Codex
+  - Windows: `${USERPROFILE}\.codex\config.toml`, `${USERPROFILE}\.codex\skills`
+  - macOS: `${HOME}/.codex/config.toml`, `${HOME}/.codex/skills`
+- Antigravity
+  - Windows: `${USERPROFILE}\.gemini\antigravity\mcp_config.json`, `${USERPROFILE}\.gemini\antigravity\skills`
+  - macOS: `${HOME}/.gemini/antigravity/mcp_config.json`, `${HOME}/.gemini/antigravity/skills`
+- Gemini CLI
+  - Windows: `${USERPROFILE}\.gemini\settings.json`, `${USERPROFILE}\.gemini\skills`
+  - macOS: `${HOME}/.gemini/settings.json`, `${HOME}/.gemini/skills`
 
-## Antigravity の同期
+## 環境変数
 
-```powershell
-# 現在のAntigravity設定を ai-config に保存
-pwsh ./scripts/export-antigravity.ps1
+`.env.example` を `.env` にコピーして必要値を設定してください。主な上書き変数:
 
-# 必要なら globalStorage も含める（機密情報が入りうるため通常は非推奨）
-pwsh ./scripts/export-antigravity.ps1 -IncludeGlobalStorage
+- `CODEX_CONFIG_PATH`
+- `GEMINI_CONFIG_PATH`
+- `GEMINI_MCP_CONFIG_PATH`
+- `ANTIGRAVITY_MCP_CONFIG_PATH`
+- `CODEX_SKILLS_PATH`
+- `GEMINI_SKILLS_PATH`
+- `ANTIGRAVITY_SKILLS_PATH`
 
-# 新環境で復元
-pwsh ./scripts/import-antigravity.ps1
-```
+## その他スクリプト
 
-- エクスポート先は既定で `inventory/antigravity/` です
-- `latest/` は復元用の最新スナップショット、`snapshot-YYYYMMDD-HHmmss/` は履歴です
-- 拡張は `extensions-manifest.txt`（`publisher.name@version`）から再インストールします
+- `scripts/sync-env-files.ps1`: 共有 `.env` の配布
+- `scripts/export-inventory.ps1`: 現在状態のスナップショット出力
+- `scripts/import-skills-sh-top.ps1`: skills.sh 上位の取り込み
+- `scripts/audit-skill-duplicates.ps1`: スキル重複棚卸し
+- `scripts/fetch-repos.ps1`: 依存リポジトリの clone/pull
+- `scripts/restore-ai-workspace.ps1`: 新環境復元フロー
 
-## Mac / Linuxで再現
+## 注意
 
-PowerShell 7(`pwsh`) を使えば同じスクリプトで再現できます。
-
-```bash
-cd ~/ai-config
-pwsh ./scripts/sync-all.ps1
-```
-
-- 反映先は `$HOME` 基準で解決されます
-- 必要なら `.env` の `*_PATH` と `AI_AGENT_COLLECTION_ENV_PATH` で上書きしてください
-- `TopN 500` 取り込みはネットワークとディスクを使うため、初回は時間がかかります
-
-## skills.sh 上位導入フロー
-
-1. `./scripts/import-skills-sh-top.ps1 -TopN 500`  
-2. `./scripts/audit-skill-duplicates.ps1`  
-3. `inventory/skill-duplicates.md` を見て統合作業  
-4. 採用するものだけ `skills/shared` または `skills/<agent>` に昇格  
-5. `./scripts/sync-skills.ps1` で各ツールへ配布
-
-## Skills更新ポリシー（重要）
-
-- `sync-all.ps1` / `sync-skills.ps1` は **配布のみ**（`ai-config/skills/*` の内容を各ツール配下へコピー）
-- 外部更新の取得は明示的に実行:
-  - 依存リポジトリ更新: `./scripts/fetch-repos.ps1`
-  - skills.sh 由来更新: `./scripts/import-skills-sh-top.ps1`
-- つまり「同期するたびに公式Skillを都度フェッチ」は現状しません（必要時に pull/import する運用）
-
-現状メモ:
-- `TopN 500` の取り込み実績は `498/500`（未解決: `stripe-best-practices`, `vue-development-guides`）
-- 重複名は `19` 件（`inventory/skill-duplicates.md` に推薦keep先あり）
-
-## 日々の追加運用
-
-1. まず `skills/imported/skills-sh` に新規取り込み
-2. `./scripts/audit-skill-duplicates.ps1` で重複確認
-3. 採用候補を `skills/shared` または `skills/<agent>` に昇格
-4. `./scripts/sync-skills.ps1` で配布
-5. 定期的に `inventory/skill-duplicates.md` を見直し
-
-## 既定の反映先
-
-- Codex MCP: `~/.codex/config.toml`
-- Gemini MCP: `~/.gemini/antigravity/mcp_config.json`
-- Antigravity MCP: `~/.antigravity/mcp_config.json`
-- Codex Skills: `~/.codex/skills`
-- Gemini Skills: `~/.gemini/skills`
-- Antigravity Skills: `~/.gemini/antigravity/skills`
-- ai-agent-collection `.env`: `~/ai-agent-collection/docker-infrastructure/.env`
-
-`.env` の `*_PATH` と `AI_AGENT_COLLECTION_ENV_PATH` で上書き可能です。
-
-## GitHub Private Repo化
-
-```powershell
-# 1) GitHub認証
-# gh auth login
-
-# 2) Private repo作成してpush
-# gh repo create <repo-name> --private --source=. --remote=origin --push
-```
-
-## セキュリティ注意
-
-- `.env` はコミットしないでください（`.gitignore` 済み）
-- `inventory` にはキー値は保存せず、名前・件数のみを出力します
-- もし既存設定にトークン直書きを見つけた場合は、環境変数化してトークンをローテーションしてください
+- `.env` はコミットしないでください（`.gitignore` 対象）
+- PowerShell 実行環境（`pwsh` 推奨）が必要です
+- `sync-all.ps1 -DryRun` では環境同期と inventory 出力は実際には書き込みません

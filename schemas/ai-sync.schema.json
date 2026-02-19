@@ -1,0 +1,329 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-config.local/schemas/ai-sync.schema.json",
+  "title": "AI Config Master Sync Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "defaults",
+    "targets",
+    "mcp_servers",
+    "skill_sets"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^1\\.\\d+\\.\\d+$"
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dry_run",
+        "backup",
+        "conflict_policy",
+        "excluded_toolchains"
+      ],
+      "properties": {
+        "dry_run": {
+          "type": "boolean"
+        },
+        "backup": {
+          "type": "boolean"
+        },
+        "conflict_policy": {
+          "type": "string",
+          "enum": [
+            "prompt",
+            "overwrite",
+            "skip"
+          ]
+        },
+        "excluded_toolchains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "contains": {
+            "const": "anthropic"
+          }
+        }
+      }
+    },
+    "targets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "codex",
+        "antigravity",
+        "gemini_cli"
+      ],
+      "properties": {
+        "codex": {
+          "$ref": "#/$defs/target"
+        },
+        "antigravity": {
+          "$ref": "#/$defs/target"
+        },
+        "gemini_cli": {
+          "$ref": "#/$defs/target"
+        }
+      }
+    },
+    "mcp_servers": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/$defs/mcpServer"
+      }
+    },
+    "skill_sets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shared",
+        "codex",
+        "antigravity",
+        "gemini_cli"
+      ],
+      "properties": {
+        "shared": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "codex": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "antigravity": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "gemini_cli": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "targetName": {
+      "type": "string",
+      "enum": [
+        "codex",
+        "antigravity",
+        "gemini_cli"
+      ]
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "path_profiles",
+        "sync"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "path_profiles": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "windows",
+            "darwin"
+          ],
+          "properties": {
+            "windows": {
+              "$ref": "#/$defs/pathProfile"
+            },
+            "darwin": {
+              "$ref": "#/$defs/pathProfile"
+            }
+          }
+        },
+        "templates": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "config_template": {
+              "type": "string"
+            },
+            "mcp_template": {
+              "type": "string"
+            }
+          }
+        },
+        "override_env": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "config_file": {
+              "type": "string"
+            },
+            "mcp_file": {
+              "type": "string"
+            },
+            "skills_dir": {
+              "type": "string"
+            }
+          }
+        },
+        "sync": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mcp_mode",
+            "skills_mode",
+            "skill_layers"
+          ],
+          "properties": {
+            "mcp_mode": {
+              "type": "string",
+              "enum": [
+                "replace",
+                "merge"
+              ]
+            },
+            "skills_mode": {
+              "type": "string",
+              "enum": [
+                "overlay",
+                "replace"
+              ]
+            },
+            "skill_layers": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "shared",
+                  "target"
+                ]
+              },
+              "minItems": 1
+            }
+          }
+        }
+      }
+    },
+    "pathProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "root_dir"
+      ],
+      "properties": {
+        "root_dir": {
+          "type": "string"
+        },
+        "config_file": {
+          "type": "string"
+        },
+        "mcp_file": {
+          "type": "string"
+        },
+        "skills_dir": {
+          "type": "string"
+        },
+        "fallback_skills_dirs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "mcpServer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transport",
+        "enabled_targets"
+      ],
+      "properties": {
+        "transport": {
+          "type": "string",
+          "enum": [
+            "stdio",
+            "http",
+            "sse"
+          ]
+        },
+        "enabled_targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/targetName"
+          },
+          "minItems": 1
+        },
+        "command": {
+          "type": "string"
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "env": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "transport": {
+                "const": "stdio"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "command"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "transport": {
+                "enum": [
+                  "http",
+                  "sse"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "url"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
