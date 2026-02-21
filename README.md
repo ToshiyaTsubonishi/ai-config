@@ -16,14 +16,22 @@ Codex / Antigravity / Gemini CLI の `MCP` と `Skills` を一元管理して同
 - スキーマ: `schemas/ai-sync.schema.json`
 - ターゲット別テンプレート:
   - `config/targets/codex/config.toml.tmpl`
+  - `config/targets/codex/AGENTS.md.tmpl`
+  - `config/targets/codex/AGENTS_RULES.md.tmpl`
   - `config/targets/antigravity/mcp_config.json.tmpl`
+  - `config/targets/antigravity/GEMINI.md.tmpl`
+  - `config/targets/antigravity/GEMINI_RULES.md.tmpl`
   - `config/targets/gemini-cli/settings.json.tmpl`
+  - `config/targets/gemini-cli/GEMINI.md.tmpl`
+  - `config/targets/gemini-cli/GEMINI_RULES.md.tmpl`
 - コア同期スクリプト:
   - `scripts/sync/sync-mcp.ps1`
   - `scripts/sync/sync-skills.ps1`
+  - `scripts/sync/sync-agent-context.ps1`
 - 互換ラッパー:
   - `scripts/apply-mcp.ps1`
   - `scripts/sync-skills.ps1`
+  - `scripts/sync/sync-gemini-context.ps1`（旧名互換）
   - `scripts/sync-all.ps1`
 
 ## 同期ロジック
@@ -44,6 +52,15 @@ Codex / Antigravity / Gemini CLI の `MCP` と `Skills` を一元管理して同
 - `skills_mode: "replace"` の場合:
   - ターゲット側をクリアしてから再配置
 
+### Agent Context (`AGENTS.md` / `GEMINI.md` / Rules)
+
+- `codex` / `gemini_cli` / `antigravity` で、ターゲットごとのコンテキストテンプレートをホーム配下へ同期
+- デフォルト出力:
+  - Codex: `${USERPROFILE}\.codex\AGENTS.md`, `${USERPROFILE}\.codex\AGENTS_RULES.md`
+  - Gemini CLI: `${USERPROFILE}\.gemini\GEMINI.md`, `${USERPROFILE}\.gemini\GEMINI_RULES.md`
+  - Antigravity: `${USERPROFILE}\.gemini\antigravity\GEMINI.md`, `${USERPROFILE}\.gemini\antigravity\GEMINI_RULES.md`
+- 必要なら環境変数で出力先を上書き可能（後述）
+
 ## 実行
 
 ```powershell
@@ -60,9 +77,13 @@ cd $HOME/ai-config
 # Skillsのみ
 ./scripts/sync/sync-skills.ps1 -RepoRoot $HOME/ai-config
 
+# Agent context のみ (codex / gemini_cli / antigravity)
+./scripts/sync/sync-agent-context.ps1 -RepoRoot $HOME/ai-config
+
 # DryRun
 ./scripts/sync/sync-mcp.ps1 -RepoRoot $HOME/ai-config -DryRun
 ./scripts/sync/sync-skills.ps1 -RepoRoot $HOME/ai-config -DryRun
+./scripts/sync/sync-agent-context.ps1 -RepoRoot $HOME/ai-config -DryRun
 ```
 
 ### 互換エイリアス
@@ -86,9 +107,15 @@ cd $HOME/ai-config
 `.env.example` を `.env` にコピーして必要値を設定してください。主な上書き変数:
 
 - `CODEX_CONFIG_PATH`
+- `CODEX_AGENTS_PATH`
+- `CODEX_AGENTS_RULES_PATH`
 - `GEMINI_CONFIG_PATH`
 - `GEMINI_MCP_CONFIG_PATH`
 - `ANTIGRAVITY_MCP_CONFIG_PATH`
+- `GEMINI_SYSTEM_PROMPT_PATH`
+- `GEMINI_RULES_PATH`
+- `ANTIGRAVITY_SYSTEM_PROMPT_PATH`
+- `ANTIGRAVITY_RULES_PATH`
 - `CODEX_SKILLS_PATH`
 - `GEMINI_SKILLS_PATH`
 - `ANTIGRAVITY_SKILLS_PATH`

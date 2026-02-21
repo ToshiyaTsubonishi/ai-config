@@ -42,12 +42,13 @@ function Resolve-TargetAliases {
 
 $syncMcpScript = Join-Path $RepoRoot "scripts/sync/sync-mcp.ps1"
 $syncSkillsScript = Join-Path $RepoRoot "scripts/sync/sync-skills.ps1"
+$syncAgentContextScript = Join-Path $RepoRoot "scripts/sync/sync-agent-context.ps1"
 $inventoryScript = Join-Path $RepoRoot "scripts/export-inventory.ps1"
 $syncEnvScript = Join-Path $RepoRoot "scripts/sync-env-files.ps1"
 $workspaceRoot = Split-Path -Path $RepoRoot -Parent
 $windowsEnvSyncScript = Join-Path $workspaceRoot "windows-env-sync/scripts/sync-windows-env.ps1"
 
-foreach ($requiredScript in @($syncMcpScript, $syncSkillsScript, $inventoryScript, $syncEnvScript)) {
+foreach ($requiredScript in @($syncMcpScript, $syncSkillsScript, $syncAgentContextScript, $inventoryScript, $syncEnvScript)) {
   if (-not (Test-Path $requiredScript)) {
     throw "Required script not found: $requiredScript"
   }
@@ -150,6 +151,29 @@ if ($effectiveSkillTargets.Count -gt 0) {
 }
 else {
   Write-Host "[skip] Skills sync target list is empty."
+}
+
+$contextTargets = @($effectiveMcpTargets + $effectiveSkillTargets | Select-Object -Unique)
+if ($contextTargets.Count -gt 0) {
+  $contextArgs = @{
+    RepoRoot = $RepoRoot
+    Targets  = $contextTargets
+  }
+
+  if ($ConfigPath) {
+    $contextArgs["ConfigPath"] = $ConfigPath
+  }
+  if ($NoBackup) {
+    $contextArgs["NoBackup"] = $true
+  }
+  if ($DryRun) {
+    $contextArgs["DryRun"] = $true
+  }
+
+  & $syncAgentContextScript @contextArgs
+}
+else {
+  Write-Host "[skip] Agent context sync target list is empty."
 }
 
 if ($DryRun) {
