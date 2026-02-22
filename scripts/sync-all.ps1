@@ -7,6 +7,7 @@ param(
   [string[]]$SkillTargets,
   [switch]$SkipWindowsEnvSync,
   [switch]$SkipEnvSync,
+  [switch]$SkipBaselineSkillImport,
   [switch]$NoBackup,
   [switch]$StrictVariables,
   [switch]$OverwriteExistingSkills,
@@ -43,12 +44,13 @@ function Resolve-TargetAliases {
 $syncMcpScript = Join-Path $RepoRoot "scripts/sync/sync-mcp.ps1"
 $syncSkillsScript = Join-Path $RepoRoot "scripts/sync/sync-skills.ps1"
 $syncAgentContextScript = Join-Path $RepoRoot "scripts/sync/sync-agent-context.ps1"
+$importBaselineSkillsScript = Join-Path $RepoRoot "scripts/import-antigravity-awesome-skills.ps1"
 $inventoryScript = Join-Path $RepoRoot "scripts/export-inventory.ps1"
 $syncEnvScript = Join-Path $RepoRoot "scripts/sync-env-files.ps1"
 $workspaceRoot = Split-Path -Path $RepoRoot -Parent
 $windowsEnvSyncScript = Join-Path $workspaceRoot "windows-env-sync/scripts/sync-windows-env.ps1"
 
-foreach ($requiredScript in @($syncMcpScript, $syncSkillsScript, $syncAgentContextScript, $inventoryScript, $syncEnvScript)) {
+foreach ($requiredScript in @($syncMcpScript, $syncSkillsScript, $syncAgentContextScript, $importBaselineSkillsScript, $inventoryScript, $syncEnvScript)) {
   if (-not (Test-Path $requiredScript)) {
     throw "Required script not found: $requiredScript"
   }
@@ -64,6 +66,21 @@ if ($OverwriteExistingSkills) {
 
 if ($PruneManagedSkills) {
   Write-Warning "-PruneManagedSkills is deprecated. Use ai-sync.yaml sync.skills_mode='replace' when full replacement is required."
+}
+
+if (-not $SkipBaselineSkillImport) {
+  $baselineArgs = @{
+    RepoRoot = $RepoRoot
+  }
+
+  if ($NoBackup) {
+    $baselineArgs["NoBackup"] = $true
+  }
+  if ($DryRun) {
+    $baselineArgs["DryRun"] = $true
+  }
+
+  & $importBaselineSkillsScript @baselineArgs
 }
 
 $defaultTargets = Resolve-TargetAliases -RawTargets $Targets

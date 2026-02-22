@@ -35,7 +35,7 @@ targets:
     sync:
       mcp_mode: "replace"
       skills_mode: "overlay"
-      skill_layers: ["shared", "target"]
+      skill_layers: ["external", "shared", "target"]
 
   antigravity:
     enabled: true
@@ -56,7 +56,7 @@ targets:
     sync:
       mcp_mode: "replace"
       skills_mode: "overlay"
-      skill_layers: ["shared", "target"]
+      skill_layers: ["external", "shared", "target"]
 
   gemini_cli:
     enabled: true
@@ -81,7 +81,7 @@ targets:
     sync:
       mcp_mode: "merge"
       skills_mode: "overlay"
-      skill_layers: ["shared", "target"]
+      skill_layers: ["external", "shared", "target"]
 
 mcp_servers:
   filesystem:
@@ -93,6 +93,8 @@ mcp_servers:
     timeout_ms: 20000
 
 skill_sets:
+  external:
+    - "skills/external/*"
   shared:
     - "skills/shared/*"
   codex:

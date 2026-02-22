@@ -46,6 +46,10 @@ Codex / Antigravity / Gemini CLI の `MCP` と `Skills` を一元管理して同
 ### Skills
 
 - `skill_layers: ["shared", "target"]` の順で適用
+- ベースラインは `https://github.com/tsytbns/antigravity-awesome-skills` の以下3系統を使用:
+  - `skills/codex-cli` -> `skills/codex`
+  - `skills/gemini-cli` -> `skills/gemini`
+  - `skills/antigravity` -> `skills/antigravity`
 - `skills_mode: "overlay"` の場合:
   - 同名ファイルは上書き
   - ターゲット側にしかないファイルは削除しない
@@ -66,6 +70,14 @@ Codex / Antigravity / Gemini CLI の `MCP` と `Skills` を一元管理して同
 ```powershell
 cd $HOME/ai-config
 ./scripts/sync-all.ps1
+```
+
+`sync-all.ps1` はデフォルトで `scripts/import-antigravity-awesome-skills.ps1` を実行し、
+`codex` / `gemini_cli` / `antigravity` 用のベースライン Skills を更新します。  
+ベースライン取り込みをスキップする場合:
+
+```powershell
+./scripts/sync-all.ps1 -SkipBaselineSkillImport
 ```
 
 ### 個別実行
@@ -124,7 +136,8 @@ cd $HOME/ai-config
 
 - `scripts/sync-env-files.ps1`: 共有 `.env` の配布
 - `scripts/export-inventory.ps1`: 現在状態のスナップショット出力
-- `scripts/import-skills-sh-top.ps1`: skills.sh 上位の取り込み
+- `scripts/import-antigravity-awesome-skills.ps1`: `antigravity-awesome-skills` から `codex-cli` / `gemini-cli` / `antigravity` を取り込み
+- `scripts/import-skills-sh-top.ps1`: 廃止（TopN 収集は基本設定から除外）
 - `scripts/audit-skill-duplicates.ps1`: スキル重複棚卸し
 - `scripts/fetch-repos.ps1`: 依存リポジトリの clone/pull
 - `scripts/restore-ai-workspace.ps1`: 新環境復元フロー

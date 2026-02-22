@@ -6,11 +6,24 @@ param(
   [string]$Agent = "codex",
   [int]$ChunkSize = 20,
   [switch]$OverwriteImported,
-  [switch]$SkipInstall
+  [switch]$SkipInstall,
+  [switch]$AllowDeprecated
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+
+if (-not $AllowDeprecated) {
+  throw @"
+scripts/import-skills-sh-top.ps1 は廃止されました。
+TopN（Top200/Top500 など）の収集は基本設定から外しています。
+
+代わりに以下を使ってください:
+  scripts/import-antigravity-awesome-skills.ps1
+
+どうしても旧フローを使う場合のみ -AllowDeprecated を明示してください。
+"@
+}
 
 if ($TopN -lt 1) {
   throw "TopN must be >= 1"
