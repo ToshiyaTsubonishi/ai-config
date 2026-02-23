@@ -15,7 +15,7 @@ if (-not $ConfigPath) {
 }
 
 function ConvertTo-HashtableRecursive {
-  param([Parameter(Mandatory = $true)]$Value)
+  param([AllowNull()]$Value)
 
   if ($null -eq $Value) { return $null }
 
@@ -30,7 +30,7 @@ function ConvertTo-HashtableRecursive {
   if (($Value -is [System.Collections.IEnumerable]) -and -not ($Value -is [string])) {
     $items = @()
     foreach ($item in $Value) {
-      $items += ,(ConvertTo-HashtableRecursive -Value $item)
+      $items += , (ConvertTo-HashtableRecursive -Value $item)
     }
     return $items
   }
@@ -291,10 +291,10 @@ function Write-ManagedMarker {
 
   $markerPath = Join-Path $SkillDir ".ai-config-managed.json"
   $markerObj = [ordered]@{
-    managedBy = "ai-config/scripts/sync/sync-skills.ps1"
-    target = $TargetName
-    layer = $LayerName
-    source = $SourcePath
+    managedBy   = "ai-config/scripts/sync/sync-skills.ps1"
+    target      = $TargetName
+    layer       = $LayerName
+    source      = $SourcePath
     syncedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
   }
 

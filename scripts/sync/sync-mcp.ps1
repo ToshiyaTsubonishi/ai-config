@@ -15,7 +15,7 @@ if (-not $ConfigPath) {
 }
 
 function ConvertTo-HashtableRecursive {
-  param([Parameter(Mandatory = $true)]$Value)
+  param([AllowNull()]$Value)
 
   if ($null -eq $Value) {
     return $null
@@ -32,7 +32,7 @@ function ConvertTo-HashtableRecursive {
   if (($Value -is [System.Collections.IEnumerable]) -and -not ($Value -is [string])) {
     $items = @()
     foreach ($item in $Value) {
-      $items += ,(ConvertTo-HashtableRecursive -Value $item)
+      $items += , (ConvertTo-HashtableRecursive -Value $item)
     }
     return $items
   }

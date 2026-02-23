@@ -15,7 +15,7 @@ if (-not $ConfigPath) {
 }
 
 function ConvertTo-HashtableRecursive {
-  param([Parameter(Mandatory = $true)]$Value)
+  param([AllowNull()]$Value)
 
   if ($null -eq $Value) {
     return $null
@@ -32,7 +32,7 @@ function ConvertTo-HashtableRecursive {
   if (($Value -is [System.Collections.IEnumerable]) -and -not ($Value -is [string])) {
     $items = @()
     foreach ($item in $Value) {
-      $items += ,(ConvertTo-HashtableRecursive -Value $item)
+      $items += , (ConvertTo-HashtableRecursive -Value $item)
     }
     return $items
   }
@@ -225,45 +225,45 @@ function Resolve-TemplatePath {
 }
 
 $targetFileSpecs = @{
-  "codex" = @(
+  "codex"       = @(
     @{
-      label = "AGENTS.md"
-      template = "config/targets/codex/AGENTS.md.tmpl"
-      file_name = "AGENTS.md"
+      label        = "AGENTS.md"
+      template     = "config/targets/codex/AGENTS.md.tmpl"
+      file_name    = "AGENTS.md"
       override_env = "CODEX_AGENTS_PATH"
     },
     @{
-      label = "AGENTS_RULES.md"
-      template = "config/targets/codex/AGENTS_RULES.md.tmpl"
-      file_name = "AGENTS_RULES.md"
+      label        = "AGENTS_RULES.md"
+      template     = "config/targets/codex/AGENTS_RULES.md.tmpl"
+      file_name    = "AGENTS_RULES.md"
       override_env = "CODEX_AGENTS_RULES_PATH"
     }
   )
-  "gemini_cli" = @(
+  "gemini_cli"  = @(
     @{
-      label = "GEMINI.md"
-      template = "config/targets/gemini-cli/GEMINI.md.tmpl"
-      file_name = "GEMINI.md"
+      label        = "GEMINI.md"
+      template     = "config/targets/gemini-cli/GEMINI.md.tmpl"
+      file_name    = "GEMINI.md"
       override_env = "GEMINI_SYSTEM_PROMPT_PATH"
     },
     @{
-      label = "GEMINI_RULES.md"
-      template = "config/targets/gemini-cli/GEMINI_RULES.md.tmpl"
-      file_name = "GEMINI_RULES.md"
+      label        = "GEMINI_RULES.md"
+      template     = "config/targets/gemini-cli/GEMINI_RULES.md.tmpl"
+      file_name    = "GEMINI_RULES.md"
       override_env = "GEMINI_RULES_PATH"
     }
   )
   "antigravity" = @(
     @{
-      label = "GEMINI.md"
-      template = "config/targets/antigravity/GEMINI.md.tmpl"
-      file_name = "GEMINI.md"
+      label        = "GEMINI.md"
+      template     = "config/targets/antigravity/GEMINI.md.tmpl"
+      file_name    = "GEMINI.md"
       override_env = "ANTIGRAVITY_SYSTEM_PROMPT_PATH"
     },
     @{
-      label = "GEMINI_RULES.md"
-      template = "config/targets/antigravity/GEMINI_RULES.md.tmpl"
-      file_name = "GEMINI_RULES.md"
+      label        = "GEMINI_RULES.md"
+      template     = "config/targets/antigravity/GEMINI_RULES.md.tmpl"
+      file_name    = "GEMINI_RULES.md"
       override_env = "ANTIGRAVITY_RULES_PATH"
     }
   )
