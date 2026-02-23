@@ -437,14 +437,14 @@ foreach ($targetName in $effectiveTargets) {
   }
 
   foreach ($layerName in $skillLayers) {
-    $patterns = Get-LayerPatterns -Config $config -TargetName $targetName -LayerName $layerName
+    $patterns = @(Get-LayerPatterns -Config $config -TargetName $targetName -LayerName $layerName)
     if ($patterns.Count -eq 0) {
       Write-Host "[info] [$targetName][$layerName] no patterns."
       continue
     }
 
     foreach ($pattern in $patterns) {
-      $sourceDirs = Resolve-SkillDirsFromPattern -Pattern $pattern -RepoRootPath $RepoRoot
+      $sourceDirs = @(Resolve-SkillDirsFromPattern -Pattern $pattern -RepoRootPath $RepoRoot)
       if ($sourceDirs.Count -eq 0) {
         Write-Host "[info] [$targetName][$layerName] no skill dirs matched: $pattern"
         continue
