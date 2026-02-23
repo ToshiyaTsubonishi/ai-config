@@ -1,3 +1,6 @@
 [submodule "skills/external/streamlit"]
 	path = skills/external/streamlit
 	url = https://github.com/streamlit/agent-skills
+[submodule "skills/external/remotion"]
+	path = skills/external/remotion
+	url = https://github.com/remotion-dev/skills

@@ -92,6 +92,14 @@ mcp_servers:
     env: {}
     timeout_ms: 20000
 
+  remotion-documentation:
+    transport: "stdio"
+    enabled_targets: ["codex", "antigravity", "gemini_cli"]
+    command: "npx"
+    args: ["-y", "@remotion/mcp@latest"]
+    env: {}
+    timeout_ms: 20000
+
 skill_sets:
   external:
     - "skills/external/*"
