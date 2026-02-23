@@ -100,6 +100,30 @@ mcp_servers:
     env: {}
     timeout_ms: 20000
 
+  reinfo:
+    transport: "stdio"
+    enabled_targets: ["codex", "antigravity", "gemini_cli"]
+    command: "npx"
+    args: ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=get-time,reinfolib-real-estate-price,reinfolib-city-list"]
+    env: {}
+    timeout_ms: 20000
+
+  kkj:
+    transport: "stdio"
+    enabled_targets: ["codex", "antigravity", "gemini_cli"]
+    command: "npx"
+    args: ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=kkj-search"]
+    env: {}
+    timeout_ms: 20000
+
+  e-stat:
+    transport: "stdio"
+    enabled_targets: ["codex", "antigravity", "gemini_cli"]
+    command: "npx"
+    args: ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=e-stat-get-stats-list,e-stat-get-meta-info,e-stat-get-data-catalog"]
+    env: {}
+    timeout_ms: 20000
+
 skill_sets:
   external:
     - "skills/external/*"

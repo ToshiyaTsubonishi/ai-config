@@ -1,6 +1,6 @@
 {
   "configPath": "C:\\Users\\ttsub\\.codex\\config.toml",
-  "count": 33,
+  "count": 37,
   "servers": [
     {
       "name": "apify",
@@ -60,6 +60,12 @@
     },
     {
       "name": "davinci_resolve",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
+      "name": "e-stat",
       "hasCommand": true,
       "hasUrl": false,
       "envKeys": []
@@ -127,6 +133,12 @@
       ]
     },
     {
+      "name": "google_developer_knowledge",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
       "name": "google_maps",
       "hasCommand": true,
       "hasUrl": false,
@@ -142,6 +154,12 @@
     },
     {
       "name": "jina_reader",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
+      "name": "kkj",
       "hasCommand": true,
       "hasUrl": false,
       "envKeys": []
@@ -191,6 +209,12 @@
     },
     {
       "name": "postgres",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
+      "name": "reinfo",
       "hasCommand": true,
       "hasUrl": false,
       "envKeys": []

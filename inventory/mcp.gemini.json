@@ -1,6 +1,6 @@
 {
   "configPath": "C:\\Users\\ttsub\\.gemini\\antigravity\\mcp_config.json",
-  "count": 33,
+  "count": 36,
   "servers": [
     {
       "name": "apify",
@@ -62,6 +62,12 @@
       "name": "davinci_resolve",
       "command": "npx",
       "argsCount": 2,
+      "envKeys": []
+    },
+    {
+      "name": "e-stat",
+      "command": "npx",
+      "argsCount": 3,
       "envKeys": []
     },
     {
@@ -147,6 +153,12 @@
       "envKeys": []
     },
     {
+      "name": "kkj",
+      "command": "npx",
+      "argsCount": 3,
+      "envKeys": []
+    },
+    {
       "name": "line_bot",
       "command": "npx",
       "argsCount": 2,
@@ -196,6 +208,12 @@
       "envKeys": []
     },
     {
+      "name": "reinfo",
+      "command": "npx",
+      "argsCount": 3,
+      "envKeys": []
+    },
+    {
       "name": "sequential_thinking",
       "command": "npx",
       "argsCount": 2,
@@ -230,11 +248,9 @@
     },
     {
       "name": "webflow",
-      "command": "npx",
-      "argsCount": 2,
-      "envKeys": [
-        "WEBFLOW_TOKEN"
-      ]
+      "command": "C:/Windows/System32/cmd.exe",
+      "argsCount": 3,
+      "envKeys": []
     }
   ]
 }

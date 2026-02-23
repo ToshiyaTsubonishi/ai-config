@@ -305,6 +305,33 @@
         "https://mcp.jina.ai/v1"
       ],
       "env": {}
+    },
+    "reinfo": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.n-3.ai/mcp?tools=get-time,reinfolib-real-estate-price,reinfolib-city-list"
+      ],
+      "env": {}
+    },
+    "kkj": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.n-3.ai/mcp?tools=kkj-search"
+      ],
+      "env": {}
+    },
+    "e-stat": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.n-3.ai/mcp?tools=e-stat-get-stats-list,e-stat-get-meta-info,e-stat-get-data-catalog"
+      ],
+      "env": {}
     }
   }
 }

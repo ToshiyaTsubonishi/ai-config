@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-02-19T02:29:48.4282411+09:00",
+  "generatedAt": "2026-02-24T08:16:31.0857751+09:00",
   "skills": {
-    "codex": 356,
-    "gemini": 21,
-    "antigravity": 21
+    "codex": 376,
+    "gemini": 41,
+    "antigravity": 41
   },
   "mcp": {
-    "codex": 33,
-    "gemini": 33,
+    "codex": 37,
+    "gemini": 36,
     "antigravity": 33
   }
 }

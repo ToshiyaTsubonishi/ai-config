@@ -146,3 +146,16 @@ env = { FIGMA_API_KEY = "{{FIGMA_API_KEY}}" }
 [mcp_servers.jina_reader]
 command = "npx"
 args = ["-y", "mcp-remote", "https://mcp.jina.ai/v1"]
+
+[mcp_servers.reinfo]
+command = "npx"
+args = ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=get-time,reinfolib-real-estate-price,reinfolib-city-list"]
+
+[mcp_servers.kkj]
+command = "npx"
+args = ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=kkj-search"]
+
+[mcp_servers.e-stat]
+command = "npx"
+args = ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=e-stat-get-stats-list,e-stat-get-meta-info,e-stat-get-data-catalog"]
+
