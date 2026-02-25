@@ -84,6 +84,14 @@ targets:
       skill_layers: ["external", "shared", "target"]
 
 mcp_servers:
+  eslint:
+    transport: "stdio"
+    enabled_targets: ["codex", "antigravity", "gemini_cli"]
+    command: "npx"
+    args: ["-y", "@eslint/mcp@latest"]
+    env: {}
+    timeout_ms: 20000
+
   filesystem:
     transport: "stdio"
     enabled_targets: ["codex", "antigravity", "gemini_cli"]
