@@ -49,6 +49,7 @@ _MCP_DESCRIPTIONS: dict[str, str] = {
     "kkj": "Japanese public procurement information search",
     "line_bot": "LINE messaging bot operations",
     "google_maps": "Google Maps geocoding, directions, and places",
+    "inference-proxy-mcp": "Inference Proxy MCP for Whisper and Yomitoku (audio transcription and OCR)",
 }
 
 
@@ -142,6 +143,7 @@ def scan_mcp_servers(repo_root: Path) -> list[ToolRecord]:
                 metadata={
                     "transport": entry.get("transport", "stdio"),
                     "command": entry.get("command"),
+                    "args": entry.get("args", []),
                     "enabled_targets": entry.get("enabled_targets", []),
                     "env_keys": entry.get("env_keys", []),
                 },

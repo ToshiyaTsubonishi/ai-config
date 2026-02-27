@@ -120,6 +120,10 @@ function Build-TemplateVariables {
     $vars["MCP_LOCAL_TIMEZONE"] = [System.TimeZoneInfo]::Local.Id
   }
 
+  if (-not $vars.ContainsKey("PORT_INFERENCE_PROXY_MCP") -or [string]::IsNullOrWhiteSpace([string]$vars["PORT_INFERENCE_PROXY_MCP"])) {
+    $vars["PORT_INFERENCE_PROXY_MCP"] = "9030"
+  }
+
   $defaultWebflowMcpCommand = "npx"
   $defaultWebflowMcpArgs = '["-y", "mcp-remote", "https://mcp.webflow.com/mcp"]'
 

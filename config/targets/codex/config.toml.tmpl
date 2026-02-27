@@ -159,3 +159,6 @@ args = ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=kkj-search"]
 command = "npx"
 args = ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=e-stat-get-stats-list,e-stat-get-meta-info,e-stat-get-data-catalog"]
 
+[mcp_servers.inference-proxy-mcp]
+command = "npx"
+args = ["-y", "mcp-remote", "http://localhost:{{PORT_INFERENCE_PROXY_MCP}}/mcp"]
