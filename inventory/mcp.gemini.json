@@ -1,5 +1,5 @@
 {
-  "configPath": "C:\\Users\\ttsub\\.gemini\\antigravity\\mcp_config.json",
+  "configPath": "/Users/tsytbns/.gemini/antigravity/mcp_config.json",
   "count": 36,
   "servers": [
     {
@@ -248,7 +248,7 @@
     },
     {
       "name": "webflow",
-      "command": "C:/Windows/System32/cmd.exe",
+      "command": "npx",
       "argsCount": 3,
       "envKeys": []
     }

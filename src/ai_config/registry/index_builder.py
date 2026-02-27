@@ -21,7 +21,7 @@ from ai_config.registry.models import ToolRecord, save_records
 logger = logging.getLogger(__name__)
 
 DEFAULT_INDEX_DIR = ".index"
-EMBEDDING_MODEL = "all-MiniLM-L6-v2"
+EMBEDDING_MODEL = "intfloat/multilingual-e5-small"
 
 
 def _tokenize(text: str) -> list[str]:

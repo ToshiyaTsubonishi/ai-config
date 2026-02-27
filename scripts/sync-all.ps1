@@ -83,16 +83,16 @@ if (-not $SkipBaselineSkillImport) {
   & $importBaselineSkillsScript @baselineArgs
 }
 
-$defaultTargets = Resolve-TargetAliases -RawTargets $Targets
-$effectiveMcpTargets = $defaultTargets
-$effectiveSkillTargets = $defaultTargets
+$defaultTargets = @(Resolve-TargetAliases -RawTargets $Targets)
+$effectiveMcpTargets = @($defaultTargets)
+$effectiveSkillTargets = @($defaultTargets)
 
 if ($PSBoundParameters.ContainsKey("McpTargets")) {
-  $effectiveMcpTargets = Resolve-TargetAliases -RawTargets $McpTargets
+  $effectiveMcpTargets = @(Resolve-TargetAliases -RawTargets $McpTargets)
 }
 
 if ($PSBoundParameters.ContainsKey("SkillTargets")) {
-  $effectiveSkillTargets = Resolve-TargetAliases -RawTargets $SkillTargets
+  $effectiveSkillTargets = @(Resolve-TargetAliases -RawTargets $SkillTargets)
 }
 
 $isWindowsPlatform = $false
@@ -171,6 +171,7 @@ else {
 }
 
 $contextTargets = @($effectiveMcpTargets + $effectiveSkillTargets | Select-Object -Unique)
+if ($null -eq $contextTargets) { $contextTargets = @() }
 if ($contextTargets.Count -gt 0) {
   $contextArgs = @{
     RepoRoot = $RepoRoot
@@ -195,9 +196,20 @@ else {
 
 if ($DryRun) {
   Write-Host "[dry-run] skip inventory export: $inventoryScript"
+  Write-Host "[dry-run] skip ai_config dynamic index build"
 }
 else {
   & $inventoryScript -RepoRoot $RepoRoot
+
+  # Build ai_config dynamic index
+  Write-Host "Building ai_config dynamic tool index..."
+  $pythonPath = Join-Path $RepoRoot ".venv/bin/python"
+  if (Test-Path $pythonPath) {
+    & $pythonPath -m ai_config.build_index --repo-root $RepoRoot
+  }
+  else {
+    Write-Warning "Python environment not found at $pythonPath. Skipping dynamic index build."
+  }
 }
 
 Write-Host "All sync operations completed."

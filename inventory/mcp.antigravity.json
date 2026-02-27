@@ -1,5 +1,5 @@
 {
-  "configPath": "C:\\Users\\ttsub\\.antigravity\\mcp_config.json",
+  "configPath": "/Users/tsytbns/.antigravity/mcp_config.json",
   "count": 33,
   "servers": [
     {
@@ -231,10 +231,8 @@
     {
       "name": "webflow",
       "command": "npx",
-      "argsCount": 2,
-      "envKeys": [
-        "WEBFLOW_TOKEN"
-      ]
+      "argsCount": 3,
+      "envKeys": []
     }
   ]
 }
