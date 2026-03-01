@@ -1,89 +1,90 @@
-"""CLI entrypoint for the agent orchestrator.
-
-Usage:
-    python -m ai_config.orchestrator.cli "フロントエンド開発のためのツールを探して"
-"""
+"""CLI entrypoint for LangGraph orchestrator."""
 
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-)
+from ai_config.orchestrator.graph import create_agent
+from ai_config.retriever.hybrid_search import HybridRetriever
+from ai_config.retriever.query_intent import infer_query_intent
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger(__name__)
+
+
+def _print_search_only(index_dir: Path, query: str, top_k: int) -> None:
+    retriever = HybridRetriever(index_dir)
+    intent = infer_query_intent(query)
+    hits = retriever.search(
+        query=query,
+        top_k=top_k,
+        tool_kinds=intent.tool_kinds or None,
+        targets=intent.targets or None,
+        capabilities=intent.capabilities or None,
+    )
+    if not hits:
+        print("No tools found.")
+        return
+    for idx, hit in enumerate(hits, start=1):
+        payload = hit.to_dict()
+        score = payload["score_breakdown"]
+        print(
+            f"{idx}. [{payload['tool_kind']}] {payload['name']} "
+            f"(rrf={score['rrf']:.4f}, sem={score['semantic']:.4f}, bm25={score['bm25']:.4f})"
+        )
+        print(f"   id={payload['id']} source={payload['source_path']}")
+        print(f"   {payload['description'][:140]}")
 
 
 def main(argv: list[str] | None = None) -> None:
     load_dotenv()
-
-    parser = argparse.ArgumentParser(description="AI Config Agent - Dynamic tool orchestrator")
-    parser.add_argument("query", type=str, help="User request / question")
-    parser.add_argument(
-        "--index-dir",
-        type=Path,
-        default=Path(".index"),
-        help="Path to the pre-built index directory (default: .index)",
-    )
-    parser.add_argument(
-        "--search-only",
-        action="store_true",
-        help="Only search tools, skip LLM planning and execution",
-    )
+    parser = argparse.ArgumentParser(description="ai-config dynamic tool orchestrator")
+    parser.add_argument("query", type=str, help="User query")
+    parser.add_argument("--index-dir", type=Path, default=Path(".index"), help="Index directory")
+    parser.add_argument("--search-only", action="store_true", help="Run retriever only")
+    parser.add_argument("--max-retries", type=int, default=2, help="Maximum re-retrieve retries")
+    parser.add_argument("--top-k", type=int, default=8, help="Retriever top-k")
+    parser.add_argument("--trace", action="store_true", help="Print execution trace JSON")
     args = parser.parse_args(argv)
 
     index_dir = args.index_dir.resolve()
-    if not (index_dir / "records.json").exists():
-        logger.error("Index not found at %s. Run 'python -m ai_config.build_index' first.", index_dir)
+    if not (index_dir / "summary.json").exists():
+        logger.error("Index artifacts not found: %s. Run ai-config-index first.", index_dir)
         sys.exit(1)
 
     if args.search_only:
-        # Quick search mode: no LLM needed
-        from ai_config.retriever.hybrid_search import HybridRetriever
-
-        retriever = HybridRetriever(index_dir)
-        print(retriever.search_text(args.query))
+        _print_search_only(index_dir, args.query, args.top_k)
         return
 
-    # Full orchestrator mode
-    from ai_config.orchestrator.graph import create_agent
-    from ai_config.orchestrator import nodes
-
-    # Point retriever to the correct index
-    nodes._retriever = None  # Reset so it picks up the new index dir
-
-    # Monkey-patch index dir (simple approach for CLI)
-    original_get = nodes._get_retriever
-
-    def patched_get(d=None):
-        return original_get(index_dir)
-
-    nodes._get_retriever = patched_get
-
-    agent = create_agent()
-
+    agent = create_agent(index_dir=index_dir, repo_root=Path(".").resolve())
     initial_state = {
         "query": args.query,
-        "retrieved_tools": [],
-        "plan": "",
+        "top_k": max(1, args.top_k),
+        "max_retries": max(0, args.max_retries),
+        "trace": bool(args.trace),
+        "retrieval_attempts": 0,
+        "candidates": [],
         "execution_results": [],
+        "recovery_path": [],
+        "adopted_tools": [],
+        "unmet": [],
         "error": None,
-        "retry_count": 0,
         "final_answer": "",
     }
 
-    logger.info("Running agent with query: %s", args.query)
     result = agent.invoke(initial_state)
+    if args.trace:
+        print("TRACE:")
+        print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
+        print("")
 
-    print("\n" + "=" * 60)
     print(result.get("final_answer", "(no answer)"))
-    print("=" * 60)
 
 
 if __name__ == "__main__":

@@ -40,6 +40,66 @@ function Read-DotEnv {
   return $vars
 }
 
+function ConvertTo-HashtableRecursive {
+  param([AllowNull()]$Value)
+
+  if ($null -eq $Value) {
+    return $null
+  }
+
+  if ($Value -is [System.Collections.IDictionary]) {
+    $result = @{}
+    foreach ($key in $Value.Keys) {
+      $result[[string]$key] = ConvertTo-HashtableRecursive -Value $Value[$key]
+    }
+    return $result
+  }
+
+  if (($Value -is [System.Collections.IEnumerable]) -and -not ($Value -is [string])) {
+    $items = @()
+    foreach ($item in $Value) {
+      $items += , (ConvertTo-HashtableRecursive -Value $item)
+    }
+    return $items
+  }
+
+  if ($Value -is [pscustomobject]) {
+    $result = @{}
+    foreach ($prop in $Value.PSObject.Properties) {
+      $result[[string]$prop.Name] = ConvertTo-HashtableRecursive -Value $prop.Value
+    }
+    return $result
+  }
+
+  return $Value
+}
+
+function ConvertFrom-JsonCompat {
+  param(
+    [Parameter(Mandatory = $true)][string]$Json,
+    [int]$Depth = 100
+  )
+
+  $jsonCommand = Get-Command -Name ConvertFrom-Json -ErrorAction Stop
+  $hasAsHashtable = $jsonCommand.Parameters.ContainsKey("AsHashtable")
+  $hasDepth = $jsonCommand.Parameters.ContainsKey("Depth")
+
+  if ($hasAsHashtable) {
+    if ($hasDepth) {
+      return ($Json | ConvertFrom-Json -AsHashtable -Depth $Depth)
+    }
+    return ($Json | ConvertFrom-Json -AsHashtable)
+  }
+
+  if ($hasDepth) {
+    $parsed = $Json | ConvertFrom-Json -Depth $Depth
+  }
+  else {
+    $parsed = $Json | ConvertFrom-Json
+  }
+  return ConvertTo-HashtableRecursive -Value $parsed
+}
+
 function Resolve-ConfiguredPath {
   param(
     [Parameter(Mandatory = $true)][string]$DefaultPath,
@@ -142,7 +202,7 @@ function Get-JsonMcpInventory {
     }
   }
 
-  $json = Get-Content -Path $Path -Raw | ConvertFrom-Json -AsHashtable
+  $json = ConvertFrom-JsonCompat -Json (Get-Content -Path $Path -Raw) -Depth 100
   $servers = @()
 
   if ($json.ContainsKey("mcpServers") -and $json["mcpServers"] -is [hashtable]) {

@@ -7,16 +7,17 @@ dependencies = [
     "langgraph>=0.3",
     "langchain-google-genai>=2.0",
     "langchain-core>=0.3",
-    "faiss-cpu>=1.9",
-    "sentence-transformers>=3.0",
+    "numpy>=1.26",
     "rank-bm25>=0.2",
     "pyyaml>=6.0",
     "python-frontmatter>=1.1",
     "python-dotenv>=1.0",
+    "pydantic>=2.8",
 ]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "pytest-asyncio>=0.24"]
+semantic = ["faiss-cpu>=1.9", "sentence-transformers>=3.0"]
 
 [project.scripts]
 ai-config-index = "ai_config.build_index:main"

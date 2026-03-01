@@ -5,18 +5,24 @@ param(
   [string[]]$Targets = @("codex", "gemini_cli", "antigravity"),
   [string[]]$McpTargets,
   [string[]]$SkillTargets,
+  [string]$SelectorIndexCommand,
+  [string[]]$SelectorIndexArgs,
   [switch]$SkipWindowsEnvSync,
   [switch]$SkipEnvSync,
   [switch]$SkipBaselineSkillImport,
+  [switch]$SkipSelectorIndex,
   [switch]$NoBackup,
   [switch]$StrictVariables,
   [switch]$OverwriteExistingSkills,
   [switch]$PruneManagedSkills,
+  [switch]$ResetMcpState,
   [switch]$DryRun
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+
+$RepoRoot = (Resolve-Path $RepoRoot).Path
 
 function Resolve-TargetAliases {
   param([string[]]$RawTargets)
@@ -44,13 +50,15 @@ function Resolve-TargetAliases {
 $syncMcpScript = Join-Path $RepoRoot "scripts/sync/sync-mcp.ps1"
 $syncSkillsScript = Join-Path $RepoRoot "scripts/sync/sync-skills.ps1"
 $syncAgentContextScript = Join-Path $RepoRoot "scripts/sync/sync-agent-context.ps1"
+$resetMcpStateScript = Join-Path $RepoRoot "scripts/sync/reset-mcp-state.ps1"
+$selectorIndexScript = Join-Path $RepoRoot "scripts/sync/run-selector-index.ps1"
 $importBaselineSkillsScript = Join-Path $RepoRoot "scripts/import-antigravity-awesome-skills.ps1"
 $inventoryScript = Join-Path $RepoRoot "scripts/export-inventory.ps1"
 $syncEnvScript = Join-Path $RepoRoot "scripts/sync-env-files.ps1"
 $workspaceRoot = Split-Path -Path $RepoRoot -Parent
 $windowsEnvSyncScript = Join-Path $workspaceRoot "windows-env-sync/scripts/sync-windows-env.ps1"
 
-foreach ($requiredScript in @($syncMcpScript, $syncSkillsScript, $syncAgentContextScript, $importBaselineSkillsScript, $inventoryScript, $syncEnvScript)) {
+foreach ($requiredScript in @($syncMcpScript, $syncSkillsScript, $syncAgentContextScript, $selectorIndexScript, $importBaselineSkillsScript, $inventoryScript, $syncEnvScript)) {
   if (-not (Test-Path $requiredScript)) {
     throw "Required script not found: $requiredScript"
   }
@@ -126,6 +134,25 @@ if (-not $SkipWindowsEnvSync -and $isWindowsPlatform) {
   }
 }
 
+if ($ResetMcpState) {
+  if (-not (Test-Path $resetMcpStateScript)) {
+    throw "Required script not found: $resetMcpStateScript"
+  }
+
+  $resetArgs = @{
+    RepoRoot = $RepoRoot
+  }
+
+  if ($NoBackup) {
+    $resetArgs["NoBackup"] = $true
+  }
+  if ($DryRun) {
+    $resetArgs["DryRun"] = $true
+  }
+
+  & $resetMcpStateScript @resetArgs
+}
+
 if ($effectiveMcpTargets.Count -gt 0) {
   $mcpArgs = @{
     RepoRoot = $RepoRoot
@@ -196,19 +223,35 @@ else {
 
 if ($DryRun) {
   Write-Host "[dry-run] skip inventory export: $inventoryScript"
-  Write-Host "[dry-run] skip ai_config dynamic index build"
+  if ($SkipSelectorIndex) {
+    Write-Host "[dry-run] skip selector index build (explicit skip)"
+  }
+  else {
+    Write-Host "[dry-run] skip selector index build"
+  }
 }
 else {
   & $inventoryScript -RepoRoot $RepoRoot
 
-  # Build ai_config dynamic index
-  Write-Host "Building ai_config dynamic tool index..."
-  $pythonPath = Join-Path $RepoRoot ".venv/bin/python"
-  if (Test-Path $pythonPath) {
-    & $pythonPath -m ai_config.build_index --repo-root $RepoRoot
+  if ($SkipSelectorIndex) {
+    Write-Host "[skip] selector index build skipped by -SkipSelectorIndex"
   }
   else {
-    Write-Warning "Python environment not found at $pythonPath. Skipping dynamic index build."
+    try {
+      $selectorArgs = @{
+        RepoRoot = $RepoRoot
+      }
+      if ($SelectorIndexCommand) {
+        $selectorArgs["SelectorIndexCommand"] = $SelectorIndexCommand
+      }
+      if ($SelectorIndexArgs) {
+        $selectorArgs["SelectorIndexArgs"] = $SelectorIndexArgs
+      }
+      & $selectorIndexScript @selectorArgs
+    }
+    catch {
+      Write-Warning "Selector index build failed, but continuing sync-all: $($_.Exception.Message)"
+    }
   }
 }
 

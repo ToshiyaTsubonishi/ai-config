@@ -1,235 +1,379 @@
-"""Node implementations for the orchestration graph.
-
-Each function takes AgentState and returns a partial state update dict.
-"""
+"""Node implementations for the orchestration graph."""
 
 from __future__ import annotations
 
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Any
 
+from ai_config.executor import ToolExecutor
+from ai_config.orchestrator.plan_schema import PlanObject, PlanStep, parse_plan_text
 from ai_config.retriever.hybrid_search import HybridRetriever
+from ai_config.retriever.query_intent import infer_query_intent
 
 logger = logging.getLogger(__name__)
 
-# Lazy-initialised globals
+_runtime_index_dir = Path(".index")
+_runtime_repo_root = Path(".")
 _retriever: HybridRetriever | None = None
+_executor: ToolExecutor | None = None
 _llm = None
 
 
-def _get_retriever(index_dir: str | Path | None = None) -> HybridRetriever:
-    """Get or create the retriever singleton."""
+def configure_runtime(index_dir: Path | None = None, repo_root: Path | None = None) -> None:
+    global _runtime_index_dir, _runtime_repo_root, _retriever, _executor
+    if index_dir is not None:
+        _runtime_index_dir = index_dir.resolve()
+    if repo_root is not None:
+        _runtime_repo_root = repo_root.resolve()
+    _retriever = None
+    _executor = None
+
+
+def _get_retriever() -> HybridRetriever:
     global _retriever
     if _retriever is None:
-        if index_dir is None:
-            index_dir = Path(".index")
-        _retriever = HybridRetriever(index_dir)
+        _retriever = HybridRetriever(_runtime_index_dir)
     return _retriever
 
 
-def _get_llm():
-    """Get or create the LLM singleton."""
-    global _llm
-    if _llm is None:
-        from langchain_google_genai import ChatGoogleGenerativeAI
+def _get_executor() -> ToolExecutor:
+    global _executor
+    if _executor is None:
+        _executor = ToolExecutor(repo_root=_runtime_repo_root)
+    return _executor
 
-        _llm = ChatGoogleGenerativeAI(
-            model="gemini-2.0-flash",
-            temperature=0.1,
-        )
+
+def _get_llm():
+    global _llm
+    if _llm is not None:
+        return _llm
+
+    if not os.getenv("GOOGLE_API_KEY"):
+        return None
+    try:
+        from langchain_google_genai import ChatGoogleGenerativeAI
+    except Exception:
+        return None
+
+    model_name = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
+    _llm = ChatGoogleGenerativeAI(model=model_name, temperature=0.1)
     return _llm
 
 
-# ---------- Node: retrieve ----------
-
-def retrieve(state: dict[str, Any]) -> dict[str, Any]:
-    """Search the tool registry for relevant tools."""
+def retrieve_candidates(state: dict[str, Any]) -> dict[str, Any]:
     query = state["query"]
-    retry_count = state.get("retry_count", 0)
+    top_k = int(state.get("top_k", 8))
+    attempt = int(state.get("retrieval_attempts", 0)) + 1
 
+    intent = infer_query_intent(query)
     retriever = _get_retriever()
-    results = retriever.search(query, top_k=8)
-
-    tools = [
-        {
-            "id": rec.id,
-            "name": rec.name,
-            "description": rec.description,
-            "tool_type": rec.tool_type,
-            "source_path": rec.source_path,
-            "score": score,
-        }
-        for rec, score in results
-    ]
-
-    logger.info(
-        "Retrieved %d tools for query=%r (retry=%d)",
-        len(tools),
-        query[:60],
-        retry_count,
+    hits = retriever.search(
+        query=query,
+        top_k=top_k,
+        semantic_k=max(top_k * 4, 20),
+        bm25_k=max(top_k * 4, 20),
+        tool_kinds=intent.tool_kinds or None,
+        targets=intent.targets or None,
+        capabilities=intent.capabilities or None,
     )
 
-    return {"retrieved_tools": tools, "retry_count": retry_count}
+    candidates = [hit.to_dict() for hit in hits]
+    logger.info("retrieve_candidates: query=%r candidates=%d attempt=%d", query[:80], len(candidates), attempt)
+    return {
+        "candidates": candidates,
+        "intent": {
+            "tool_kinds": intent.tool_kinds,
+            "targets": intent.targets,
+            "capabilities": intent.capabilities,
+        },
+        "retrieval_attempts": attempt,
+        "require_reretrieve": False,
+        "reretrieve_failed": False,
+        "error": None,
+    }
 
-
-# ---------- Node: plan ----------
 
 _PLAN_PROMPT = """\
-あなたはタスクプランナーです。ユーザーリクエストと利用可能なツールを基に、実行計画を策定してください。
+あなたは厳格な実行計画エンジンです。必ず JSON のみ返してください。
 
-## ユーザーリクエスト
+ユーザー要求:
 {query}
 
-## 利用可能なツール
-{tools_json}
+候補ツール:
+{candidates}
 
-## 指示
-1. リクエストを達成するために必要なツールを選び、実行順序を決定してください。
-2. 各ステップの入力と期待される出力を明記してください。
-3. 利用可能なツールだけでは不十分な場合は、その旨を明記してください。
+制約:
+- steps は実行順に並べる
+- 各 step は step_id/tool_id/action/reason/params を含める
+- action は "run" を基本にする
+- 候補外の tool_id を作らない
 
-JSON形式で出力してください:
-```json
+返却 JSON 形式:
 {{
   "steps": [
-    {{"tool_id": "...", "action": "...", "reason": "..."}}
+    {{
+      "step_id": "step-1",
+      "tool_id": "...",
+      "action": "run",
+      "reason": "...",
+      "params": {{}}
+    }}
   ],
   "feasibility": "full|partial|impossible",
   "notes": "..."
 }}
-```
 """
 
 
-def plan(state: dict[str, Any]) -> dict[str, Any]:
-    """Generate an execution plan using LLM."""
-    query = state["query"]
-    tools = state.get("retrieved_tools", [])
+def _fallback_plan(query: str, candidates: list[dict[str, Any]]) -> PlanObject:
+    if not candidates:
+        return PlanObject(steps=[], feasibility="impossible", notes="No candidates retrieved.")
 
-    if not tools:
-        return {
-            "plan": json.dumps({
-                "steps": [],
-                "feasibility": "impossible",
-                "notes": "No relevant tools found in the registry.",
-            }),
-        }
+    first = candidates[0]
+    params: dict[str, Any] = {}
+    if first.get("tool_kind") == "toolchain_adapter":
+        params = {"args": ["--help"]}
+    step = PlanStep(
+        step_id="step-1",
+        tool_id=str(first["id"]),
+        action="run",
+        reason=f"Top-ranked candidate for query: {query[:80]}",
+        params=params,
+    )
+    return PlanObject(steps=[step], feasibility="partial", notes="Heuristic fallback planner used.")
+
+
+def plan_steps(state: dict[str, Any]) -> dict[str, Any]:
+    query = state["query"]
+    candidates = state.get("candidates", [])
 
     llm = _get_llm()
-    prompt = _PLAN_PROMPT.format(
-        query=query,
-        tools_json=json.dumps(tools, ensure_ascii=False, indent=2),
-    )
+    if not llm:
+        plan_obj = _fallback_plan(query, candidates)
+    else:
+        prompt = _PLAN_PROMPT.format(
+            query=query,
+            candidates=json.dumps(
+                [
+                    {
+                        "id": c.get("id"),
+                        "name": c.get("name"),
+                        "tool_kind": c.get("tool_kind"),
+                        "description": c.get("description"),
+                        "score": c.get("score"),
+                    }
+                    for c in candidates
+                ],
+                ensure_ascii=False,
+                indent=2,
+            ),
+        )
+        response = llm.invoke(prompt)
+        content = response.content if hasattr(response, "content") else str(response)
+        plan_obj = parse_plan_text(content)
+        if not plan_obj.steps and candidates:
+            plan_obj = _fallback_plan(query, candidates)
 
-    response = llm.invoke(prompt)
-    plan_text = response.content if hasattr(response, "content") else str(response)
+    logger.info("plan_steps: steps=%d feasibility=%s", len(plan_obj.steps), plan_obj.feasibility)
+    return {
+        "plan": plan_obj.model_dump(),
+        "current_step": 0,
+        "step_retry_count": 0,
+        "done": len(plan_obj.steps) == 0,
+        "needs_repair": False,
+        "require_reretrieve": False,
+    }
 
-    logger.info("Plan generated (%d chars)", len(plan_text))
-    return {"plan": plan_text}
 
-
-# ---------- Node: execute ----------
-
-def execute(state: dict[str, Any]) -> dict[str, Any]:
-    """Execute the plan (mock execution for Happy Path).
-
-    In production, this would dispatch to the MCP wrapper.
-    For the initial implementation, we simulate execution.
-    """
-    plan_text = state.get("plan", "")
-
-    # Parse plan to extract steps
-    steps = []
+def _current_plan(state: dict[str, Any]) -> PlanObject:
+    raw = state.get("plan") or {}
     try:
-        # Try to extract JSON from markdown code block
-        if "```json" in plan_text:
-            json_str = plan_text.split("```json")[1].split("```")[0].strip()
-        elif "```" in plan_text:
-            json_str = plan_text.split("```")[1].split("```")[0].strip()
-        else:
-            json_str = plan_text
-
-        plan_obj = json.loads(json_str)
-        steps = plan_obj.get("steps", [])
-    except (json.JSONDecodeError, IndexError):
-        logger.warning("Could not parse plan JSON, treating as free-text plan")
-
-    results = []
-    for step in steps:
-        tool_id = step.get("tool_id", "unknown")
-        action = step.get("action", "")
-        results.append({
-            "tool_id": tool_id,
-            "action": action,
-            "status": "mock_success",
-            "output": f"[Mock] Executed {tool_id}: {action}",
-        })
-
-    logger.info("Executed %d steps (mock)", len(results))
-    return {"execution_results": results, "error": None}
+        return PlanObject.model_validate(raw)
+    except Exception:
+        return PlanObject(steps=[], feasibility="impossible", notes="Plan is invalid.")
 
 
-# ---------- Node: evaluate ----------
+def execute_step(state: dict[str, Any]) -> dict[str, Any]:
+    plan = _current_plan(state)
+    idx = int(state.get("current_step", 0))
+    if idx >= len(plan.steps):
+        return {"done": True, "last_step_result": None}
 
-def evaluate(state: dict[str, Any]) -> dict[str, Any]:
-    """Evaluate execution results and decide next action.
+    step = plan.steps[idx]
+    candidates = state.get("candidates", [])
+    executor = _get_executor()
+    executor.register_records(candidates)
+    result = executor.tools_call(tool_id=step.tool_id, action=step.action, params=step.params)
 
-    Returns updated state. The routing logic is in graph.py.
-    """
-    error = state.get("error")
-    results = state.get("execution_results", [])
-    retry_count = state.get("retry_count", 0)
+    execution_results = list(state.get("execution_results", []))
+    step_result = {
+        "step_id": step.step_id,
+        "step_index": idx,
+        "tool_id": step.tool_id,
+        "action": step.action,
+        "status": result.get("status", "error"),
+        "output": result.get("output"),
+        "error": result.get("error"),
+    }
+    execution_results.append(step_result)
 
-    if error and retry_count < 2:
-        logger.info("Error detected, will retry (count=%d)", retry_count)
-        return {"retry_count": retry_count + 1, "error": error}
+    adopted_tools = list(state.get("adopted_tools", []))
+    if step_result["status"] == "success":
+        adopted_tools.append(step.tool_id)
 
-    # Check for any failures
-    failures = [r for r in results if r.get("status") not in ("mock_success", "success")]
-    if failures and retry_count < 2:
-        logger.info("%d failures, will retry", len(failures))
+    logger.info("execute_step: idx=%d tool=%s status=%s", idx, step.tool_id, step_result["status"])
+    return {
+        "execution_results": execution_results,
+        "last_step_result": step_result,
+        "adopted_tools": adopted_tools,
+    }
+
+
+def evaluate_step(state: dict[str, Any]) -> dict[str, Any]:
+    plan = _current_plan(state)
+    idx = int(state.get("current_step", 0))
+    last = state.get("last_step_result")
+
+    if idx >= len(plan.steps) or not last:
+        return {"done": True, "needs_repair": False}
+
+    if last.get("status") == "success":
+        next_idx = idx + 1
+        done = next_idx >= len(plan.steps)
+        return {"current_step": next_idx, "done": done, "needs_repair": False, "step_retry_count": 0}
+
+    return {"done": False, "needs_repair": True}
+
+
+def repair_or_fallback(state: dict[str, Any]) -> dict[str, Any]:
+    if not state.get("needs_repair"):
+        return {}
+
+    plan = _current_plan(state)
+    idx = int(state.get("current_step", 0))
+    if idx >= len(plan.steps):
+        return {"abort": True, "done": True}
+    step = plan.steps[idx]
+
+    step_retry_count = int(state.get("step_retry_count", 0))
+    recovery = list(state.get("recovery_path", []))
+
+    if step_retry_count < 1:
+        recovery.append(f"retry_same_step:{step.step_id}")
+        return {"step_retry_count": step_retry_count + 1, "needs_repair": False, "recovery_path": recovery}
+
+    candidates = state.get("candidates", [])
+    alt_tool = None
+    for c in candidates:
+        candidate_id = str(c.get("id", ""))
+        if candidate_id and candidate_id != step.tool_id:
+            alt_tool = candidate_id
+            break
+
+    if alt_tool:
+        step.tool_id = alt_tool
+        step.reason = (step.reason + " | repaired via alternative candidate").strip()
+        plan.steps[idx] = step
+        recovery.append(f"repair_alternative:{step.step_id}:{alt_tool}")
         return {
-            "retry_count": retry_count + 1,
-            "error": f"{len(failures)} steps failed",
+            "plan": plan.model_dump(),
+            "step_retry_count": 0,
+            "needs_repair": False,
+            "recovery_path": recovery,
         }
 
-    return {"error": None}
+    unmet = list(state.get("unmet", []))
+    unmet.append(f"Step {step.step_id} failed and no local alternative candidate was found.")
+    recovery.append(f"re_retrieve:{step.step_id}")
+    return {
+        "require_reretrieve": True,
+        "needs_repair": False,
+        "unmet": unmet,
+        "recovery_path": recovery,
+    }
 
 
-# ---------- Node: respond ----------
+def re_retrieve(state: dict[str, Any]) -> dict[str, Any]:
+    max_retries = int(state.get("max_retries", 2))
+    attempts = int(state.get("retrieval_attempts", 0))
+    if attempts >= (max_retries + 1):
+        return {
+            "reretrieve_failed": True,
+            "done": True,
+            "error": f"Exceeded retrieval retries: {attempts}/{max_retries}",
+        }
 
-def respond(state: dict[str, Any]) -> dict[str, Any]:
-    """Generate the final response to the user."""
     query = state["query"]
-    tools = state.get("retrieved_tools", [])
-    plan_text = state.get("plan", "")
-    results = state.get("execution_results", [])
-    error = state.get("error")
-
-    if error:
-        return {
-            "final_answer": f"タスクの実行中にエラーが発生しました: {error}\n\n"
-            f"取得されたツール: {[t['name'] for t in tools]}",
-        }
-
-    if not tools:
-        return {
-            "final_answer": "リクエストに対応するツールがレジストリ内に見つかりませんでした。",
-        }
-
-    # Summarise results
-    tool_names = [t["name"] for t in tools[:5]]
-    step_summaries = [
-        f"- {r['tool_id']}: {r['status']}" for r in results
-    ]
-
-    answer = (
-        f"## 検索されたツール\n"
-        f"{', '.join(tool_names)}\n\n"
-        f"## 実行計画\n{plan_text[:500]}\n\n"
-        f"## 実行結果\n" + "\n".join(step_summaries) if step_summaries else "(実行ステップなし)"
+    top_k = int(state.get("top_k", 8))
+    retriever = _get_retriever()
+    hits = retriever.search(
+        query=query,
+        top_k=max(top_k, 8),
+        semantic_k=max(top_k * 5, 30),
+        bm25_k=max(top_k * 5, 30),
     )
+    failed_tools = {str(r.get("tool_id")) for r in state.get("execution_results", []) if r.get("status") != "success"}
+    ordered_hits = sorted(hits, key=lambda h: (h.record.id in failed_tools, -h.rrf_score))
+    candidates = [hit.to_dict() for hit in ordered_hits]
 
-    return {"final_answer": answer}
+    if not candidates:
+        return {"reretrieve_failed": True, "done": True, "error": "Re-retrieve returned no candidates."}
+
+    return {
+        "candidates": candidates,
+        "retrieval_attempts": attempts + 1,
+        "require_reretrieve": False,
+        "reretrieve_failed": False,
+    }
+
+
+def finalize(state: dict[str, Any]) -> dict[str, Any]:
+    candidates = state.get("candidates", [])
+    results = state.get("execution_results", [])
+    recovery = state.get("recovery_path", [])
+    unmet = state.get("unmet", [])
+    adopted = []
+    seen_tools = set()
+    for tool_id in state.get("adopted_tools", []):
+        if tool_id in seen_tools:
+            continue
+        seen_tools.add(tool_id)
+        adopted.append(tool_id)
+
+    failures = [r for r in results if r.get("status") != "success"]
+    lines: list[str] = []
+    lines.append("採用ツール:")
+    lines.append(", ".join(adopted) if adopted else "(なし)")
+    lines.append("")
+    lines.append("失敗と回復経路:")
+    if failures:
+        for item in failures:
+            err = item.get("error") or {}
+            code = err.get("code", "UNKNOWN")
+            message = err.get("message", "")
+            lines.append(f"- {item.get('step_id')} {item.get('tool_id')} => {code}: {message}")
+    else:
+        lines.append("- 失敗なし")
+    if recovery:
+        for entry in recovery:
+            lines.append(f"- recovery: {entry}")
+
+    lines.append("")
+    lines.append("未達成事項:")
+    if unmet:
+        for item in unmet:
+            lines.append(f"- {item}")
+    elif not candidates:
+        lines.append("- 候補ツールを取得できませんでした。")
+    else:
+        lines.append("- なし")
+
+    error = state.get("error")
+    if error:
+        lines.append("")
+        lines.append(f"エラー: {error}")
+
+    return {"final_answer": "\n".join(lines)}

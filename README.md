@@ -65,6 +65,17 @@ Codex / Antigravity / Gemini CLI の `MCP` と `Skills` を一元管理して同
   - Antigravity: `${USERPROFILE}\.gemini\antigravity\GEMINI.md`, `${USERPROFILE}\.gemini\antigravity\GEMINI_RULES.md`
 - 必要なら環境変数で出力先を上書き可能（後述）
 
+### Dynamic Index Artifact 契約
+
+`.index/summary.json` は検索側の実行契約として以下キーを必須扱いにします。
+
+- `index_format_version`
+- `embedding_backend`
+- `vector_backend`
+- `embedding_dim`
+
+`index_format_version` は **3** を使用します。v1/v2 の index は互換移行せず、再構築が必要です。
+
 ## 実行
 
 ```powershell
@@ -79,6 +90,75 @@ cd $HOME/ai-config
 ```powershell
 ./scripts/sync-all.ps1 -SkipBaselineSkillImport
 ```
+
+### selector index 実行（分離準備）
+
+`sync-all.ps1` は selector index 構築を `scripts/sync/run-selector-index.ps1` 経由で実行します。  
+これにより、将来的に動的ツール選択ロジックを別リポジトリへ移行しても、`sync-all` 側は外部CLI呼び出しだけに保てます。
+
+既定（ローカル fallback）:
+
+```powershell
+./scripts/sync-all.ps1
+```
+
+外部 selector CLI を明示:
+
+```powershell
+./scripts/sync-all.ps1 `
+  -SelectorIndexCommand selector-cli `
+  -SelectorIndexArgs @("build-index", "--repo-root", "{REPO_ROOT}")
+```
+
+index 構築をスキップ:
+
+```powershell
+./scripts/sync-all.ps1 -SkipSelectorIndex
+```
+
+### selector index watch モード
+
+`skills/`, `config/`, `inventory/` の変更を監視し、debounce 後に再構築します。
+
+```powershell
+./scripts/sync/watch-selector-index.ps1 -RepoRoot $HOME/ai-config -DebounceSec 1.5
+```
+
+または Python CLI 直呼び出し:
+
+```powershell
+$env:PYTHONPATH="$HOME/ai-config/src"
+.venv\Scripts\python.exe -m ai_config.build_index --repo-root $HOME/ai-config --watch --debounce-sec 1.5
+```
+
+### 動的検索 + 自己修復フロー
+
+`ai-config-agent` は以下のグラフで処理します。
+
+1. `retrieve_candidates`（Hybrid + RRF）
+2. `plan_steps`（構造化 plan）
+3. `execute_step`
+4. `evaluate_step`
+5. `repair_or_fallback`
+6. 必要時のみ `re_retrieve`
+7. `finalize`
+
+最終応答には「採用ツール」「失敗と回復経路」「未達成事項」を含めます。
+
+### agent CLI
+
+```powershell
+# 検索のみ
+ai-config-agent "MCP設定を確認したい" --search-only --top-k 8
+
+# フル実行（自己修復あり）
+ai-config-agent "codex で実行して" --top-k 8 --max-retries 2 --trace
+```
+
+### 実行エンジンの未導入CLI挙動
+
+`codex` / `gemini` / `antigravity` の CLI が未導入の場合、実行層は  
+`EXECUTOR_NOT_AVAILABLE` を返し、Orchestrator は代替候補または再検索へフォールバックします。
 
 ### 個別実行
 
@@ -147,3 +227,4 @@ cd $HOME/ai-config
 - `.env` はコミットしないでください（`.gitignore` 対象）
 - PowerShell 実行環境（`pwsh` 推奨）が必要です
 - `sync-all.ps1 -DryRun` では環境同期と inventory 出力は実際には書き込みません
+- selector index 構築に失敗しても、`sync-all` は MCP/Skills/Context 同期を継続します（警告ログのみ）

@@ -1,65 +1,113 @@
-"""CLI entrypoint: build the tool registry index.
-
-Usage:
-    python -m ai_config.build_index --repo-root /path/to/ai-config-sync
-"""
+"""CLI entrypoint for selector index build."""
 
 from __future__ import annotations
 
 import argparse
 import logging
 import sys
+import time
 from pathlib import Path
 
-from ai_config.registry.skill_parser import scan_skills
-from ai_config.registry.mcp_parser import scan_mcp_servers
-from ai_config.registry.index_builder import build_index, DEFAULT_INDEX_DIR
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+from ai_config.registry.extractors import collect_all_records
+from ai_config.registry.index_builder import (
+    DEFAULT_INDEX_DIR,
+    EMBEDDING_BACKEND,
+    EMBEDDING_MODEL,
+    VECTOR_BACKEND,
+    build_index,
 )
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
+WATCH_DIRS = ("skills", "config", "inventory")
+
+
+def _snapshot(repo_root: Path) -> dict[str, float]:
+    snapshot: dict[str, float] = {}
+    for rel_dir in WATCH_DIRS:
+        root = repo_root / rel_dir
+        if not root.exists():
+            continue
+        for path in root.rglob("*"):
+            if path.is_file():
+                try:
+                    snapshot[str(path.relative_to(repo_root).as_posix())] = path.stat().st_mtime
+                except OSError:
+                    continue
+    return snapshot
+
+
+def _run_build(repo_root: Path, index_dir: Path, embedding_backend: str, vector_backend: str) -> int:
+    records = collect_all_records(repo_root)
+    if not records:
+        logger.error("No records found. Check skills/, config/, and inventory/.")
+        return 1
+
+    logger.info("Collected records: total=%d", len(records))
+    build_index(
+        records=records,
+        index_dir=index_dir,
+        model_name=EMBEDDING_MODEL,
+        embedding_backend=embedding_backend,
+        vector_backend=vector_backend,
+    )
+    logger.info("Index build succeeded at %s", index_dir)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(
-        description="Build FAISS + BM25 indexes from skills/ and MCP configs"
-    )
+    parser = argparse.ArgumentParser(description="Build selector index from skills/config/inventory.")
+    parser.add_argument("--repo-root", type=Path, default=Path("."), help="Repository root path")
+    parser.add_argument("--index-dir", type=Path, default=None, help=f"Index output directory (default: {DEFAULT_INDEX_DIR})")
+    parser.add_argument("--watch", action="store_true", help="Watch skills/config/inventory and rebuild on changes")
+    parser.add_argument("--debounce-sec", type=float, default=1.5, help="Debounce window for watch rebuilds")
+    parser.add_argument("--poll-sec", type=float, default=1.0, help="Watch poll interval in seconds")
     parser.add_argument(
-        "--repo-root",
-        type=Path,
-        default=Path("."),
-        help="Root of the ai-config-sync repository (default: cwd)",
+        "--embedding-backend",
+        choices=("hash", "sentence_transformer"),
+        default=EMBEDDING_BACKEND,
+        help="Embedding backend",
     )
-    parser.add_argument(
-        "--index-dir",
-        type=Path,
-        default=None,
-        help=f"Output directory for indexes (default: <repo-root>/{DEFAULT_INDEX_DIR})",
-    )
+    parser.add_argument("--vector-backend", choices=("numpy", "faiss"), default=VECTOR_BACKEND, help="Vector backend")
     args = parser.parse_args(argv)
 
     repo_root = args.repo_root.resolve()
     index_dir = (args.index_dir or repo_root / DEFAULT_INDEX_DIR).resolve()
-
     logger.info("Repo root: %s", repo_root)
     logger.info("Index dir: %s", index_dir)
 
-    # ---------- Collect all tool records ----------
-    skills = scan_skills(repo_root)
-    mcp_servers = scan_mcp_servers(repo_root)
-    all_records = skills + mcp_servers
+    exit_code = _run_build(repo_root, index_dir, args.embedding_backend, args.vector_backend)
+    if exit_code != 0:
+        sys.exit(exit_code)
 
-    if not all_records:
-        logger.error("No tools found. Check that skills/ and config/ exist.")
-        sys.exit(1)
+    if not args.watch:
+        return
 
-    logger.info("Total records: %d (skills=%d, mcp=%d)", len(all_records), len(skills), len(mcp_servers))
+    logger.info("Watch mode started (debounce=%.2fs, poll=%.2fs)", args.debounce_sec, args.poll_sec)
+    prev = _snapshot(repo_root)
+    changed_at: float | None = None
 
-    # ---------- Build indexes ----------
-    build_index(all_records, index_dir)
-    logger.info("✅ Index build completed successfully.")
+    while True:
+        time.sleep(max(args.poll_sec, 0.2))
+        now = _snapshot(repo_root)
+        if now != prev:
+            changed_at = time.time()
+            prev = now
+            logger.info("Changes detected in watch targets; waiting for debounce window...")
+            continue
+
+        if changed_at is None:
+            continue
+        if (time.time() - changed_at) < max(args.debounce_sec, 0.0):
+            continue
+
+        logger.info("Debounce window elapsed. Rebuilding index...")
+        code = _run_build(repo_root, index_dir, args.embedding_backend, args.vector_backend)
+        if code != 0:
+            logger.warning("Rebuild failed during watch loop (continuing).")
+        changed_at = None
 
 
 if __name__ == "__main__":

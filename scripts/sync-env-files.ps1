@@ -162,8 +162,15 @@ if (-not [string]::IsNullOrWhiteSpace($WorkspaceRoot)) {
   $workspace = (Resolve-Path (Join-Path $RepoRoot "..")).Path
 }
 
-$defaultAgentEnvPath = Join-Path $workspace "ai-agent-collection/docker-infrastructure/.env"
-$defaultAgentTemplatePath = Join-Path $workspace "ai-agent-collection/docker-infrastructure/.env.template"
+$workspaceDockerRoot = Join-Path $workspace "docker-infrastructure"
+if (Test-Path $workspaceDockerRoot) {
+  $defaultAgentEnvPath = Join-Path $workspaceDockerRoot ".env"
+  $defaultAgentTemplatePath = Join-Path $workspaceDockerRoot ".env.template"
+}
+else {
+  $defaultAgentEnvPath = Join-Path $workspace "ai-agent-collection/docker-infrastructure/.env"
+  $defaultAgentTemplatePath = Join-Path $workspace "ai-agent-collection/docker-infrastructure/.env.template"
+}
 
 $agentEnvPath = Resolve-ConfiguredPath -DefaultPath $defaultAgentEnvPath -PathVarName "AI_AGENT_COLLECTION_ENV_PATH" -Variables $vars
 $agentTemplatePath = Resolve-ConfiguredPath -DefaultPath $defaultAgentTemplatePath -PathVarName "AI_AGENT_COLLECTION_ENV_TEMPLATE_PATH" -Variables $vars

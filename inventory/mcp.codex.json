@@ -1,6 +1,6 @@
 {
-  "configPath": "/Users/tsytbns/.codex/config.toml",
-  "count": 37,
+  "configPath": "C:\\Users\\ttsub\\.codex\\config.toml",
+  "count": 38,
   "servers": [
     {
       "name": "apify",
@@ -148,6 +148,12 @@
     },
     {
       "name": "googlemaps_code_assist",
+      "hasCommand": true,
+      "hasUrl": false,
+      "envKeys": []
+    },
+    {
+      "name": "inference-proxy-mcp",
       "hasCommand": true,
       "hasUrl": false,
       "envKeys": []

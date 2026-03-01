@@ -79,7 +79,7 @@ targets:
       mcp_file: "GEMINI_MCP_CONFIG_PATH"
       skills_dir: "GEMINI_SKILLS_PATH"
     sync:
-      mcp_mode: "merge"
+      mcp_mode: "replace"
       skills_mode: "overlay"
       skill_layers: ["external", "shared", "target"]
 

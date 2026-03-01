@@ -9,7 +9,10 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-import frontmatter
+try:
+    import frontmatter  # type: ignore
+except Exception:  # pragma: no cover - optional dependency fallback
+    frontmatter = None
 
 from ai_config.registry.models import ToolRecord
 
@@ -17,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 # Skill layers expected at skills/<layer>/<skill-name>/SKILL.md
 SKILL_LAYERS = ("shared", "external", "codex", "antigravity", "gemini")
+TARGET_LAYERS = {"codex", "antigravity", "gemini"}
 
 
 def parse_skill_file(skill_md: Path, repo_root: Path) -> ToolRecord | None:
@@ -25,7 +29,14 @@ def parse_skill_file(skill_md: Path, repo_root: Path) -> ToolRecord | None:
     Returns None if the file cannot be parsed meaningfully.
     """
     try:
-        post = frontmatter.load(str(skill_md))
+        if frontmatter is not None:
+            post = frontmatter.load(str(skill_md))
+            metadata = dict(post.metadata)
+            content = str(post.content)
+        else:
+            raw = skill_md.read_text(encoding="utf-8", errors="ignore")
+            metadata, content = _fallback_frontmatter_parse(raw)
+            post = type("FrontmatterShim", (), {"metadata": metadata, "content": content})()
     except Exception:
         logger.warning("Failed to parse frontmatter: %s", skill_md)
         return None
@@ -52,19 +63,50 @@ def parse_skill_file(skill_md: Path, repo_root: Path) -> ToolRecord | None:
     # Determine layer from path structure
     rel = skill_md.relative_to(repo_root / "skills")
     layer = rel.parts[0] if rel.parts else "unknown"
+    skill_name = skill_md.parent.name
+    source_path = skill_md.relative_to(repo_root).as_posix()
+
+    tags = [f"layer:{layer}", f"skill:{skill_name}"]
+    if layer in TARGET_LAYERS:
+        tags.append(f"target:{layer}")
 
     return ToolRecord(
         id=f"skill:{name}",
         name=name,
         description=description,
-        tool_type="skill",
-        source_path=str(skill_md.relative_to(repo_root)),
+        tool_kind="skill",
+        source_path=source_path,
         metadata={
             "layer": layer,
-            "has_frontmatter": bool(post.metadata),
-            "body_length": len(post.content),
+            "has_frontmatter": bool(metadata),
+            "body_length": len(content),
+            "skill_name": skill_name,
         },
+        invoke={
+            "backend": "skill_markdown",
+            "command": source_path,
+            "args": [],
+            "timeout_ms": 10000,
+            "env_keys": [],
+        },
+        tags=tags,
     )
+
+
+def _fallback_frontmatter_parse(raw: str) -> tuple[dict[str, str], str]:
+    metadata: dict[str, str] = {}
+    content = raw
+    if raw.startswith("---"):
+        parts = raw.split("---", 2)
+        if len(parts) == 3:
+            fm_body = parts[1]
+            content = parts[2]
+            for line in fm_body.splitlines():
+                if ":" not in line:
+                    continue
+                key, value = line.split(":", 1)
+                metadata[key.strip()] = value.strip().strip('"').strip("'")
+    return metadata, content
 
 
 def scan_skills(repo_root: Path) -> list[ToolRecord]:

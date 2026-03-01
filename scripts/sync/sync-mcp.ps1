@@ -40,6 +40,32 @@ function ConvertTo-HashtableRecursive {
   return $Value
 }
 
+function ConvertFrom-JsonCompat {
+  param(
+    [Parameter(Mandatory = $true)][string]$Json,
+    [int]$Depth = 100
+  )
+
+  $jsonCommand = Get-Command -Name ConvertFrom-Json -ErrorAction Stop
+  $hasAsHashtable = $jsonCommand.Parameters.ContainsKey("AsHashtable")
+  $hasDepth = $jsonCommand.Parameters.ContainsKey("Depth")
+
+  if ($hasAsHashtable) {
+    if ($hasDepth) {
+      return ($Json | ConvertFrom-Json -AsHashtable -Depth $Depth)
+    }
+    return ($Json | ConvertFrom-Json -AsHashtable)
+  }
+
+  if ($hasDepth) {
+    $parsed = $Json | ConvertFrom-Json -Depth $Depth
+  }
+  else {
+    $parsed = $Json | ConvertFrom-Json
+  }
+  return ConvertTo-HashtableRecursive -Value $parsed
+}
+
 function Load-MasterConfig {
   param([Parameter(Mandatory = $true)][string]$Path)
 
@@ -57,7 +83,7 @@ function Load-MasterConfig {
 
   try {
     # JSON is valid YAML. This fallback avoids hard dependency on external YAML modules.
-    $parsed = $raw | ConvertFrom-Json -AsHashtable -Depth 100
+    $parsed = ConvertFrom-JsonCompat -Json $raw -Depth 100
     return $parsed
   }
   catch {
@@ -105,8 +131,22 @@ function Resolve-EnvExpressions {
 }
 
 function Get-PlatformProfileName {
-  if ($IsWindows) { return "windows" }
-  if ($IsMacOS) { return "darwin" }
+  $isWindowsPlatform = $false
+  if (Get-Variable -Name IsWindows -ErrorAction SilentlyContinue) {
+    $isWindowsPlatform = [bool]$IsWindows
+  }
+  elseif ($env:OS -eq "Windows_NT") {
+    $isWindowsPlatform = $true
+  }
+
+  if ($isWindowsPlatform) { return "windows" }
+
+  $isMacPlatform = $false
+  if (Get-Variable -Name IsMacOS -ErrorAction SilentlyContinue) {
+    $isMacPlatform = [bool]$IsMacOS
+  }
+
+  if ($isMacPlatform) { return "darwin" }
   return "linux"
 }
 
@@ -127,7 +167,15 @@ function Build-TemplateVariables {
   $defaultWebflowMcpCommand = "npx"
   $defaultWebflowMcpArgs = '["-y", "mcp-remote", "https://mcp.webflow.com/mcp"]'
 
-  if ($IsWindows) {
+  $isWindowsPlatform = $false
+  if (Get-Variable -Name IsWindows -ErrorAction SilentlyContinue) {
+    $isWindowsPlatform = [bool]$IsWindows
+  }
+  elseif ($env:OS -eq "Windows_NT") {
+    $isWindowsPlatform = $true
+  }
+
+  if ($isWindowsPlatform) {
     $defaultWebflowMcpCommand = "C:/Windows/System32/cmd.exe"
     $defaultWebflowMcpArgs = '["/d", "/c", "set PATH=C:/Progra~1/nodejs;%PATH% ^&^& C:/Progra~1/nodejs/npx.cmd -y mcp-remote https://mcp.webflow.com/mcp"]'
   }
@@ -140,7 +188,7 @@ function Build-TemplateVariables {
     $vars["WEBFLOW_MCP_ARGS"] = $defaultWebflowMcpArgs
   }
 
-  if ($IsWindows -and $vars.ContainsKey("WEBFLOW_MCP_COMMAND")) {
+  if ($isWindowsPlatform -and $vars.ContainsKey("WEBFLOW_MCP_COMMAND")) {
     $vars["WEBFLOW_MCP_COMMAND"] = ([string]$vars["WEBFLOW_MCP_COMMAND"]) -replace "\\", "/"
   }
 
@@ -321,7 +369,7 @@ function Merge-McpJsonContent {
     [Parameter(Mandatory = $true)][string]$TargetPath
   )
 
-  $templateObj = ConvertTo-HashtableRecursive -Value ($TemplateContent | ConvertFrom-Json -AsHashtable -Depth 100)
+  $templateObj = ConvertTo-HashtableRecursive -Value (ConvertFrom-JsonCompat -Json $TemplateContent -Depth 100)
 
   if ($templateObj.ContainsKey("mcpServers")) {
     $templateMcpServers = $templateObj["mcpServers"]
@@ -337,7 +385,7 @@ function Merge-McpJsonContent {
   if (Test-Path $TargetPath) {
     $existingRaw = Get-Content -Path $TargetPath -Raw
     if (-not [string]::IsNullOrWhiteSpace($existingRaw)) {
-      $targetObj = ConvertTo-HashtableRecursive -Value ($existingRaw | ConvertFrom-Json -AsHashtable -Depth 100)
+      $targetObj = ConvertTo-HashtableRecursive -Value (ConvertFrom-JsonCompat -Json $existingRaw -Depth 100)
     }
   }
 

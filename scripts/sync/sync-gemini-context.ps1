@@ -40,6 +40,32 @@ function ConvertTo-HashtableRecursive {
   return $Value
 }
 
+function ConvertFrom-JsonCompat {
+  param(
+    [Parameter(Mandatory = $true)][string]$Json,
+    [int]$Depth = 100
+  )
+
+  $jsonCommand = Get-Command -Name ConvertFrom-Json -ErrorAction Stop
+  $hasAsHashtable = $jsonCommand.Parameters.ContainsKey("AsHashtable")
+  $hasDepth = $jsonCommand.Parameters.ContainsKey("Depth")
+
+  if ($hasAsHashtable) {
+    if ($hasDepth) {
+      return ($Json | ConvertFrom-Json -AsHashtable -Depth $Depth)
+    }
+    return ($Json | ConvertFrom-Json -AsHashtable)
+  }
+
+  if ($hasDepth) {
+    $parsed = $Json | ConvertFrom-Json -Depth $Depth
+  }
+  else {
+    $parsed = $Json | ConvertFrom-Json
+  }
+  return ConvertTo-HashtableRecursive -Value $parsed
+}
+
 function Load-MasterConfig {
   param([Parameter(Mandatory = $true)][string]$Path)
 
@@ -57,7 +83,7 @@ function Load-MasterConfig {
 
   try {
     # JSON is valid YAML. This fallback avoids hard dependency on external YAML modules.
-    $parsed = $raw | ConvertFrom-Json -AsHashtable -Depth 100
+    $parsed = ConvertFrom-JsonCompat -Json $raw -Depth 100
     return $parsed
   }
   catch {

@@ -127,10 +127,12 @@ try {
     throw "skills directory not found in extracted repository: $skillsRoot"
   }
 
+  $importedCount = 0
   foreach ($entry in $profileMap) {
     $sourceDir = Join-Path $skillsRoot $entry.source
     if (-not (Test-Path $sourceDir)) {
-      throw "Source profile directory not found: $sourceDir"
+      Write-Warning "Source profile directory not found; skipping: $sourceDir"
+      continue
     }
 
     $targetDir = Join-Path $repoRootPath ("skills/{0}" -f $entry.target)
@@ -141,6 +143,11 @@ try {
     Copy-DirectoryContents -Source $sourceDir -Destination $targetDir
 
     Write-Host "[ok] imported $($entry.source) -> $targetDir"
+    $importedCount += 1
+  }
+
+  if ($importedCount -eq 0) {
+    Write-Warning "No baseline profiles were imported from $skillsRoot."
   }
 
   Write-Host "Baseline skills import completed."

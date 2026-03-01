@@ -1,6 +1,6 @@
 {
-  "configPath": "/Users/tsytbns/.gemini/antigravity/mcp_config.json",
-  "count": 36,
+  "configPath": "C:\\Users\\ttsub\\.gemini\\antigravity\\mcp_config.json",
+  "count": 37,
   "servers": [
     {
       "name": "apify",
@@ -147,6 +147,12 @@
       "envKeys": []
     },
     {
+      "name": "inference-proxy-mcp",
+      "command": "npx",
+      "argsCount": 3,
+      "envKeys": []
+    },
+    {
       "name": "jina_reader",
       "command": "npx",
       "argsCount": 3,
@@ -248,7 +254,7 @@
     },
     {
       "name": "webflow",
-      "command": "npx",
+      "command": "C:/Windows/System32/cmd.exe",
       "argsCount": 3,
       "envKeys": []
     }
