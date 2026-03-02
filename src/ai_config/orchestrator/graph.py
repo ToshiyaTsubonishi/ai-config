@@ -40,6 +40,7 @@ def _route_after_reretrieve(state: dict[str, Any]) -> str:
 def build_graph() -> StateGraph:
     graph = StateGraph(AgentState)
 
+    graph.add_node("route_specialist", nodes.route_specialist)
     graph.add_node("retrieve_candidates", nodes.retrieve_candidates)
     graph.add_node("plan_steps", nodes.plan_steps)
     graph.add_node("execute_step", nodes.execute_step)
@@ -48,7 +49,8 @@ def build_graph() -> StateGraph:
     graph.add_node("re_retrieve", nodes.re_retrieve)
     graph.add_node("finalize", nodes.finalize)
 
-    graph.set_entry_point("retrieve_candidates")
+    graph.set_entry_point("route_specialist")
+    graph.add_edge("route_specialist", "retrieve_candidates")
     graph.add_edge("retrieve_candidates", "plan_steps")
     graph.add_conditional_edges("plan_steps", _route_after_plan, {"execute_step": "execute_step", "finalize": "finalize"})
     graph.add_edge("execute_step", "evaluate_step")

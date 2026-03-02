@@ -1,0 +1,49 @@
+[
+  {
+    "vendor_name": "グーグル・クラウド・ジャパン合同会社",
+    "location": "東京都渋谷区渋谷3丁目21番3号渋谷ストリーム",
+    "phone_number": "03-6384-9000",
+    "representative_name": "田中 幸子",
+    "capital_stock": "非公開",
+    "establishment_date": "2015年5月17日",
+    "entrusted_work_content": "クラウドインフラの提供",
+    "transaction_type": "情報成果物作成委託",
+    "include_personal_info": false,
+    "is_it_outsourcing": true,
+    "it_handles_sensitive_data": true,
+    "evaluation_descriptions": {
+      "reporting": "納品書は不要としています。製品のアップデート情報については都度公開されています。\nhttps://cloud.google.com/solutions?hl=ja",
+      "quality": "2025年度契約において問題なくサービスが提供されていました。\n2025 年に初めて導入された Gartner Magic Quadrant の AI アプリケーション開発プラットフォーム部門で、Google は実行能力とビジョンの完全性が評価されてリーダーに選出されました。",
+      "price": "Google Cloud の従量課金制の料金体系では、使用したサービスに対してのみ料金が発生します。前払い料金や、解約手数料は不要です。また、月間使用量に基づく自動的な費用割引やリソース料金の前払い割引を利用することで、他のプロバイダより費用を節約できます。",
+      "timeliness": "利用期間などを設定する必要のあるサービスについては、当社側で設定した期間で正しくサービスが稼働していました。",
+      "financial": "日本単独の決算情報はありませんが、親会社であるAlphabetの2025年第3四半期（7-9月期）の決算は、売上高が前年同期比15.9%増の1,023億4,600万ドル、当期純利益は同33%増の349億7,900万ドルとなり、過去最高を記録しました。\n\n特にGoogle Cloud（クラウド事業）は前年同期比で30%超の成長を見せており、Google検索やYouTubeといった広告事業の堅調さと共に業績を牽引しています。また、自社製AI半導体「TPU」の外販開始など、生成AI分野への積極的な投資が実を結び始めています。\n\n財務基盤については、自己資本比率が70%台で推移しており、豊富な手元資金を有しています。一方で、欧州委員会からの制裁金や訴訟関連費用が一時的な財務リスクとして存在しますが、全体としての収益性は揺るぎないものとなっています.",
+      "information": "・個人情報を含む場合は、定期評価時にも委託先の個人情報管理体制を検証することが必要\n⇒「委託先評価チェックリスト（個人情報の取り扱いに関する報告書）」等を取得して確認。\n・IT業務を委託する場合は、定期評価時にも委託先の体制を検証することが必要\n⇒「IT業務委託先評価チェックリスト」を取得し、委託元部門長の承認をえる\nISO/IEC 27001/27017/27018/27701、SOC 1/2/3、PCI DSS、FedRAMP 認を取得しているほか、GDPRやHIPAAにも対応しています。\nhttps://cloud.google.com/trust-center?hl=ja",
+      "anti_social": "反社データベースにないことを確認しました。",
+      "compliance": "Google は独立した機関によるセキュリティ、プライバシー、コンプライアンス管理に関する監査を実施し、お客様が規制やポリシーに関する目標を達成できるようにしています。\nhttps://cloud.google.com/compliance?hl=ja\nhttps://cloud.google.com/security/compliance/offerings",
+      "other": "Google Cloudは、Gartner、IDC、Forresterなどの業界トップクラスのアナリスト企業により、高い評価を受けております。\nhttps://cloud.google.com/analyst-reports?hl=ja"
+    }
+  },
+ {
+   "vendor_name": "DataRobot Japan株式会社",
+   "location": "東京都中央区日本橋三丁目9番1号日本橋三丁目スクエア11階",
+   "phone_number": "03-6684-2302",
+   "representative_name": "Rober Brown",
+   "capital_stock": "1円",
+   "establishment_date": "2016年3月28日",
+   "entrusted_work_content": "汎用機械学習プラットフォームの提供",
+   "transaction_type": "情報成果物作成委託",
+   "include_personal_info": false,
+   "is_it_outsourcing": true,
+   "it_handles_sensitive_data": true,
+   "evaluation_descriptions": {
+     "reporting": "納品書は不要としています。製品のアップデート情報については都度公開されています。\nhttps://docs.datarobot.com/ja/docs/release/cloud-history/index.html",
+     "quality": "2024年度契約において問題なくサービスが提供されていました。2024 Gartner® Magic Quadrant™ for Data Science and Machine Learning Platformsではリーダーに選出されています。\nhttps://www.gartner.com/doc/reprints?id=1-2HNJ79HD&ct=240523&st=sb",
+     "price": "2024 Gartner® Magic Quadrant™ for Data Science\nand Machine Learning Platforms の評価によれば、他の同様製品と比較して価格は高い部類に位置づけられておりますが、他製品にはないデータサイエンティストとビジネスユーザー向けの優れた機能と拡張性を鑑みて、相応の価格と評価しています。",
+     "timeliness": "2024年度契約において全ての納期を厳守し、予定通りにサービスを提供しました。納品スケジュールの遅延やトラブルは一切なく、契約通りの期日で業務を遂行したことが確認されています。",
+     "financial": "2025年度第2四半期の売上高は21.52億円、営業利益は1.32億円、当期純利益は2.28億円でした。流動資産は30.90億円、流動負債は29.42億円、純資産は15.28億円に増加しています。営業外収益として為替差益9.44億円が含まれています。販売費・一般管理費は20.20億円で、引き続きライセンス料が大きな割合を占めています。総じて財務状況は改善傾向にあり、利益の増加が見られます。親会社であるDataRobot,inc.の収益は約1億4,000万ドルであり、2025年1月31日時点で現金および投資残高は2億1,700万ドルとなっています。\n一方で昨今AI関連は大きな投資が必要であり、資金については常に監視していく必要があります。直近でもM&Aでの買収が発表されており、今後規模拡大のためのM&A資金が必要になってくると思われます.",
+     "information": "・個人情報を含む場合は、定期評価時にも委託先の個人情報管理体制を検証することが必要\n⇒「委託先評価チェックリスト（個人情報の取り扱いに関する報告書）」等を取得して確認。\n・IT業務を委託する場合は、定期評価時にも委託先の体制を検証することが必要\n⇒「IT業務委託先評価チェックリスト」を取得して情報セキュリティ管理責任者へ提出。\n情報セキュリティポリシーが定められ、セキュリティ、アクセス制御、監査について保証されている他、認定資格としてISO27001、SOC2、HIPAAを取得しています。また同社はGDPR、CCPA、CPRA、CPA、VCDPA、EU AI法などの国際的なデータプライバシー規制に準拠しています。\nhttps://www.datarobot.com/wp-content/uploads/2024/07/DataRobot-Information-Security-Policy-01-Jul-2024.pdf\nhttps://www.datarobot.com/trustcenter/",
+     "anti_social": "反社データベースにないことを確認しました。",
+     "compliance": "同社は業界のベストプラクティスに沿った包括的なGRC（ガバナンス、リスク管理、コンプライアンス）プログラムを導入しており、年次の外部監査、運用アプリケーション、オンプレミスおよびクラウド アセットのセキュリティ評価、従業員向けのセキュリティ意識向上トレーニングを行っております。",
+     "other": "同社はGartner®社によるガバナンス・ユースケース（AIガバナンス領域）において、MicrosoftやGoogleを抜いて、1位を獲得しています。\nhttps://www.datarobot.com/jp/blog/datarobot-ranked-1-for-governance-use-case-by-gartner/"
+   }
+]

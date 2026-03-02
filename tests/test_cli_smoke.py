@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import sys
@@ -63,3 +64,70 @@ mcp_servers: {}
     )
     assert agent_proc.returncode == 0, agent_proc.stderr
     assert "demo-skill" in agent_proc.stdout.lower()
+
+
+def test_build_index_default_profile_excludes_antigravity(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir(parents=True, exist_ok=True)
+
+    _write(
+        repo_root / "skills" / "external" / "anthropics-skills" / "skills" / "docx" / "SKILL.md",
+        "---\nname: anthropic-docx\ndescription: anthropic skill\n---\n# docx\n",
+    )
+    _write(
+        repo_root / "skills" / "external" / "antigravity-awesome-skills" / "skills" / "heavy" / "SKILL.md",
+        "---\nname: antigravity-heavy\ndescription: antigravity skill\n---\n# heavy\n",
+    )
+    _write(
+        repo_root / "config" / "master" / "ai-sync.yaml",
+        """
+targets: {}
+mcp_servers: {}
+""".strip(),
+    )
+    _write(
+        repo_root / "config" / "index_profiles.yaml",
+        """
+version: "1.0.0"
+profiles:
+  default:
+    include:
+      - "**"
+    exclude:
+      - "skills/external/antigravity-awesome-skills/**"
+  full:
+    include:
+      - "**"
+    exclude: []
+""".strip(),
+    )
+    (repo_root / "inventory").mkdir(parents=True, exist_ok=True)
+
+    project_root = Path(__file__).resolve().parents[1]
+    env = dict(os.environ)
+    py_path = str(project_root / "src")
+    env["PYTHONPATH"] = py_path if not env.get("PYTHONPATH") else f"{py_path}{os.pathsep}{env['PYTHONPATH']}"
+
+    index_dir = tmp_path / "index"
+    build_proc = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "ai_config.build_index",
+            "--repo-root",
+            str(repo_root),
+            "--index-dir",
+            str(index_dir),
+            "--profile",
+            "default",
+        ],
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+    assert build_proc.returncode == 0, build_proc.stderr
+
+    records_json = json.loads((index_dir / "records.json").read_text(encoding="utf-8"))
+    paths = [r["source_path"] for r in records_json]
+    assert any("anthropics-skills" in p for p in paths)
+    assert all("antigravity-awesome-skills" not in p for p in paths)

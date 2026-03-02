@@ -26,6 +26,21 @@ def _tokenize(text: str) -> list[str]:
     return [tok for tok in text.lower().split() if tok]
 
 
+def _infer_source_repo_from_source_path(source_path: str) -> str:
+    parts = source_path.split("/")
+    if len(parts) >= 3 and parts[0] == "skills" and parts[1] == "external":
+        return parts[2]
+    if len(parts) >= 5 and parts[0] == "skills" and parts[1] == "imported" and parts[2] == "skills-sh" and parts[3] == "sources":
+        return parts[4]
+    if len(parts) >= 3 and parts[0] == "skills" and parts[1] == "imported":
+        return parts[2]
+    if len(parts) >= 2 and parts[0] == "skills":
+        return "local"
+    if len(parts) >= 2 and parts[0] == "config":
+        return "managed"
+    return "unknown"
+
+
 def _hash_embedding(text: str, dim: int) -> np.ndarray:
     vec = np.zeros((dim,), dtype=np.float32)
     for token in _tokenize(text):
@@ -160,7 +175,12 @@ class HybridRetriever:
         tool_kinds: set[str] | None,
         targets: set[str] | None,
         capabilities: set[str] | None,
+        source_repos: set[str] | None,
+        domains: set[str] | None,
+        executable_only: bool,
     ) -> bool:
+        if executable_only and record.metadata.get("executable", True) is False:
+            return False
         if tool_kinds and record.tool_kind not in tool_kinds:
             return False
         if targets:
@@ -174,6 +194,14 @@ class HybridRetriever:
             caps.update(tag.split(":", 1)[1] for tag in record.tags if tag.startswith("capability:"))
             if not caps.intersection(capabilities):
                 return False
+        if source_repos:
+            source_repo = str(record.metadata.get("source_repo") or _infer_source_repo_from_source_path(record.source_path))
+            if source_repo not in source_repos:
+                return False
+        if domains:
+            domain = str(record.metadata.get("domain") or "")
+            if not domain or domain not in domains:
+                return False
         return True
 
     def search(
@@ -186,6 +214,9 @@ class HybridRetriever:
         tool_kinds: list[str] | None = None,
         targets: list[str] | None = None,
         capabilities: list[str] | None = None,
+        source_repos: list[str] | None = None,
+        domains: list[str] | None = None,
+        executable_only: bool = False,
     ) -> list[SearchHit]:
         if not self.records:
             return []
@@ -226,6 +257,8 @@ class HybridRetriever:
         kind_filter = set(tool_kinds or []) or None
         target_filter = set(targets or []) or None
         cap_filter = set(capabilities or []) or None
+        source_filter = set(source_repos or []) or None
+        domain_filter = set(domains or []) or None
 
         rrf_scores: dict[int, float] = {}
         semantic_rank_map: dict[int, int] = {}
@@ -234,21 +267,45 @@ class HybridRetriever:
 
         for rank, idx in enumerate(semantic_ranking, start=1):
             rec = self.records[idx]
-            if not self._matches_filters(rec, kind_filter, target_filter, cap_filter):
+            if not self._matches_filters(
+                rec,
+                kind_filter,
+                target_filter,
+                cap_filter,
+                source_filter,
+                domain_filter,
+                executable_only,
+            ):
                 continue
             semantic_rank_map[idx] = rank
             rrf_scores[idx] = rrf_scores.get(idx, 0.0) + 1.0 / (rrf_k + rank)
 
         for rank, idx in enumerate(bm25_ranking, start=1):
             rec = self.records[idx]
-            if not self._matches_filters(rec, kind_filter, target_filter, cap_filter):
+            if not self._matches_filters(
+                rec,
+                kind_filter,
+                target_filter,
+                cap_filter,
+                source_filter,
+                domain_filter,
+                executable_only,
+            ):
                 continue
             bm25_rank_map[idx] = rank
             rrf_scores[idx] = rrf_scores.get(idx, 0.0) + 1.0 / (rrf_k + rank)
 
         for rank, idx in enumerate(keyword_ranking, start=1):
             rec = self.records[idx]
-            if not self._matches_filters(rec, kind_filter, target_filter, cap_filter):
+            if not self._matches_filters(
+                rec,
+                kind_filter,
+                target_filter,
+                cap_filter,
+                source_filter,
+                domain_filter,
+                executable_only,
+            ):
                 continue
             keyword_rank_map[idx] = rank
             rrf_scores[idx] = rrf_scores.get(idx, 0.0) + 1.0 / (rrf_k + rank)

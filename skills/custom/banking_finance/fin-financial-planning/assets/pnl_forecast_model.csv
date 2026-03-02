@@ -1,0 +1,6 @@
+Category,Item,Unit,Jan,Feb,Mar,Total,Driver (KPI)
+Revenue,Subscription Sales,JPY,1000000,1200000,1500000,3700000,Active Users * ARPU
+COGS,Server Cost,JPY,200000,240000,300000,740000,% of Revenue
+OPEX,Personnel,JPY,500000,500000,1000000,2000000,Headcount
+OPEX,Marketing,JPY,300000,300000,300000,900000,Fixed Budget
+Operating Profit,,JPY,0,160000,-100000,60000,-

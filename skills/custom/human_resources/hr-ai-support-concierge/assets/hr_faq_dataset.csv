@@ -1,0 +1,10 @@
+# 人事問い合わせチャットボット FAQ構造化データ (CSV)
+
+```csv
+category,question,answer,keywords,reference_link
+休暇,有給休暇の付与日数を知りたい,入社半年後に10日付与されます。以降1年ごとに付与日数が増え、最大20日となります。,有給,付与,日数,残日数,https://portal.example.com/rule/vacation
+手続き,住所変更の手続きはどうすればいいですか？,CWS(Web Service)の「身上異動申請」より住所の変更登録を行ってください。住民票の添付が必要です。,住所,変更,引越し,届出,https://portal.example.com/manual/cws-move
+給与,給与明細を個人スマホで見たい,専用の閲覧サイト[URL]より、個人用のアカウントでログインして確認可能です。退職後も一定期間閲覧できます。,明細,スマホ,閲覧,パスワード,https://portal.example.com/it/payroll-mobile
+福利厚生,健康診断の予約方法を教えてください,提携の健診予約システム[システム名]より希望の医療機関と日時を選択してください。二次健診は別途案内があります。,健康診断,予約,病院,健診,https://portal.example.com/health/checkup
+勤怠,打刻を忘れた時の対応は？,CWSの「勤怠実績修正申請」より、正しい時刻を入力して上長の承認を得てください。,打刻,忘れ,修正,勤怠,https://portal.example.com/manual/cws-time
+```

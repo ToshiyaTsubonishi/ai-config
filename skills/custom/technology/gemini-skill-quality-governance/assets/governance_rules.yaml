@@ -1,0 +1,15 @@
+# Skill Governance Rules
+
+rules:
+  naming_convention:
+    pattern: "^[A-Z]{2,6}-[A-Za-z]+-[A-Za-z]+$"
+    description: "Must follow CATEGORY-SubCategory-Focus format (e.g., HR-Talent-Development)."
+  
+  structure:
+    required_files: ["SKILL.md"]
+    recommended_dirs: ["assets", "references", "scripts"]
+  
+  content:
+    min_description_length: 50
+    required_sections: ["Instructions", "Available Resources"]
+

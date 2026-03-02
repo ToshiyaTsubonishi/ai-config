@@ -1,0 +1,4 @@
+ID,Category,Risk Description,Probability (1-5),Impact (1-5),Score,Owner,Mitigation Plan,Status
+R01,Technical,API Rate Limit Exceeded,3,4,12,Dev Lead,Implement caching and exponential backoff,Open
+R02,Legal,Regulatory Change,2,5,10,Legal,Monitor FSA announcements weekly,Open
+R03,Resource,Key Member Resignation,2,5,10,PM,Document all processes for handover,Open

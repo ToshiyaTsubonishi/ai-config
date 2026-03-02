@@ -1,0 +1,8 @@
+Category,Task Name,Deadline (Business Day),Owner,Status,Dependency
+Sales,売上データの確定,D+1,Sales Admin,,
+Expense,経費精算の締切,D+2,All Staff,,
+AP,未払金の計上（請求書入力）,D+3,Accounting,,
+Bank,預金残高の照合,D+3,Accounting,,
+Fixed Asset,減価償却費の計上,D+4,Accounting,,
+Tax,消費税・法人税の試算,D+5,Tax Accountant,,
+Reporting,月次試算表(TB)の作成,D+5,Accounting,,All tasks completed

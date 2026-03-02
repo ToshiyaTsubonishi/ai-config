@@ -7,6 +7,7 @@ import logging
 import re
 from pathlib import Path
 
+from ai_config.registry.path_metadata import infer_source_repo_and_domain
 from ai_config.registry.models import ToolRecord
 
 logger = logging.getLogger(__name__)
@@ -152,6 +153,7 @@ def parse_script_file(script_path: Path, repo_root: Path) -> ToolRecord | None:
 
     rel_after_skills = script_path.relative_to(repo_root / "skills")
     layer, skill_name = _infer_layer_and_skill(rel_after_skills)
+    source_repo, domain = infer_source_repo_and_domain(rel_after_skills)
 
     tags = [
         f"layer:{layer}",
@@ -171,6 +173,10 @@ def parse_script_file(script_path: Path, repo_root: Path) -> ToolRecord | None:
         tool_kind="skill_script",
         metadata={
             "layer": layer,
+            "source_repo": source_repo,
+            "domain": domain,
+            "catalog_only": False,
+            "executable": True,
             "skill_name": skill_name,
             "script_extension": suffix,
         },
@@ -209,4 +215,3 @@ def scan_skill_scripts(repo_root: Path) -> list[ToolRecord]:
 
     logger.info("Parsed %d skill scripts from %s", len(records), skills_dir)
     return records
-

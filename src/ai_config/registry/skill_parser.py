@@ -14,12 +14,13 @@ try:
 except Exception:  # pragma: no cover - optional dependency fallback
     frontmatter = None
 
+from ai_config.registry.path_metadata import infer_source_repo_and_domain
 from ai_config.registry.models import ToolRecord
 
 logger = logging.getLogger(__name__)
 
 # Skill layers expected at skills/<layer>/<skill-name>/SKILL.md
-SKILL_LAYERS = ("shared", "external", "custom", "codex", "antigravity", "gemini")
+SKILL_LAYERS = ("shared", "external", "imported", "custom", "codex", "antigravity", "gemini")
 TARGET_LAYERS = {"codex", "antigravity", "gemini"}
 
 
@@ -63,6 +64,7 @@ def parse_skill_file(skill_md: Path, repo_root: Path) -> ToolRecord | None:
     # Determine layer from path structure
     rel = skill_md.relative_to(repo_root / "skills")
     layer = rel.parts[0] if rel.parts else "unknown"
+    source_repo, domain = infer_source_repo_and_domain(rel)
     skill_name = skill_md.parent.name
     source_path = skill_md.relative_to(repo_root).as_posix()
 
@@ -78,6 +80,10 @@ def parse_skill_file(skill_md: Path, repo_root: Path) -> ToolRecord | None:
         source_path=source_path,
         metadata={
             "layer": layer,
+            "source_repo": source_repo,
+            "domain": domain,
+            "catalog_only": False,
+            "executable": True,
             "has_frontmatter": bool(metadata),
             "body_length": len(content),
             "skill_name": skill_name,

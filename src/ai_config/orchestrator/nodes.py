@@ -9,6 +9,12 @@ from pathlib import Path
 from typing import Any
 
 from ai_config.executor import ToolExecutor
+from ai_config.orchestrator.router import (
+    SPECIALIST_CANDIDATE_THRESHOLD,
+    SPECIALIST_GENERAL,
+    route_specialist as decide_specialist,
+    specialist_filters,
+)
 from ai_config.orchestrator.plan_schema import PlanObject, PlanStep, parse_plan_text
 from ai_config.retriever.hybrid_search import HybridRetriever
 from ai_config.retriever.query_intent import infer_query_intent
@@ -63,35 +69,98 @@ def _get_llm():
     return _llm
 
 
-def retrieve_candidates(state: dict[str, Any]) -> dict[str, Any]:
-    query = state["query"]
-    top_k = int(state.get("top_k", 8))
-    attempt = int(state.get("retrieval_attempts", 0)) + 1
+def route_specialist(state: dict[str, Any]) -> dict[str, Any]:
+    query = str(state.get("query", ""))
+    specialist, score = decide_specialist(query)
+    return {
+        "specialist": specialist,
+        "specialist_score": score,
+        "specialist_fallback_used": False,
+    }
 
+
+def _resolve_tool_kinds(intent_kinds: list[str], specialist_kinds: list[str] | None) -> list[str] | None:
+    if not specialist_kinds:
+        return intent_kinds or None
+    if not intent_kinds:
+        return specialist_kinds
+    intersection = sorted(set(intent_kinds).intersection(specialist_kinds))
+    return intersection or intent_kinds
+
+
+def _retrieve_hits(
+    query: str,
+    top_k: int,
+    specialist: str,
+    *,
+    executable_only: bool = True,
+    strict_intent: bool = True,
+) -> tuple[list[Any], dict[str, Any]]:
     intent = infer_query_intent(query)
+    filters = specialist_filters(specialist)
+    tool_kinds = _resolve_tool_kinds(intent.tool_kinds, filters.get("tool_kinds")) if strict_intent else (filters.get("tool_kinds") or None)
+    targets = intent.targets if strict_intent else []
+    capabilities = intent.capabilities if strict_intent else []
     retriever = _get_retriever()
     hits = retriever.search(
         query=query,
         top_k=top_k,
         semantic_k=max(top_k * 4, 20),
         bm25_k=max(top_k * 4, 20),
-        tool_kinds=intent.tool_kinds or None,
-        targets=intent.targets or None,
-        capabilities=intent.capabilities or None,
+        tool_kinds=tool_kinds or None,
+        targets=targets or None,
+        capabilities=capabilities or None,
+        source_repos=filters.get("source_repos"),
+        domains=filters.get("domains"),
+        executable_only=executable_only,
     )
+    return hits, {
+        "tool_kinds": intent.tool_kinds,
+        "targets": intent.targets,
+        "capabilities": intent.capabilities,
+    }
+
+
+def retrieve_candidates(state: dict[str, Any]) -> dict[str, Any]:
+    query = state["query"]
+    top_k = int(state.get("top_k", 8))
+    attempt = int(state.get("retrieval_attempts", 0)) + 1
+    specialist = str(state.get("specialist") or SPECIALIST_GENERAL)
+    specialist_score = float(state.get("specialist_score", 0.0))
+    specialist_fallback_used = bool(state.get("specialist_fallback_used", False))
+
+    hits, intent_payload = _retrieve_hits(query, top_k, specialist, executable_only=True)
+    active_specialist = specialist
+    if (
+        specialist != SPECIALIST_GENERAL
+        and len(hits) < SPECIALIST_CANDIDATE_THRESHOLD
+        and not specialist_fallback_used
+    ):
+        fallback_hits, fallback_intent = _retrieve_hits(query, top_k, SPECIALIST_GENERAL, executable_only=True)
+        if fallback_hits:
+            hits = fallback_hits
+            intent_payload = fallback_intent
+            specialist_fallback_used = True
+            active_specialist = SPECIALIST_GENERAL
+            specialist_score = 0.0
 
     candidates = [hit.to_dict() for hit in hits]
-    logger.info("retrieve_candidates: query=%r candidates=%d attempt=%d", query[:80], len(candidates), attempt)
+    logger.info(
+        "retrieve_candidates: query=%r candidates=%d attempt=%d specialist=%s",
+        query[:80],
+        len(candidates),
+        attempt,
+        active_specialist,
+    )
     return {
         "candidates": candidates,
-        "intent": {
-            "tool_kinds": intent.tool_kinds,
-            "targets": intent.targets,
-            "capabilities": intent.capabilities,
-        },
+        "intent": intent_payload,
         "retrieval_attempts": attempt,
         "require_reretrieve": False,
         "reretrieve_failed": False,
+        "specialist": active_specialist,
+        "specialist_score": specialist_score,
+        "specialist_fallback_used": specialist_fallback_used,
         "error": None,
     }
 
@@ -308,13 +377,30 @@ def re_retrieve(state: dict[str, Any]) -> dict[str, Any]:
 
     query = state["query"]
     top_k = int(state.get("top_k", 8))
-    retriever = _get_retriever()
-    hits = retriever.search(
-        query=query,
-        top_k=max(top_k, 8),
-        semantic_k=max(top_k * 5, 30),
-        bm25_k=max(top_k * 5, 30),
-    )
+    specialist = str(state.get("specialist") or SPECIALIST_GENERAL)
+    specialist_score = float(state.get("specialist_score", 0.0))
+    specialist_fallback_used = bool(state.get("specialist_fallback_used", False))
+    hits, intent_payload = _retrieve_hits(query, max(top_k, 8), specialist, executable_only=True, strict_intent=False)
+    active_specialist = specialist
+    if (
+        specialist != SPECIALIST_GENERAL
+        and len(hits) < SPECIALIST_CANDIDATE_THRESHOLD
+        and not specialist_fallback_used
+    ):
+        fallback_hits, fallback_intent = _retrieve_hits(
+            query,
+            max(top_k, 8),
+            SPECIALIST_GENERAL,
+            executable_only=True,
+            strict_intent=False,
+        )
+        if fallback_hits:
+            hits = fallback_hits
+            intent_payload = fallback_intent
+            specialist_fallback_used = True
+            active_specialist = SPECIALIST_GENERAL
+            specialist_score = 0.0
+
     failed_tools = {str(r.get("tool_id")) for r in state.get("execution_results", []) if r.get("status") != "success"}
     ordered_hits = sorted(hits, key=lambda h: (h.record.id in failed_tools, -h.rrf_score))
     candidates = [hit.to_dict() for hit in ordered_hits]
@@ -324,9 +410,13 @@ def re_retrieve(state: dict[str, Any]) -> dict[str, Any]:
 
     return {
         "candidates": candidates,
+        "intent": intent_payload,
         "retrieval_attempts": attempts + 1,
         "require_reretrieve": False,
         "reretrieve_failed": False,
+        "specialist": active_specialist,
+        "specialist_score": specialist_score,
+        "specialist_fallback_used": specialist_fallback_used,
     }
 
 

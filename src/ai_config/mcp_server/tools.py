@@ -44,9 +44,9 @@ class ToolIndex:
 
         # Try to initialize hybrid search
         try:
-            from ai_config.retriever.hybrid_search import HybridSearch
+            from ai_config.retriever.hybrid_search import HybridRetriever
 
-            self._searcher = HybridSearch.load(self._index_dir)
+            self._searcher = HybridRetriever(self._index_dir)
             logger.info("Hybrid search engine loaded successfully.")
         except Exception as e:
             logger.warning("Could not load hybrid search engine: %s – falling back to simple search.", e)
@@ -64,8 +64,8 @@ class ToolIndex:
 
         if self._searcher is not None:
             try:
-                results = self._searcher.search(query, top_k=top_k)
-                return [self._summarize(r) for r in results]
+                hits = self._searcher.search(query, top_k=top_k)
+                return [self._summarize(hit.to_dict()) for hit in hits]
             except Exception as e:
                 logger.warning("Hybrid search failed: %s – falling back to keyword search.", e)
 

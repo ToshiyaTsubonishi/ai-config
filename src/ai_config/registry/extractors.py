@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from ai_config.registry.external_mcp_catalog_parser import scan_external_mcp_catalog
 from ai_config.registry.mcp_parser import scan_mcp_servers
 from ai_config.registry.models import ToolRecord
 from ai_config.registry.script_parser import scan_skill_scripts
@@ -21,7 +22,13 @@ def _toolchain_adapters(repo_root: Path) -> list[ToolRecord]:
             description="Codex CLI adapter for unified execution",
             tool_kind="toolchain_adapter",
             source_path=(repo_root / "src/ai_config/executor/adapters/codex.py").relative_to(repo_root).as_posix(),
-            metadata={"backend": "codex"},
+            metadata={
+                "backend": "codex",
+                "source_repo": "local",
+                "domain": "toolchain",
+                "catalog_only": False,
+                "executable": True,
+            },
             invoke={
                 "backend": "cli",
                 "command": "codex",
@@ -37,7 +44,13 @@ def _toolchain_adapters(repo_root: Path) -> list[ToolRecord]:
             description="Gemini CLI adapter for unified execution",
             tool_kind="toolchain_adapter",
             source_path=(repo_root / "src/ai_config/executor/adapters/gemini_cli.py").relative_to(repo_root).as_posix(),
-            metadata={"backend": "gemini_cli"},
+            metadata={
+                "backend": "gemini_cli",
+                "source_repo": "local",
+                "domain": "toolchain",
+                "catalog_only": False,
+                "executable": True,
+            },
             invoke={
                 "backend": "cli",
                 "command": "gemini",
@@ -53,7 +66,13 @@ def _toolchain_adapters(repo_root: Path) -> list[ToolRecord]:
             description="Antigravity CLI adapter for unified execution",
             tool_kind="toolchain_adapter",
             source_path=(repo_root / "src/ai_config/executor/adapters/antigravity.py").relative_to(repo_root).as_posix(),
-            metadata={"backend": "antigravity"},
+            metadata={
+                "backend": "antigravity",
+                "source_repo": "local",
+                "domain": "toolchain",
+                "catalog_only": False,
+                "executable": True,
+            },
             invoke={
                 "backend": "cli",
                 "command": "antigravity",
@@ -72,6 +91,7 @@ def collect_all_records(repo_root: Path) -> list[ToolRecord]:
     records.extend(scan_skills(repo_root))
     records.extend(scan_skill_scripts(repo_root))
     records.extend(scan_mcp_servers(repo_root))
+    records.extend(scan_external_mcp_catalog(repo_root))
     records.extend(_toolchain_adapters(repo_root))
 
     deduped: list[ToolRecord] = []

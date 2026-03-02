@@ -450,6 +450,23 @@ def scan_mcp_servers(repo_root: Path) -> list[ToolRecord]:
         description = _MCP_DESCRIPTIONS.get(name, f"MCP server: {name}")
         enabled_targets = [str(x) for x in (entry.get("enabled_targets", []) or [])]
         env_keys = [str(x) for x in (entry.get("env_keys", []) or [])]
+        source_path = str(entry.get("source", ""))
+        source_repo = "managed"
+        domain = "core"
+        layer = "managed"
+        if source_path.startswith("skills/external/"):
+            path_parts = source_path.split("/")
+            source_repo = path_parts[2] if len(path_parts) > 2 else "external"
+            domain = path_parts[3] if len(path_parts) > 3 else "general"
+            layer = "external"
+        elif source_path.startswith("inventory/"):
+            source_repo = "inventory"
+            domain = "inventory"
+            layer = "inventory"
+        elif source_path.startswith("config/"):
+            source_repo = "managed"
+            domain = "core"
+            layer = "managed"
 
         tags = ["kind:mcp_server"]
         tags.extend(f"target:{t}" for t in enabled_targets if t)
@@ -461,14 +478,19 @@ def scan_mcp_servers(repo_root: Path) -> list[ToolRecord]:
                 name=name,
                 description=description,
                 tool_kind="mcp_server",
-                source_path=str(entry.get("source", "")),
+                source_path=source_path,
                 metadata={
+                    "layer": layer,
                     "transport": entry.get("transport", "stdio"),
                     "command": entry.get("command"),
                     "args": entry.get("args", []),
                     "enabled_targets": enabled_targets,
                     "env_keys": env_keys,
                     "source_kind": entry.get("source_kind", "unknown"),
+                    "source_repo": source_repo,
+                    "domain": domain,
+                    "catalog_only": False,
+                    "executable": True,
                 },
                 invoke={
                     "backend": "mcp",

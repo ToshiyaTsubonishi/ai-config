@@ -1,0 +1,6 @@
+Risk ID,Description,Likelihood (1-5),Impact (1-5),Score,Zone,Owner
+R01,Cyber Attack,3,5,15,Red,CISO
+R02,Regulatory Change,2,5,10,Orange,Legal
+R03,System Failure,4,3,12,Orange,CTO
+R04,Market Crash,3,4,12,Orange,CFO
+R05,Office Fire,1,4,4,Yellow,GA

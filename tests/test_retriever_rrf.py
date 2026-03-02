@@ -34,6 +34,14 @@ def _build_sample_index(index_dir: Path) -> None:
             tool_kind="skill_script",
             tags=["target:codex"],
         ),
+        ToolRecord(
+            id="mcp_catalog:demo:plugins:data:bigquery",
+            name="bigquery-catalog",
+            description="catalog-only mcp",
+            source_path="skills/external/anthropics-knowledge-work-plugins/data/.mcp.json",
+            tool_kind="mcp_server",
+            metadata={"catalog_only": True, "executable": False},
+        ),
     ]
     build_index(records, index_dir, embedding_backend="hash", vector_backend="numpy")
 
@@ -59,3 +67,5 @@ def test_rrf_and_filters(tmp_path: Path) -> None:
         for h in codex_only
     )
 
+    exec_only = retriever.search("bigquery", top_k=10, executable_only=True)
+    assert all(h.record.metadata.get("executable", True) is not False for h in exec_only)

@@ -10,6 +10,9 @@ class AgentState(TypedDict, total=False):
     top_k: int
     max_retries: int
     trace: bool
+    specialist: str
+    specialist_score: float
+    specialist_fallback_used: bool
 
     retrieval_attempts: int
     candidates: list[dict[str, Any]]

@@ -16,6 +16,7 @@ from ai_config.registry.index_builder import (
     VECTOR_BACKEND,
     build_index,
 )
+from ai_config.registry.profile_loader import filter_records_by_profile, load_profiles
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -39,19 +40,37 @@ def _snapshot(repo_root: Path) -> dict[str, float]:
     return snapshot
 
 
-def _run_build(repo_root: Path, index_dir: Path, embedding_backend: str, vector_backend: str) -> int:
+def _run_build(repo_root: Path, index_dir: Path, embedding_backend: str, vector_backend: str, profile_name: str) -> int:
     records = collect_all_records(repo_root)
     if not records:
         logger.error("No records found. Check skills/, config/, and inventory/.")
         return 1
 
-    logger.info("Collected records: total=%d", len(records))
+    profiles = load_profiles(repo_root)
+    profile = profiles.get(profile_name)
+    if profile is None:
+        logger.error("Unknown profile: %s (available=%s)", profile_name, ", ".join(sorted(profiles.keys())))
+        return 1
+
+    total = len(records)
+    records = filter_records_by_profile(records, profile)
+    logger.info(
+        "Collected records: total=%d filtered=%d profile=%s",
+        total,
+        len(records),
+        profile.name,
+    )
+    if not records:
+        logger.error("No records left after applying profile=%s", profile.name)
+        return 1
+
     build_index(
         records=records,
         index_dir=index_dir,
         model_name=EMBEDDING_MODEL,
         embedding_backend=embedding_backend,
         vector_backend=vector_backend,
+        profile=profile.name,
     )
     logger.info("Index build succeeded at %s", index_dir)
     return 0
@@ -71,6 +90,7 @@ def main(argv: list[str] | None = None) -> None:
         help="Embedding backend",
     )
     parser.add_argument("--vector-backend", choices=("numpy", "faiss"), default=VECTOR_BACKEND, help="Vector backend")
+    parser.add_argument("--profile", default="default", help="Index profile name (default: default)")
     args = parser.parse_args(argv)
 
     repo_root = args.repo_root.resolve()
@@ -78,7 +98,7 @@ def main(argv: list[str] | None = None) -> None:
     logger.info("Repo root: %s", repo_root)
     logger.info("Index dir: %s", index_dir)
 
-    exit_code = _run_build(repo_root, index_dir, args.embedding_backend, args.vector_backend)
+    exit_code = _run_build(repo_root, index_dir, args.embedding_backend, args.vector_backend, args.profile)
     if exit_code != 0:
         sys.exit(exit_code)
 
@@ -104,7 +124,7 @@ def main(argv: list[str] | None = None) -> None:
             continue
 
         logger.info("Debounce window elapsed. Rebuilding index...")
-        code = _run_build(repo_root, index_dir, args.embedding_backend, args.vector_backend)
+        code = _run_build(repo_root, index_dir, args.embedding_backend, args.vector_backend, args.profile)
         if code != 0:
             logger.warning("Rebuild failed during watch loop (continuing).")
         changed_at = None

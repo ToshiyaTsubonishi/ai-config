@@ -17,6 +17,30 @@ sources:
     path: skills/external/remotion
     branch: main
 
+  anthropics-skills:
+    type: skill
+    url: https://github.com/anthropics/skills
+    path: skills/external/anthropics-skills
+    branch: main
+
+  anthropics-knowledge-work-plugins:
+    type: skill
+    url: https://github.com/anthropics/knowledge-work-plugins
+    path: skills/external/anthropics-knowledge-work-plugins
+    branch: main
+
+  antigravity-awesome-skills:
+    type: skill
+    url: https://github.com/sickn33/antigravity-awesome-skills
+    path: skills/external/antigravity-awesome-skills
+    branch: main
+
+  nextlevelbuilder-ui-ux-pro-max-skill:
+    type: skill
+    url: https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
+    path: skills/external/nextlevelbuilder-ui-ux-pro-max-skill
+    branch: main
+
   # --- MCP Servers ---
   # example-mcp:
   #   type: mcp

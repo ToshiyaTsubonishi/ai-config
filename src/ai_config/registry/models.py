@@ -60,6 +60,10 @@ class ToolRecord:
         # Include tag-like metadata if present.
         if layer := self.metadata.get("layer"):
             parts.append(f"layer:{layer}")
+        if source_repo := self.metadata.get("source_repo"):
+            parts.append(f"source_repo:{source_repo}")
+        if domain := self.metadata.get("domain"):
+            parts.append(f"domain:{domain}")
         targets = self.metadata.get("enabled_targets", [])
         if isinstance(targets, list):
             parts.extend(f"target:{target}" for target in targets if target)

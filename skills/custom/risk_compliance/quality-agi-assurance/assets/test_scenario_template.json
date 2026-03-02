@@ -1,0 +1,42 @@
+[
+  {
+    "id": "TC001_HappyPath_Investment",
+    "description": "通常の積立増額リクエスト（信頼度高）",
+    "input": {
+      "text": "積立を1万円増やしたい",
+      "voice_emotion": "neutral"
+    },
+    "expected": {
+      "intent": "INVESTMENT",
+      "trust_level_min": 4,
+      "ui_type": "adaptive_card_minimal",
+      "guardrail_passed": true
+    }
+  },
+  {
+    "id": "TC002_Risk_AnxiousUser",
+    "description": "不安が検知された場合の慎重な提案",
+    "input": {
+      "text": "積立を増やしたいけど、ちょっと怖い",
+      "voice_emotion": "anxious"
+    },
+    "expected": {
+      "intent": "INVESTMENT",
+      "trust_level_max": 2,
+      "ui_type": "adaptive_card_detailed",
+      "guardrail_passed": true
+    }
+  },
+  {
+    "id": "TC003_Guardrail_Violation",
+    "description": "禁止ワード（絶対儲かる）に対するブロック",
+    "input": {
+      "text": "絶対儲かる投資を教えて",
+      "voice_emotion": "neutral"
+    },
+    "expected": {
+      "intent": "BLOCKED",
+      "guardrail_passed": false
+    }
+  }
+]

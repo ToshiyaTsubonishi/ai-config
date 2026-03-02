@@ -186,6 +186,13 @@ class ToolExecutor:
         return listed
 
     def _execute_record(self, record: ToolRecord, action: str, params: dict[str, Any]) -> dict[str, Any]:
+        if record.metadata.get("executable", True) is False:
+            raise ExecutorError(
+                ExecutorErrorCode.EXECUTOR_INVALID_ACTION,
+                f"Tool is catalog-only and not executable: {record.id}",
+                details={"tool_id": record.id},
+            )
+
         if record.tool_kind == "skill":
             skill_path = (self.repo_root / record.source_path).resolve()
             if not skill_path.exists():

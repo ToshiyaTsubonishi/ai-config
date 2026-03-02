@@ -1,0 +1,16 @@
+# Skill Metadata Template
+# このファイルはスキルの振る舞いを定義するマニフェストです。
+
+name: {{SKILL_NAME}}
+description: {{DESCRIPTION}} (Max 150 chars)
+
+
+# 依存関係: このスキルが効果を発揮するために必要な他のスキル
+dependencies:
+  - gemini-skill-creator
+  - {{DEPENDENCY_1}}
+
+# 実行権限: このスキルが必要とするツール群
+permissions:
+  file_system: [read, write]
+  shell: [execute]

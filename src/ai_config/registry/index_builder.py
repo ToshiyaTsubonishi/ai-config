@@ -124,6 +124,7 @@ def build_index(
     model_name: str = EMBEDDING_MODEL,
     embedding_backend: str = EMBEDDING_BACKEND,
     vector_backend: str = VECTOR_BACKEND,
+    profile: str = "default",
 ) -> None:
     """Build and persist index artifacts."""
     if not records:
@@ -159,6 +160,7 @@ def build_index(
 
     summary = {
         "index_format_version": INDEX_FORMAT_VERSION,
+        "profile": profile,
         "total_records": len(records),
         "skills": sum(1 for r in records if r.tool_kind == "skill"),
         "skill_scripts": sum(1 for r in records if r.tool_kind == "skill_script"),

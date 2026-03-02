@@ -1,0 +1,10 @@
+stages:
+  - build
+  - test
+  - deploy
+
+build_job:
+  script: make build
+
+test_job:
+  script: make test

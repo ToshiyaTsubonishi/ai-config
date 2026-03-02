@@ -2,7 +2,7 @@
 
 AI ツール（Codex / Antigravity / Gemini CLI）の MCP とスキルを動的に検索・選択する MCP サーバー。
 
-各 AI ツールに `ai-config-selector` を 1 つ登録するだけで、905+ のスキルと MCP サーバーを自然言語で検索して利用できます。
+各 AI ツールに `ai-config-selector` を 1 つ登録するだけで、スキルと MCP サーバーを自然言語で検索して利用できます。
 
 ## アーキテクチャ
 
@@ -46,11 +46,14 @@ bash scripts/register.sh codex
 ## CLI ツール
 
 ```bash
-# インデックス構築
-ai-config-index --repo-root .
+# インデックス構築 (default プロファイル)
+ai-config-index --repo-root . --profile default
+
+# インデックス構築 (全件)
+ai-config-index --repo-root . --profile full
 
 # インデックス構築 (watch モード)
-ai-config-index --repo-root . --watch
+ai-config-index --repo-root . --profile default --watch
 
 # MCP サーバー起動 (通常は AI ツールが自動起動)
 ai-config-mcp-server --repo-root .
@@ -89,6 +92,48 @@ ai-config/
 
 `config/master/ai-sync.yaml` にマネージド MCP サーバー定義とスキルセットを記述します。
 これらは `ai-config-index` でインデックス化され、`ai-config-selector` MCP を通じて動的に検索されます。
+
+## 外部ソース管理
+
+`config/sources.yaml` に外部スキルリポジトリを定義し、`ai-config-sources sync` で同期します。
+
+主なソース:
+
+- `streamlit/agent-skills`
+- `remotion-dev/skills`
+- `anthropics/skills`
+- `anthropics/knowledge-work-plugins`
+- `sickn33/antigravity-awesome-skills`
+- `nextlevelbuilder/ui-ux-pro-max-skill`
+
+推奨運用:
+
+```bash
+ai-config-sources --repo-root . sync
+ai-config-index --repo-root . --profile default
+```
+
+## インデックスプロファイル
+
+`config/index_profiles.yaml` でプロファイルごとの収録範囲を制御します。
+
+- `default`: 通常運用向け（`antigravity-awesome-skills` を除外）
+- `full`: すべて収録
+
+## custom スキル構成
+
+`skills/custom` はドメイン単位のディレクトリ分割に対応しています。
+
+例:
+
+- `skills/custom/human_resources/<skill>/SKILL.md`
+- `skills/custom/technology/<skill>/SKILL.md`
+- `skills/custom/banking_finance/<skill>/SKILL.md`
+
+## knowledge-work-plugins の MCP
+
+`skills/external/**/.mcp.json` をカタログとして索引化します。  
+この経路で取り込んだ MCP は **catalog-only** として扱い、検索結果には出ますが実行対象にはしません。
 
 ## LLM 設定
 
