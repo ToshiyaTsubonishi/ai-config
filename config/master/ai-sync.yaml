@@ -82,6 +82,55 @@ mcp_servers:
     env: {}
     timeout_ms: 20000
 
+  paper-search-mcp:
+    transport: "stdio"
+    command: "bash"
+    args:
+      - "-lc"
+      - "uvx paper-search-mcp"
+    env:
+      SEMANTIC_SCHOLAR_API_KEY: ""
+    timeout_ms: 30000
+
+  jupyter-mcp-server:
+    transport: "stdio"
+    command: "bash"
+    args:
+      - "-lc"
+      - "uvx jupyter-mcp-server@latest"
+    env:
+      JUPYTER_URL: ""
+      JUPYTER_TOKEN: ""
+    timeout_ms: 30000
+
+  notion-mcp:
+    transport: "stdio"
+    command: "bash"
+    args:
+      - "-lc"
+      - 'npx -y mcp-remote --header "Authorization: Bearer ${NOTION_API_KEY}" https://mcp.notion.com/mcp'
+    env:
+      NOTION_API_KEY: ""
+    timeout_ms: 30000
+
+  microsoft-learn-mcp:
+    transport: "stdio"
+    command: "npx"
+    args: ["-y", "mcp-remote", "https://learn.microsoft.com/api/mcp"]
+    env: {}
+    timeout_ms: 30000
+
+  google-knowledge-mcp:
+    transport: "stdio"
+    command: "bash"
+    args:
+      - "-lc"
+      - 'npx -y mcp-remote --header "X-Goog-Api-Key: ${GOOGLE_API_KEY}" --header "X-Goog-User-Project: ${PROJECT_ID}" https://knowledge-mcp.global.api.dev/mcp'
+    env:
+      GOOGLE_API_KEY: ""
+      PROJECT_ID: ""
+    timeout_ms: 30000
+
 # ---------------------------------------------------------------------------
 # Skill sets — indexed for dynamic selection
 # ---------------------------------------------------------------------------
