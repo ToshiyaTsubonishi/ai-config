@@ -1,172 +1,100 @@
 version: "1.0.0"
 
-defaults:
-  dry_run: false
-  backup: true
-  conflict_policy: prompt
-  excluded_toolchains:
-    - anthropic
+# ---------------------------------------------------------------------------
+# Tool catalog configuration
+# ---------------------------------------------------------------------------
+# This file defines the managed tools that are indexed for dynamic selection.
+# The ai-config-selector MCP server searches these via the .index/ registry.
+# Only ai-config-selector itself is registered as an active MCP server.
 
 targets:
   codex:
-    enabled: true
     path_profiles:
       windows:
-        root_dir: "${USERPROFILE}\\.codex"
-        config_file: "${USERPROFILE}\\.codex\\config.toml"
         mcp_file: "${USERPROFILE}\\.codex\\config.toml"
-        skills_dir: "${USERPROFILE}\\.codex\\skills"
-        fallback_skills_dirs:
-          - "${USERPROFILE}\\.agents\\skills"
       darwin:
-        root_dir: "${HOME}/.codex"
-        config_file: "${HOME}/.codex/config.toml"
         mcp_file: "${HOME}/.codex/config.toml"
-        skills_dir: "${HOME}/.codex/skills"
-        fallback_skills_dirs:
-          - "${HOME}/.agents/skills"
-    templates:
-      config_template: "config/targets/codex/config.toml.tmpl"
-      mcp_template: "config/targets/codex/config.toml.tmpl"
-    override_env:
-      config_file: "CODEX_CONFIG_PATH"
-      mcp_file: "CODEX_CONFIG_PATH"
-      skills_dir: "CODEX_SKILLS_PATH"
-    sync:
-      mcp_mode: "replace"
-      skills_mode: "overlay"
-      skill_layers: ["external", "custom", "shared", "target"]
 
   antigravity:
-    enabled: true
     path_profiles:
       windows:
-        root_dir: "${USERPROFILE}\\.gemini\\antigravity"
         mcp_file: "${USERPROFILE}\\.gemini\\antigravity\\mcp_config.json"
-        skills_dir: "${USERPROFILE}\\.gemini\\antigravity\\skills"
       darwin:
-        root_dir: "${HOME}/.gemini/antigravity"
         mcp_file: "${HOME}/.gemini/antigravity/mcp_config.json"
-        skills_dir: "${HOME}/.gemini/antigravity/skills"
-    templates:
-      mcp_template: "config/targets/antigravity/mcp_config.json.tmpl"
-    override_env:
-      mcp_file: "ANTIGRAVITY_MCP_CONFIG_PATH"
-      skills_dir: "ANTIGRAVITY_SKILLS_PATH"
-    sync:
-      mcp_mode: "replace"
-      skills_mode: "overlay"
-      skill_layers: ["external", "custom", "shared", "target"]
 
   gemini_cli:
-    enabled: true
     path_profiles:
       windows:
-        root_dir: "${USERPROFILE}\\.gemini"
-        config_file: "${USERPROFILE}\\.gemini\\settings.json"
         mcp_file: "${USERPROFILE}\\.gemini\\settings.json"
-        skills_dir: "${USERPROFILE}\\.gemini\\skills"
       darwin:
-        root_dir: "${HOME}/.gemini"
-        config_file: "${HOME}/.gemini/settings.json"
         mcp_file: "${HOME}/.gemini/settings.json"
-        skills_dir: "${HOME}/.gemini/skills"
-    templates:
-      config_template: "config/targets/gemini-cli/settings.json.tmpl"
-      mcp_template: "config/targets/gemini-cli/settings.json.tmpl"
-    override_env:
-      config_file: "GEMINI_CONFIG_PATH"
-      mcp_file: "GEMINI_MCP_CONFIG_PATH"
-      skills_dir: "GEMINI_SKILLS_PATH"
-    sync:
-      mcp_mode: "replace"
-      skills_mode: "overlay"
-      skill_layers: ["external", "custom", "shared", "target"]
 
 # ---------------------------------------------------------------------------
-# Active MCP servers — only the dynamic selector is always-on.
-# All other MCPs and skills are indexed and managed dynamically.
+# Managed MCP servers — indexed for dynamic selection
 # ---------------------------------------------------------------------------
 mcp_servers:
-  ai-config-selector:
+  eslint:
     transport: "stdio"
-    enabled_targets: ["codex", "antigravity", "gemini_cli"]
-    command: "ai-config-mcp-server"
-    args: ["--repo-root", "${AI_CONFIG_ROOT}"]
+    command: "npx"
+    args: ["-y", "@eslint/mcp@latest"]
     env: {}
-    timeout_ms: 30000
+    timeout_ms: 20000
+
+  filesystem:
+    transport: "stdio"
+    command: "npx"
+    args: ["-y", "@modelcontextprotocol/server-filesystem", "${WORKSPACE_ROOT}"]
+    env: {}
+    timeout_ms: 20000
+
+  remotion-documentation:
+    transport: "stdio"
+    command: "npx"
+    args: ["-y", "@remotion/mcp@latest"]
+    env: {}
+    timeout_ms: 20000
+
+  reinfo:
+    transport: "stdio"
+    command: "npx"
+    args: ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=get-time,reinfolib-real-estate-price,reinfolib-city-list"]
+    env: {}
+    timeout_ms: 20000
+
+  kkj:
+    transport: "stdio"
+    command: "npx"
+    args: ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=kkj-search"]
+    env: {}
+    timeout_ms: 20000
+
+  e-stat:
+    transport: "stdio"
+    command: "npx"
+    args: ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=e-stat-get-stats-list,e-stat-get-meta-info,e-stat-get-data-catalog"]
+    env: {}
+    timeout_ms: 20000
+
+  inference-proxy-mcp:
+    transport: "stdio"
+    command: "npx"
+    args: ["-y", "mcp-remote", "http://localhost:{{PORT_INFERENCE_PROXY_MCP}}/mcp"]
+    env: {}
+    timeout_ms: 20000
 
 # ---------------------------------------------------------------------------
-# Managed tools — these are indexed for dynamic selection, not loaded directly.
-# The ai-config-selector MCP server searches these via the .index/ registry.
+# Skill sets — indexed for dynamic selection
 # ---------------------------------------------------------------------------
-managed_tools:
-  mcp_servers:
-    eslint:
-      transport: "stdio"
-      command: "npx"
-      args: ["-y", "@eslint/mcp@latest"]
-      env: {}
-      timeout_ms: 20000
-
-    filesystem:
-      transport: "stdio"
-      command: "npx"
-      args: ["-y", "@modelcontextprotocol/server-filesystem", "${WORKSPACE_ROOT}"]
-      env: {}
-      timeout_ms: 20000
-
-    remotion-documentation:
-      transport: "stdio"
-      command: "npx"
-      args: ["-y", "@remotion/mcp@latest"]
-      env: {}
-      timeout_ms: 20000
-
-    reinfo:
-      transport: "stdio"
-      command: "npx"
-      args: ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=get-time,reinfolib-real-estate-price,reinfolib-city-list"]
-      env: {}
-      timeout_ms: 20000
-
-    kkj:
-      transport: "stdio"
-      command: "npx"
-      args: ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=kkj-search"]
-      env: {}
-      timeout_ms: 20000
-
-    e-stat:
-      transport: "stdio"
-      command: "npx"
-      args: ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=e-stat-get-stats-list,e-stat-get-meta-info,e-stat-get-data-catalog"]
-      env: {}
-      timeout_ms: 20000
-
-    inference-proxy-mcp:
-      transport: "stdio"
-      command: "npx"
-      args: ["-y", "mcp-remote", "http://localhost:{{PORT_INFERENCE_PROXY_MCP}}/mcp"]
-      env: {}
-      timeout_ms: 20000
-
-  skill_sets:
-    external:
-      - "skills/external/*"
-    custom:
-      - "skills/custom/*"
-    shared:
-      - "skills/shared/*"
-    codex:
-      - "skills/codex/*"
-    antigravity:
-      - "skills/antigravity/*"
-    gemini_cli:
-      - "skills/gemini/*"
+skill_sets:
+  external:
+    - "skills/external/*"
+  custom:
+    - "skills/custom/*"
+  shared:
+    - "skills/shared/*"
 
 # ---------------------------------------------------------------------------
-# LLM configuration for the dynamic tool orchestrator
+# LLM configuration for the orchestrator
 # ---------------------------------------------------------------------------
 llm:
   model: "gemini-flash-latest"
