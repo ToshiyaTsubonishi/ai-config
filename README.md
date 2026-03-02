@@ -26,8 +26,8 @@ AI Tool (Codex / Antigravity / Gemini CLI)
 ## セットアップ
 
 ```bash
-git clone https://github.com/ToshiyaTsubonishi/ai-config-sync.git
-cd ai-config-sync
+git clone https://github.com/ToshiyaTsubonishi/ai-config.git
+cd ai-config
 bash scripts/setup.sh
 ```
 
@@ -65,7 +65,7 @@ ai-config-agent "codex で実行して" --top-k 8 --max-retries 2
 ## ディレクトリ構成
 
 ```
-ai-config-sync/
+ai-config/
 ├── src/ai_config/
 │   ├── mcp_server/      # 動的選択 MCP サーバー
 │   ├── registry/         # ツールパーサー・インデックスビルダー
