@@ -35,7 +35,7 @@ targets:
     sync:
       mcp_mode: "replace"
       skills_mode: "overlay"
-      skill_layers: ["external", "shared", "target"]
+      skill_layers: ["external", "custom", "shared", "target"]
 
   antigravity:
     enabled: true
@@ -56,7 +56,7 @@ targets:
     sync:
       mcp_mode: "replace"
       skills_mode: "overlay"
-      skill_layers: ["external", "shared", "target"]
+      skill_layers: ["external", "custom", "shared", "target"]
 
   gemini_cli:
     enabled: true
@@ -81,73 +81,94 @@ targets:
     sync:
       mcp_mode: "replace"
       skills_mode: "overlay"
-      skill_layers: ["external", "shared", "target"]
+      skill_layers: ["external", "custom", "shared", "target"]
 
+# ---------------------------------------------------------------------------
+# Active MCP servers — only the dynamic selector is always-on.
+# All other MCPs and skills are indexed and managed dynamically.
+# ---------------------------------------------------------------------------
 mcp_servers:
-  eslint:
+  ai-config-selector:
     transport: "stdio"
     enabled_targets: ["codex", "antigravity", "gemini_cli"]
-    command: "npx"
-    args: ["-y", "@eslint/mcp@latest"]
+    command: "ai-config-mcp-server"
+    args: ["--repo-root", "${AI_CONFIG_ROOT}"]
     env: {}
-    timeout_ms: 20000
+    timeout_ms: 30000
 
-  filesystem:
-    transport: "stdio"
-    enabled_targets: ["codex", "antigravity", "gemini_cli"]
-    command: "npx"
-    args: ["-y", "@modelcontextprotocol/server-filesystem", "${WORKSPACE_ROOT}"]
-    env: {}
-    timeout_ms: 20000
+# ---------------------------------------------------------------------------
+# Managed tools — these are indexed for dynamic selection, not loaded directly.
+# The ai-config-selector MCP server searches these via the .index/ registry.
+# ---------------------------------------------------------------------------
+managed_tools:
+  mcp_servers:
+    eslint:
+      transport: "stdio"
+      command: "npx"
+      args: ["-y", "@eslint/mcp@latest"]
+      env: {}
+      timeout_ms: 20000
 
-  remotion-documentation:
-    transport: "stdio"
-    enabled_targets: ["codex", "antigravity", "gemini_cli"]
-    command: "npx"
-    args: ["-y", "@remotion/mcp@latest"]
-    env: {}
-    timeout_ms: 20000
+    filesystem:
+      transport: "stdio"
+      command: "npx"
+      args: ["-y", "@modelcontextprotocol/server-filesystem", "${WORKSPACE_ROOT}"]
+      env: {}
+      timeout_ms: 20000
 
-  reinfo:
-    transport: "stdio"
-    enabled_targets: ["codex", "antigravity", "gemini_cli"]
-    command: "npx"
-    args: ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=get-time,reinfolib-real-estate-price,reinfolib-city-list"]
-    env: {}
-    timeout_ms: 20000
+    remotion-documentation:
+      transport: "stdio"
+      command: "npx"
+      args: ["-y", "@remotion/mcp@latest"]
+      env: {}
+      timeout_ms: 20000
 
-  kkj:
-    transport: "stdio"
-    enabled_targets: ["codex", "antigravity", "gemini_cli"]
-    command: "npx"
-    args: ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=kkj-search"]
-    env: {}
-    timeout_ms: 20000
+    reinfo:
+      transport: "stdio"
+      command: "npx"
+      args: ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=get-time,reinfolib-real-estate-price,reinfolib-city-list"]
+      env: {}
+      timeout_ms: 20000
 
-  e-stat:
-    transport: "stdio"
-    enabled_targets: ["codex", "antigravity", "gemini_cli"]
-    command: "npx"
-    args: ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=e-stat-get-stats-list,e-stat-get-meta-info,e-stat-get-data-catalog"]
-    env: {}
-    timeout_ms: 20000
+    kkj:
+      transport: "stdio"
+      command: "npx"
+      args: ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=kkj-search"]
+      env: {}
+      timeout_ms: 20000
 
-  inference-proxy-mcp:
-    transport: "stdio"
-    enabled_targets: ["codex", "antigravity", "gemini_cli"]
-    command: "npx"
-    args: ["-y", "mcp-remote", "http://localhost:{{PORT_INFERENCE_PROXY_MCP}}/mcp"]
-    env: {}
-    timeout_ms: 20000
+    e-stat:
+      transport: "stdio"
+      command: "npx"
+      args: ["-y", "mcp-remote", "https://mcp.n-3.ai/mcp?tools=e-stat-get-stats-list,e-stat-get-meta-info,e-stat-get-data-catalog"]
+      env: {}
+      timeout_ms: 20000
 
-skill_sets:
-  external:
-    - "skills/external/*"
-  shared:
-    - "skills/shared/*"
-  codex:
-    - "skills/codex/*"
-  antigravity:
-    - "skills/antigravity/*"
-  gemini_cli:
-    - "skills/gemini/*"
+    inference-proxy-mcp:
+      transport: "stdio"
+      command: "npx"
+      args: ["-y", "mcp-remote", "http://localhost:{{PORT_INFERENCE_PROXY_MCP}}/mcp"]
+      env: {}
+      timeout_ms: 20000
+
+  skill_sets:
+    external:
+      - "skills/external/*"
+    custom:
+      - "skills/custom/*"
+    shared:
+      - "skills/shared/*"
+    codex:
+      - "skills/codex/*"
+    antigravity:
+      - "skills/antigravity/*"
+    gemini_cli:
+      - "skills/gemini/*"
+
+# ---------------------------------------------------------------------------
+# LLM configuration for the dynamic tool orchestrator
+# ---------------------------------------------------------------------------
+llm:
+  model: "gemini-flash-latest"
+  env_var: "GEMINI_MODEL"
+  temperature: 0.1

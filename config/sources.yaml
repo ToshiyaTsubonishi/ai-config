@@ -1,0 +1,25 @@
+version: "1.0.0"
+
+# External source repositories managed as git submodules.
+# Run `ai-config-sources sync` to clone/update all declared sources.
+
+sources:
+  # --- Skills ---
+  streamlit:
+    type: skill
+    url: https://github.com/streamlit/agent-skills
+    path: skills/external/streamlit
+    branch: main
+
+  remotion:
+    type: skill
+    url: https://github.com/remotion-dev/skills
+    path: skills/external/remotion
+    branch: main
+
+  # --- MCP Servers ---
+  # example-mcp:
+  #   type: mcp
+  #   url: https://github.com/example/mcp-server
+  #   path: mcp/external/example-mcp
+  #   branch: main

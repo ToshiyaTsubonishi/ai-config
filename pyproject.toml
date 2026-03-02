@@ -13,6 +13,7 @@ dependencies = [
     "python-frontmatter>=1.1",
     "python-dotenv>=1.0",
     "pydantic>=2.8",
+    "mcp[cli]>=1.0",
 ]
 
 [project.optional-dependencies]
@@ -22,6 +23,8 @@ semantic = ["faiss-cpu>=1.9", "sentence-transformers>=3.0"]
 [project.scripts]
 ai-config-index = "ai_config.build_index:main"
 ai-config-agent = "ai_config.orchestrator.cli:main"
+ai-config-sources = "ai_config.source_manager:main"
+ai-config-mcp-server = "ai_config.mcp_server.server:main"
 
 [build-system]
 requires = ["hatchling"]

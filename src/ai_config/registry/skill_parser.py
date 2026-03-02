@@ -19,7 +19,7 @@ from ai_config.registry.models import ToolRecord
 logger = logging.getLogger(__name__)
 
 # Skill layers expected at skills/<layer>/<skill-name>/SKILL.md
-SKILL_LAYERS = ("shared", "external", "codex", "antigravity", "gemini")
+SKILL_LAYERS = ("shared", "external", "custom", "codex", "antigravity", "gemini")
 TARGET_LAYERS = {"codex", "antigravity", "gemini"}
 
 
