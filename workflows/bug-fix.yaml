@@ -1,0 +1,39 @@
+name: bug-fix
+description: "バグ修正: 調査 → 修正 → テスト検証"
+
+steps:
+  - step_id: investigate
+    description: "バグの原因調査"
+    agent: gemini
+    prompt_template: |
+      以下のバグを調査してください。
+      
+      {user_prompt}
+      
+      ログ、エラーメッセージ、関連するコードを分析し、
+      根本原因と修正方針を report.md として保存してください。
+    timeout_seconds: 300
+
+  - step_id: fix
+    description: "バグの修正"
+    agent: codex
+    depends_on: [investigate]
+    prompt_template: |
+      report.md の調査結果に基づいて、以下のバグを修正してください。
+      
+      {user_prompt}
+      
+      最小限の変更で根本原因を解決してください。
+    timeout_seconds: 300
+
+  - step_id: verify
+    description: "テストで修正を検証"
+    agent: codex
+    depends_on: [fix]
+    prompt_template: |
+      バグ修正が完了しました。テストを実行して修正が正しいことを検証してください。
+      
+      {user_prompt}
+      
+      テストを実行し、リグレッションがないことを確認してください。
+    timeout_seconds: 300

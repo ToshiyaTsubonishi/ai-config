@@ -442,8 +442,12 @@ def finalize(state: dict[str, Any]) -> dict[str, Any]:
     if failures:
         for item in failures:
             err = item.get("error") or {}
-            code = err.get("code", "UNKNOWN")
-            message = err.get("message", "")
+            if isinstance(err, dict):
+                code = err.get("code", "UNKNOWN")
+                message = err.get("message", "")
+            else:
+                code = "UNKNOWN"
+                message = str(err)
             lines.append(f"- {item.get('step_id')} {item.get('tool_id')} => {code}: {message}")
     else:
         lines.append("- 失敗なし")

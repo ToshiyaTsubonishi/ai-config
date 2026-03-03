@@ -26,3 +26,4 @@ inventory/antigravity/**
 !inventory/antigravity/latest/extensions-manifest.txt
 !inventory/antigravity/latest/user/
 !inventory/antigravity/latest/user/settings.json
+.dispatch/

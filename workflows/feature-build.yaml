@@ -1,0 +1,51 @@
+name: feature-build
+description: "フィーチャー開発: 設計 → 実装 → テスト の順序実行"
+
+variables:
+  language: "TypeScript"
+
+steps:
+  - step_id: design
+    description: "設計ドキュメントの作成"
+    agent: gemini
+    prompt_template: |
+      以下の機能の設計ドキュメントを作成してください。
+      技術スタック: {language}
+      
+      要求: {user_prompt}
+      
+      以下を含めること:
+      - 概要
+      - データモデル
+      - API設計（該当する場合）
+      - ファイル構成
+      - 実装手順
+      
+      設計内容は design.md として保存してください。
+    timeout_seconds: 300
+
+  - step_id: implement
+    description: "コードの実装"
+    agent: codex
+    depends_on: [design]
+    prompt_template: |
+      design.md の設計ドキュメントに基づいて、以下の機能を実装してください。
+      技術スタック: {language}
+      
+      要求: {user_prompt}
+      
+      設計書を読み、それに従って実装してください。
+    timeout_seconds: 600
+
+  - step_id: test
+    description: "テストの作成と実行"
+    agent: codex
+    depends_on: [implement]
+    prompt_template: |
+      実装したコードに対するテストを作成し、実行してください。
+      技術スタック: {language}
+      
+      要求: {user_prompt}
+      
+      テストを実行し、全てのテストがパスすることを確認してください。
+    timeout_seconds: 300

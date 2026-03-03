@@ -91,7 +91,7 @@ def route_specialist(query: str) -> tuple[str, float]:
                 score += 1.0 if " " not in keyword else 1.5
         scores[specialist] = score
 
-    best_specialist = max(scores, key=scores.get)
+    best_specialist = max(scores, key=lambda k: scores[k])
     best_score = float(scores[best_specialist])
     if best_score < MIN_SPECIALIST_SCORE:
         return SPECIALIST_GENERAL, 0.0

@@ -1,0 +1,36 @@
+name: code-review
+description: "コードレビュー: 設計分析 → セキュリティチェック → テスト検証 を並列実行"
+
+steps:
+  - step_id: design-review
+    description: "設計とアーキテクチャのレビュー"
+    agent: gemini
+    prompt_template: |
+      以下のプロジェクトのコードレビューを実施してください。
+      設計パターン、アーキテクチャの一貫性、命名規約、モジュール分割の適切さを評価してください。
+      
+      対象: {user_prompt}
+      
+      結果はマークダウン形式でまとめてください。
+    timeout_seconds: 300
+
+  - step_id: security-review
+    description: "セキュリティ脆弱性チェック"
+    agent: codex
+    prompt_template: |
+      以下のプロジェクトのセキュリティレビューを実施してください。
+      インジェクション攻撃、認証/認可の問題、機密情報の漏洩、依存関係の脆弱性を確認してください。
+      
+      対象: {user_prompt}
+    timeout_seconds: 300
+
+  - step_id: test-review
+    description: "テストカバレッジと品質の検証"
+    agent: codex
+    prompt_template: |
+      以下のプロジェクトのテストを検証してください。
+      テストカバレッジ、エッジケースの網羅性、テストの品質を評価してください。
+      テストを実行し、結果を報告してください。
+      
+      対象: {user_prompt}
+    timeout_seconds: 300
