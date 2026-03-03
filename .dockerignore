@@ -1,0 +1,17 @@
+.git/
+.venv/
+__pycache__/
+*.pyc
+.index/
+.env
+.env.*
+!.env.example
+.pytest_cache/
+.dispatch/
+.agents/
+.tmp-test/
+tests/
+docs/
+*.egg-info/
+dist/
+build/
