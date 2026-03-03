@@ -15,3 +15,10 @@
 - **期待動作**: タスク開始時に `search_tools` で関連スキル / MCP を検索する
 - **実際の動作**: 一切検索せず直接作業した
 - **ルール**: タスク開始時に必ず `search_tools` で関連ツールを検索する。結果がなくても検索すること自体が正しい動作。見つかったスキルがあれば活用する。
+
+### ミス 3: Gemini API の response.content が list を返すケースを未考慮
+
+- **状況**: `response.content` が `str` であることを前提にしていたが、Gemini API は multi-part content の場合 `list` を返す
+- **影響**: `'list' object has no attribute 'strip'` で LLM プランニングが毎回フォールバックに落ちていた
+- **修正**: `_extract_text()` ヘルパー関数を追加。`list` の場合は各パーツの `.text` を結合する
+- **ルール**: LLM レスポンスの `content` フィールドは常に `str | list` の両方をハンドルする
