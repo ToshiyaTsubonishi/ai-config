@@ -129,6 +129,27 @@ def _parse_plan_json(raw: str) -> dict[str, Any]:
     return json.loads(text.strip())
 
 
+def _extract_text(response: Any) -> str:
+    """Safely extract text content from an LLM response.
+
+    Handles cases where response.content is a list (multi-part)
+    instead of a plain string.
+    """
+    content = response.content if hasattr(response, "content") else str(response)
+    if isinstance(content, list):
+        # Multi-part content: join text parts
+        parts = []
+        for part in content:
+            if isinstance(part, str):
+                parts.append(part)
+            elif hasattr(part, "text"):
+                parts.append(part.text)
+            else:
+                parts.append(str(part))
+        return "".join(parts)
+    return str(content)
+
+
 def _fallback_single_step(
     user_prompt: str, available_agents: list[str], working_directory: str
 ) -> dict[str, Any]:
@@ -244,9 +265,7 @@ def plan_tasks(state: dict[str, Any]) -> dict[str, Any]:
         )
         try:
             response = llm.invoke(prompt_text)
-            plan_data = _parse_plan_json(
-                response.content if hasattr(response, "content") else str(response)
-            )
+            plan_data = _parse_plan_json(_extract_text(response))
         except Exception as e:
             logger.warning("LLM planning failed (%s), using fallback", e)
             plan_data = _fallback_single_step(user_prompt, available, working_directory)
@@ -332,9 +351,7 @@ def replan_tasks(state: dict[str, Any]) -> dict[str, Any]:
         )
         try:
             response = llm.invoke(prompt_text)
-            plan_data = _parse_plan_json(
-                response.content if hasattr(response, "content") else str(response)
-            )
+            plan_data = _parse_plan_json(_extract_text(response))
         except Exception as e:
             logger.warning("LLM re-planning failed (%s), using fallback", e)
             plan_data = _fallback_single_step(

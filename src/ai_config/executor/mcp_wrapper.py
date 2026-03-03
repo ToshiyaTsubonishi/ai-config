@@ -90,6 +90,7 @@ class ToolExecutor:
         args: list[str],
         timeout_ms: int,
         env_keys: list[str] | None = None,
+        cwd: str | Path | None = None,
     ) -> dict[str, Any]:
         cmd_name = Path(command).name.lower()
         if cmd_name not in self._allowed_command_names():
@@ -128,38 +129,46 @@ class ToolExecutor:
                 safe_env[key] = value
                 allowed_env_values.append(value)
 
+        # Execution context
+        run_cwd = (self.repo_root / (cwd or ".")).resolve()
+        if not run_cwd.exists():
+            run_cwd = self.repo_root
+
         try:
             proc = subprocess.run(
                 [executable, *args],
-                cwd=self.repo_root,
+                cwd=run_cwd,
                 env=safe_env,
                 capture_output=True,
                 text=True,
                 timeout=max(timeout_ms, 1000) / 1000,
             )
         except subprocess.TimeoutExpired as exc:
+            masked_args = [self._mask_sensitive(a, allowed_env_values) for a in args]
             raise ExecutorError(
                 ExecutorErrorCode.EXECUTOR_TIMEOUT,
-                f"Command timed out: {command}",
-                details={"timeout_ms": timeout_ms, "args": args},
+                self._mask_sensitive(f"Command timed out: {command}", allowed_env_values),
+                details={"timeout_ms": timeout_ms, "args": masked_args},
             ) from exc
         except OSError as exc:
             raise ExecutorError(
                 ExecutorErrorCode.EXECUTOR_RUNTIME_ERROR,
-                f"Failed to execute command: {command}",
+                self._mask_sensitive(f"Failed to execute command: {command}", allowed_env_values),
                 details={"error": str(exc)},
             ) from exc
 
         stdout = self._mask_sensitive(proc.stdout or "", allowed_env_values)
         stderr = self._mask_sensitive(proc.stderr or "", allowed_env_values)
         if proc.returncode != 0:
+            masked_args = [self._mask_sensitive(a, allowed_env_values) for a in args]
             raise ExecutorError(
                 ExecutorErrorCode.EXECUTOR_RUNTIME_ERROR,
-                f"Command failed: {command}",
+                self._mask_sensitive(f"Command failed: {command}", allowed_env_values),
                 details={
                     "exit_code": proc.returncode,
                     "stderr": stderr[:2000],
                     "stdout": stdout[:500],
+                    "args": masked_args,
                 },
             )
 
@@ -185,7 +194,7 @@ class ToolExecutor:
             )
         return listed
 
-    def _execute_record(self, record: ToolRecord, action: str, params: dict[str, Any]) -> dict[str, Any]:
+    def _execute_record(self, record: ToolRecord, action: str, params: dict[str, Any], cwd: str | Path | None = None) -> dict[str, Any]:
         if record.metadata.get("executable", True) is False:
             raise ExecutorError(
                 ExecutorErrorCode.EXECUTOR_INVALID_ACTION,
@@ -212,6 +221,7 @@ class ToolExecutor:
                     f"Adapter not found for {record.id}",
                     details={"tool_id": record.id},
                 )
+            # Adapters don't support cwd yet, but we pass it anyway if we update the interface
             return adapter.call(action, params, runner=self)
 
         if record.tool_kind in {"skill_script", "mcp_server"}:
@@ -226,7 +236,7 @@ class ToolExecutor:
                     f"No command configured for {record.id}",
                     details={"tool_id": record.id},
                 )
-            return self.run_command(command=command, args=args, timeout_ms=timeout_ms, env_keys=env_keys)
+            return self.run_command(command=command, args=args, timeout_ms=timeout_ms, env_keys=env_keys, cwd=cwd)
 
         raise ExecutorError(
             ExecutorErrorCode.EXECUTOR_INVALID_ACTION,
@@ -234,7 +244,7 @@ class ToolExecutor:
             details={"tool_id": record.id},
         )
 
-    def tools_call(self, tool_id: str, action: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
+    def tools_call(self, tool_id: str, action: str, params: dict[str, Any] | None = None, cwd: str | Path | None = None) -> dict[str, Any]:
         params = params or {}
         try:
             if tool_id in self.adapters:
@@ -249,7 +259,7 @@ class ToolExecutor:
                     details={"tool_id": tool_id},
                 )
 
-            payload = self._execute_record(record, action, params)
+            payload = self._execute_record(record, action, params, cwd=cwd)
             return {"tool_id": tool_id, "status": "success", "output": payload, "error": None}
         except ExecutorError as exc:
             return {"tool_id": tool_id, "status": "error", "output": None, "error": exc.to_dict()}

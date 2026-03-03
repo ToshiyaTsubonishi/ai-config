@@ -242,6 +242,16 @@ def plan_steps(state: dict[str, Any]) -> dict[str, Any]:
         )
         response = llm.invoke(prompt)
         content = response.content if hasattr(response, "content") else str(response)
+        if isinstance(content, list):
+            parts = []
+            for part in content:
+                if isinstance(part, str):
+                    parts.append(part)
+                elif hasattr(part, "text"):
+                    parts.append(part.text)
+                else:
+                    parts.append(str(part))
+            content = "".join(parts)
         plan_obj = parse_plan_text(content)
         if not plan_obj.steps and candidates:
             plan_obj = _fallback_plan(query, candidates)
@@ -275,7 +285,12 @@ def execute_step(state: dict[str, Any]) -> dict[str, Any]:
     candidates = state.get("candidates", [])
     executor = _get_executor()
     executor.register_records(candidates)
-    result = executor.tools_call(tool_id=step.tool_id, action=step.action, params=step.params)
+    result = executor.tools_call(
+        tool_id=step.tool_id,
+        action=step.action,
+        params=step.params,
+        cwd=step.working_directory,
+    )
 
     execution_results = list(state.get("execution_results", []))
     step_result = {

@@ -14,6 +14,7 @@ class PlanStep(BaseModel):
     action: str = Field(default="run", description="Action name")
     reason: str = Field(default="", description="Why this step exists")
     params: dict[str, Any] = Field(default_factory=dict, description="Tool call parameters")
+    working_directory: str = Field(default=".", description="Execution directory")
 
 
 class PlanObject(BaseModel):
