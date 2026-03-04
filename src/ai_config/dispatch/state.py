@@ -79,6 +79,7 @@ class DispatchState(TypedDict, total=False):
     done: bool
     abort: bool
     dry_run: bool
+    keep_context: bool  # if True, preserve .dispatch/ after finalization
 
     # Output
     final_report: str

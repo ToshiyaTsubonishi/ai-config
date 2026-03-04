@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import logging
+import shutil
+from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -195,4 +197,23 @@ def finalize(state: dict[str, Any]) -> dict[str, Any]:
 
         lines.append("")
 
+    # Cleanup context directory unless keep_context is set
+    _cleanup_context_dir(state)
+
     return {"final_report": "\n".join(lines), "done": True}
+
+
+def _cleanup_context_dir(state: dict[str, Any]) -> None:
+    """Remove the session context directory if it exists and cleanup is not disabled."""
+    if state.get("keep_context"):
+        return
+    context_dir = state.get("context_dir")
+    if not context_dir:
+        return
+    path = Path(context_dir)
+    if path.exists() and path.is_dir():
+        try:
+            shutil.rmtree(path)
+            logger.info("Cleaned up context directory: %s", path)
+        except Exception as e:
+            logger.warning("Failed to clean up context directory %s: %s", path, e)

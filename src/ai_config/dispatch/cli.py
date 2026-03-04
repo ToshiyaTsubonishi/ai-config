@@ -77,6 +77,11 @@ def main(argv: list[str] | None = None) -> None:
         action="store_true",
         help="Print full execution trace as JSON",
     )
+    parser.add_argument(
+        "--keep-context",
+        action="store_true",
+        help="Keep .dispatch/ context directory after execution",
+    )
     args = parser.parse_args(argv)
 
     # --- List workflows ---
@@ -123,6 +128,7 @@ def main(argv: list[str] | None = None) -> None:
         "dry_run": args.dry_run,
         "parallel": args.parallel,
         "workflow_name": args.workflow,
+        "keep_context": args.keep_context,
         "step_results": [],
         "replan_count": 0,
         "done": False,

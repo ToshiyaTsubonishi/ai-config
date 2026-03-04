@@ -20,6 +20,25 @@ from ai_config.dispatch.planner import AGENT_PROFILES
 
 logger = logging.getLogger(__name__)
 
+# ---------------------------------------------------------------------------
+# Environment variable safety
+# ---------------------------------------------------------------------------
+_SAFE_ENV_KEYS = {
+    "PATH", "HOME", "USER", "SHELL", "LANG", "LC_ALL", "LC_CTYPE",
+    "TERM", "TMPDIR", "TMP", "TEMP",
+    # Agent-specific overrides
+    "AI_CONFIG_GEMINI_CMD", "AI_CONFIG_CODEX_CMD", "AI_CONFIG_ANTIGRAVITY_CMD",
+    # Required for LLM API access (agents need these)
+    "GEMINI_API_KEY", "GOOGLE_API_KEY", "OPENAI_API_KEY",
+    # Node / Python runtime
+    "NODE_PATH", "PYTHONPATH", "VIRTUAL_ENV",
+}
+
+
+def _build_safe_env() -> dict[str, str]:
+    """Build a filtered environment dict containing only safe keys."""
+    return {k: v for k, v in os.environ.items() if k in _SAFE_ENV_KEYS}
+
 
 # ---------------------------------------------------------------------------
 # Context directory management
@@ -143,7 +162,7 @@ def _run_agent(
             text=True,
             timeout=timeout_seconds,
             cwd=cwd,
-            env={**os.environ},
+            env=_build_safe_env(),
         )
 
         if result.returncode == 0:
@@ -388,6 +407,7 @@ def dispatch_step(state: dict[str, Any]) -> dict[str, Any]:
     return {
         "step_results": results,
         "last_step_result": result_entry,
+        "current_step": current_step,  # explicit for consistency with parallel path
         "session_id": session_id,
         "context_dir": str(context_dir),
     }

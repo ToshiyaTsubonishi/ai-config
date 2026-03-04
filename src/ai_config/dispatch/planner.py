@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import functools
 import json
 import logging
 import os
@@ -174,20 +175,14 @@ def _fallback_single_step(
 # ---------------------------------------------------------------------------
 # LangGraph node functions
 # ---------------------------------------------------------------------------
-_llm = None
-
-
+@functools.lru_cache(maxsize=1)
 def _get_llm():
-    """Lazy-init the LLM for planning."""
-    global _llm
-    if _llm is not None:
-        return _llm
+    """Lazy-init the LLM for planning (cached, thread-safe via lru_cache)."""
     try:
         from langchain_google_genai import ChatGoogleGenerativeAI
 
         model = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
-        _llm = ChatGoogleGenerativeAI(model=model, temperature=0.2)
-        return _llm
+        return ChatGoogleGenerativeAI(model=model, temperature=0.2)
     except Exception as e:
         logger.error("Failed to initialise planning LLM: %s", e)
         return None
@@ -367,6 +362,7 @@ def replan_tasks(state: dict[str, Any]) -> dict[str, Any]:
         "plan": steps,
         "current_step": 0,
         "total_steps": len(steps),
+        "step_results": [],  # reset to prevent stale results from old plan
         "step_retry_count": 0,
         "needs_replanning": False,
         "replan_count": replan_count,
