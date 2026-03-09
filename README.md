@@ -82,9 +82,11 @@ ai-config/
 │   ├── master/ai-sync.yaml  # ツールカタログ設定
 │   └── sources.yaml         # 外部スキルソース定義
 ├── .index/               # 構築済みインデックス
+├── instructions/         # Agent / Gemini / Lesson のGit管理ファイル
 ├── scripts/
 │   ├── setup.sh          # セットアップ
-│   └── register.sh       # MCP 登録
+│   ├── register.sh       # MCP 登録
+│   └── sync-instructions.sh # Agent/Gemini/Lesson 同期
 └── tests/                # テスト
 ```
 
@@ -111,6 +113,21 @@ ai-config/
 ```bash
 ai-config-sources --repo-root . sync
 ai-config-index --repo-root . --profile default
+```
+
+## Agent/Gemini/Lesson 同期
+
+`instructions/` を Git の正本として管理し、`scripts/sync-instructions.sh` で実運用ファイルと同期します。
+
+```bash
+# 同期状態を確認
+bash scripts/sync-instructions.sh status
+
+# 実運用ファイル -> instructions/ に取り込み
+bash scripts/sync-instructions.sh pull
+
+# instructions/ -> 実運用ファイルへ反映
+bash scripts/sync-instructions.sh push
 ```
 
 ## インデックスプロファイル
