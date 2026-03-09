@@ -16,3 +16,11 @@
 	path = skills/external/nextlevelbuilder-ui-ux-pro-max-skill
 	url = https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
 	branch = main
+[submodule "skills/external/antigravity-awesome-skills"]
+	path = skills/external/antigravity-awesome-skills
+	url = https://github.com/sickn33/antigravity-awesome-skills
+	branch = main
+[submodule "skills/external/claude-ads"]
+	path = skills/external/claude-ads
+	url = https://github.com/AgriciDaniel/claude-ads
+	branch = main

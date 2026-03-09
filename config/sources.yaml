@@ -41,6 +41,12 @@ sources:
     path: skills/external/nextlevelbuilder-ui-ux-pro-max-skill
     branch: main
 
+  claude-ads:
+    type: skill
+    url: https://github.com/AgriciDaniel/claude-ads
+    path: skills/external/claude-ads
+    branch: main
+
   # --- MCP Servers ---
   # example-mcp:
   #   type: mcp
