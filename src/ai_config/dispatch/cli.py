@@ -7,10 +7,9 @@ import json
 import logging
 import sys
 
-from dotenv import load_dotenv
-
 from ai_config.dispatch.graph import create_dispatch_agent
 from ai_config.dispatch.planner import detect_available_agents
+from ai_config.runtime_env import load_runtime_env
 
 logging.basicConfig(
     level=logging.INFO,
@@ -20,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 def main(argv: list[str] | None = None) -> None:
-    load_dotenv()
+    load_runtime_env()
 
     parser = argparse.ArgumentParser(
         description="Multi-agent dispatch orchestrator for AI coding tools"

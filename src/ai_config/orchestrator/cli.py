@@ -8,11 +8,10 @@ import logging
 import sys
 from pathlib import Path
 
-from dotenv import load_dotenv
-
 from ai_config.orchestrator.graph import create_agent
 from ai_config.retriever.hybrid_search import HybridRetriever
 from ai_config.retriever.query_intent import infer_query_intent
+from ai_config.runtime_env import load_runtime_env
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -43,7 +42,7 @@ def _print_search_only(index_dir: Path, query: str, top_k: int) -> None:
 
 
 def main(argv: list[str] | None = None) -> None:
-    load_dotenv()
+    load_runtime_env()
     parser = argparse.ArgumentParser(description="ai-config dynamic tool orchestrator")
     parser.add_argument("query", type=str, help="User query")
     parser.add_argument("--index-dir", type=Path, default=Path(".index"), help="Index directory")
