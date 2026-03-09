@@ -1,13 +1,13 @@
 # ai-config
 
-AI ツール（Codex / Antigravity / Gemini CLI）の MCP とスキルを動的に検索・選択する MCP サーバー。
+AI ツール（Claude Code / Codex / Antigravity / Gemini CLI）の MCP とスキルを動的に検索・選択する MCP サーバー。
 
 各 AI ツールに `ai-config-selector` を 1 つ登録するだけで、スキルと MCP サーバーを自然言語で検索して利用できます。
 
 ## アーキテクチャ
 
 ```
-AI Tool (Codex / Antigravity / Gemini CLI)
+AI Tool (Claude Code / Codex / Antigravity / Gemini CLI)
     │
     └── ai-config-selector (MCP Server)
             │
@@ -38,6 +38,7 @@ bash scripts/setup.sh
 bash scripts/register.sh
 
 # 個別登録
+bash scripts/register.sh claude
 bash scripts/register.sh antigravity
 bash scripts/register.sh gemini_cli
 bash scripts/register.sh codex

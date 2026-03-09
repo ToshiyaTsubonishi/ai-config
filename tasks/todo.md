@@ -203,3 +203,51 @@
 - 検証結果:
   - `search_tools("raindrop bookmark mcp")` で `mcp:raindrop` が引き続き返ることを確認
   - Codex / Gemini CLI / Antigravity の各設定ファイルで `mcpServers.ai-config-selector` のみ残り、`raindrop` の直接登録が消えていることを確認
+
+## 2026-03-09 Local Environment Setup Cleanup
+
+### Plan
+- [x] 現行の user-facing config 対象を確認する（Claude / Codex / Gemini / Antigravity）
+- [x] 旧方式の直置き skill / symlink 残骸を特定する
+- [x] 設定をバックアップして `ai-config-selector` を現環境に登録する
+- [x] legacy skill ディレクトリを削除し、反映結果を検証する
+
+### Progress
+- [x] 調査
+- [x] 実装
+- [x] 検証
+- [x] レビュー記録
+
+### Review
+- 更新ファイル:
+  - `scripts/register.sh`
+  - `README.md`
+  - `docs/operations.md`
+  - `tasks/lessons.md`
+  - `tasks/todo.md`
+- 実環境で更新した user-facing config:
+  - `~/.claude.json`
+  - `~/.codex/config.toml`
+  - `~/.gemini/settings.json`
+  - `~/.gemini/antigravity/mcp_config.json`
+- 削除した legacy skill 残骸:
+  - `~/.claude/skills`
+  - `~/.gemini/skills`
+  - `~/.gemini/antigravity/global_skills`
+- 実装要約:
+  - `scripts/register.sh` に Claude Code (`~/.claude.json`) 対応を追加
+  - Codex の登録処理を上書き型から section merge 型に変更し、既存設定を潰さず `ai-config-selector` だけを更新するようにした
+  - Gemini / Antigravity / Claude の JSON 設定は merge で `mcpServers.ai-config-selector` を注入するように統一した
+- 検証コマンド:
+  - `HOME=$(mktemp -d ...) bash scripts/register.sh all` 相当の一時 HOME 検証で Claude/Gemini/Antigravity merge と Codex section 更新を確認
+  - `sed -n '1,260p' ~/.claude.json`
+  - `sed -n '1,220p' ~/.codex/config.toml`
+  - `sed -n '1,220p' ~/.gemini/settings.json`
+  - `sed -n '1,220p' ~/.gemini/antigravity/mcp_config.json`
+  - `ls -ld ~/.claude/skills ~/.gemini/skills ~/.gemini/antigravity/global_skills`
+- 検証結果:
+  - `~/.claude.json` は既存の `MCP_DOCKER` を保持したまま `mcpServers.ai-config-selector` が追加された
+  - `~/.codex/config.toml` は `ai-config-selector` section が作成された
+  - `~/.gemini/settings.json` と `~/.gemini/antigravity/mcp_config.json` は `ai-config-selector` のみを保持している
+  - legacy skill ディレクトリ 3 つは削除済み
+  - バックアップとして `~/.claude.json.bak.20260309-124350` などの退避ファイルを作成済み

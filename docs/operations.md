@@ -6,7 +6,7 @@
 
 - **Python 3.11 以上**
 - **Git**（外部ソース管理に必要）
-- AI ツール（Codex / Antigravity / Gemini CLI）のいずれか
+- AI ツール（Claude Code / Codex / Antigravity / Gemini CLI）のいずれか
 
 ### 初回セットアップ
 
@@ -47,6 +47,7 @@ AI_CONFIG_ANTIGRAVITY_CMD=antigravity
 bash scripts/register.sh
 
 # 個別登録
+bash scripts/register.sh claude
 bash scripts/register.sh antigravity
 bash scripts/register.sh gemini_cli
 bash scripts/register.sh codex
