@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from ai_config.registry.normalization import normalize_targets
+
 
 @dataclass
 class QueryIntent:
@@ -32,7 +34,7 @@ def infer_query_intent(query: str) -> QueryIntent:
     if "codex" in q:
         targets.add("codex")
     if "gemini" in q:
-        targets.add("gemini_cli")
+        targets.add("gemini")
     if "antigravity" in q:
         targets.add("antigravity")
 
@@ -41,6 +43,6 @@ def infer_query_intent(query: str) -> QueryIntent:
 
     return QueryIntent(
         tool_kinds=sorted(tool_kinds),
-        targets=sorted(targets),
+        targets=normalize_targets(targets),
         capabilities=sorted(capabilities),
     )

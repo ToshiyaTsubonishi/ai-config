@@ -16,6 +16,7 @@ except Exception:  # pragma: no cover - optional dependency fallback
 
 from ai_config.registry.path_metadata import infer_source_repo_and_domain
 from ai_config.registry.models import ToolRecord
+from ai_config.registry.normalization import normalize_target
 
 logger = logging.getLogger(__name__)
 
@@ -69,8 +70,12 @@ def parse_skill_file(skill_md: Path, repo_root: Path) -> ToolRecord | None:
     source_path = skill_md.relative_to(repo_root).as_posix()
 
     tags = [f"layer:{layer}", f"skill:{skill_name}"]
+    enabled_targets: list[str] = []
     if layer in TARGET_LAYERS:
-        tags.append(f"target:{layer}")
+        normalized_target = normalize_target(layer)
+        if normalized_target:
+            enabled_targets.append(normalized_target)
+            tags.append(f"target:{normalized_target}")
 
     return ToolRecord(
         id=f"skill:{name}",
@@ -87,6 +92,7 @@ def parse_skill_file(skill_md: Path, repo_root: Path) -> ToolRecord | None:
             "has_frontmatter": bool(metadata),
             "body_length": len(content),
             "skill_name": skill_name,
+            "enabled_targets": enabled_targets,
         },
         invoke={
             "backend": "skill_markdown",

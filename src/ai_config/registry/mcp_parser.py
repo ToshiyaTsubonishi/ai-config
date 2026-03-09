@@ -20,6 +20,7 @@ except Exception:  # pragma: no cover - optional dependency fallback
     yaml = None
 
 from ai_config.registry.models import ToolRecord
+from ai_config.registry.normalization import normalize_targets
 
 logger = logging.getLogger(__name__)
 
@@ -449,7 +450,7 @@ def scan_mcp_servers(repo_root: Path) -> list[ToolRecord]:
     records: list[ToolRecord] = []
     for name, entry in sorted(merged.items()):
         description = _MCP_DESCRIPTIONS.get(name, f"MCP server: {name}")
-        enabled_targets = [str(x) for x in (entry.get("enabled_targets", []) or [])]
+        enabled_targets = normalize_targets(str(x) for x in (entry.get("enabled_targets", []) or []))
         env_keys = [str(x) for x in (entry.get("env_keys", []) or [])]
         source_path = str(entry.get("source", ""))
         source_repo = "managed"

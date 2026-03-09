@@ -46,11 +46,14 @@ class DispatchState(TypedDict, total=False):
 
     user_prompt: str
     working_directory: str
+    repo_root: str
 
     # Plan
     plan: list[dict[str, Any]]  # serialized TaskStep list
     current_step: int
     total_steps: int
+    approved_plan: dict[str, Any]
+    tool_records: list[dict[str, Any]]
 
     # Agent availability
     available_agents: list[str]
@@ -76,6 +79,7 @@ class DispatchState(TypedDict, total=False):
     needs_replanning: bool
     replan_count: int
     max_replans: int
+    replan_request: dict[str, Any] | None
     done: bool
     abort: bool
     dry_run: bool

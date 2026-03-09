@@ -9,6 +9,10 @@ import os
 import shutil
 from typing import Any
 
+from ai_config.orchestrator.plan_schema import OrchestrationPlan
+from ai_config.orchestrator.planner import render_plan_summary
+from ai_config.orchestrator.validator import validate_orchestration_plan
+
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
@@ -195,6 +199,73 @@ def plan_tasks(state: dict[str, Any]) -> dict[str, Any]:
     preferred: list[str] = state.get("preferred_agents", [])
     dry_run: bool = state.get("dry_run", False)
     workflow_name: str = state.get("workflow_name", "")
+    approved_plan_raw = state.get("approved_plan")
+
+    if approved_plan_raw:
+        approved_plan = OrchestrationPlan.model_validate(approved_plan_raw)
+        available_tools = {
+            str(record.get("id", "")): record
+            for record in state.get("tool_records", [])
+            if isinstance(record, dict) and record.get("id")
+        }
+        if not available_tools:
+            available_tools = {
+                tool.tool_id: {
+                    "id": tool.tool_id,
+                    "tool_kind": tool.tool_kind,
+                    "name": tool.name,
+                    "source_path": tool.source_path,
+                }
+                for tool in approved_plan.candidate_tools
+            }
+
+        validation = validate_orchestration_plan(approved_plan, available_tools)
+        if not validation.valid:
+            return {
+                "plan": [],
+                "done": True,
+                "error": "; ".join(validation.errors),
+                "replan_request": {
+                    "plan_id": approved_plan.plan_id,
+                    "revision": approved_plan.revision,
+                    "reason": "plan_validation_failed",
+                    "errors": validation.errors,
+                    "warnings": validation.warnings,
+                },
+                "final_report": "Error: approved plan validation failed.\n" + "\n".join(validation.errors),
+            }
+
+        steps = [
+            {
+                "step_id": step.step_id,
+                "description": step.title or step.purpose,
+                "depends_on": step.depends_on,
+                "working_directory": step.working_directory,
+                "execution_backend": "tool",
+                "tool_id": step.tool_ref.tool_id,
+                "tool_kind": step.tool_ref.tool_kind,
+                "action": step.action,
+                "params": step.params,
+                "fallback_strategy": step.fallback_strategy.model_dump(),
+                "expected_output": step.expected_output,
+            }
+            for step in approved_plan.steps
+        ]
+        result: dict[str, Any] = {
+            "plan": steps,
+            "available_agents": [],
+            "current_step": 0,
+            "total_steps": len(steps),
+            "step_results": [],
+            "step_retry_count": 0,
+            "needs_replanning": False,
+            "approved_plan": approved_plan.model_dump(),
+            "replan_request": None,
+        }
+        if dry_run:
+            result["done"] = True
+            result["final_report"] = "=== Approved Plan (dry-run) ===\n" + render_plan_summary(approved_plan)
+        return result
 
     available = detect_available_agents(preferred or None)
     if not available:

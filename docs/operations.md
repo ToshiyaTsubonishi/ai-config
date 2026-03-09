@@ -141,16 +141,95 @@ ai-config-mcp-server --repo-root .
 # 検索のみ
 ai-config-agent "ESLint の設定を確認したい" --search-only
 
-# フル実行
-ai-config-agent "codex で実行して" --top-k 8 --max-retries 2
+# plan のみ生成
+ai-config-agent "codex で実行して" --top-k 8 --plan-only
+
+# plan 作成 → 実行
+ai-config-agent "codex で実行して" --top-k 8 --max-retries 2 --max-replans 2
+
+# 承認済み plan の実行
+ai-config-agent --index-dir .index --execute-plan ./approved-plan.json
 ```
 
 | オプション | 説明 | デフォルト |
 |---|---|---|
 | `--search-only` | 検索結果の表示のみ | off |
+| `--plan-only` | 構造化 plan のみ表示 | off |
+| `--execute-plan` | 承認済み JSON plan を実行 | なし |
 | `--top-k` | 検索結果の最大件数 | `8` |
-| `--max-retries` | 最大リトライ回数 | `2` |
+| `--max-retries` | plan 実行時の各ステップ最大リトライ | `2` |
+| `--max-replans` | 制御された再計画の最大回数 | `2` |
+| `--parallel` | 依存のない承認済み step を並列実行 | off |
+| `--keep-context` | `.dispatch/` の実行コンテキストを保持 | off |
 | `--trace` | JSON 実行トレース出力 | off |
+
+#### `plan-only` 出力例
+
+```text
+Plan ID: plan-abc123 (rev 1)
+Goal: codex で実行して
+Specialist: software_engineering
+Feasibility: partial
+Approval required: yes
+
+Steps:
+- step-1: Use codex -> toolchain:codex (depends_on=none)
+  expected: Initial execution result from toolchain:codex
+```
+
+#### 承認済み plan JSON 例
+
+```json
+{
+  "plan_id": "plan-cli",
+  "revision": 1,
+  "user_goal": "Open the demo skill",
+  "assumptions": [],
+  "specialist_route": "general",
+  "candidate_tools": [
+    {
+      "tool_id": "skill:demo-skill",
+      "tool_kind": "skill",
+      "name": "demo-skill",
+      "source_path": "skills/shared/demo/SKILL.md",
+      "selection_reason": "approved",
+      "invoke_summary": "skill_markdown: skills/shared/demo/SKILL.md",
+      "confidence": 0.8
+    }
+  ],
+  "steps": [
+    {
+      "step_id": "step-1",
+      "title": "Open demo",
+      "purpose": "Read the demo skill",
+      "inputs": ["demo"],
+      "expected_output": "content preview",
+      "tool_ref": {
+        "tool_id": "skill:demo-skill",
+        "tool_kind": "skill",
+        "name": "demo-skill",
+        "source_path": "skills/shared/demo/SKILL.md",
+        "selection_reason": "approved",
+        "invoke_summary": "skill_markdown: skills/shared/demo/SKILL.md",
+        "confidence": 0.8
+      },
+      "depends_on": [],
+      "fallback_strategy": {
+        "action": "abort",
+        "fallback_tool_id": null,
+        "notes": ""
+      },
+      "action": "run",
+      "params": {},
+      "working_directory": "."
+    }
+  ],
+  "approval_required": true,
+  "execution_notes": "approved plan",
+  "feasibility": "full",
+  "notes": "approved plan"
+}
+```
 
 ### `ai-config-dispatch` — マルチエージェント・ディスパッチ
 

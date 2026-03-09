@@ -137,6 +137,7 @@ AI ツールから呼び出される MCP 準拠のサーバーです。
 ### 4. Dispatch（マルチエージェント・ディスパッチ）
 
 LangGraph ベースのステートグラフで、タスクを分解・実行します。
+現在は従来の CLI agent 分解に加えて、`OrchestrationPlan` を受け取って承認済み step を dependency order で実行する経路も持ちます。
 
 #### ステートグラフ
 
@@ -160,9 +161,9 @@ graph TD
 
 | ファイル | 役割 |
 |---|---|
-| `planner.py` | LLM でタスクを分解、フォールバック計画 |
-| `dispatcher.py` | CLI エージェント呼び出し（逐次 / 並列） |
-| `evaluator.py` | ステップ結果の評価、リトライ / 再計画 判定 |
+| `planner.py` | LLM でタスクを分解、または承認済み plan を実行用 step に正規化 |
+| `dispatcher.py` | CLI エージェント呼び出し、または approved plan の tool execution（逐次 / 並列） |
+| `evaluator.py` | ステップ結果の評価、リトライ / 再計画要求の判定 |
 | `workflow.py` | YAML ワークフロー定義の読み込み・展開 |
 | `graph.py` | LangGraph グラフ配線 |
 | `state.py` | ステート型定義 |
@@ -187,6 +188,7 @@ Plan: [A(deps=[]), B(deps=[]), C(deps=[A,B])]
 ### 5. Orchestrator（オーケストレーション）
 
 ツールの検索 → 計画 → 実行 → 評価 → 修復 を自律的に繰り返す LangGraph グラフです。
+CLI の主経路は planning-first で、まず durable な `OrchestrationPlan` を作り、必要なら `--plan-only` で人間確認し、その後 dispatch に plan を渡して実行します。
 
 #### ステートグラフ
 
@@ -222,6 +224,21 @@ graph TD
 | `data_analytics` | sql, data, dashboard, bigquery | data ドメイン優先 |
 | `knowledge_work` | sales, support, marketing | knowledge-work-plugins 優先 |
 | `general` | その他 | フィルタなし |
+
+#### Planning-First Artifact
+
+`orchestrator/plan_schema.py` は次の構造化 artifact を定義します。
+
+- `ToolReference`: 選定された Skill / MCP / Adapter の要約
+- `PlanStep`: step 単位の目的、依存関係、期待出力、fallback
+- `OrchestrationPlan`: 承認可能な全体 plan（`plan_id`, `revision`, `candidate_tools`, `steps`）
+- `PlanValidationResult`: 実行前 validation の結果
+
+この artifact により、lookup と planning と execution の責務を分離します。
+
+- MCP Server: `search_tools` / `get_tool_detail` による capability lookup
+- Orchestrator: registry-backed plan generation / validation / controlled replan
+- Dispatch: 承認済み plan の実行
 
 ---
 

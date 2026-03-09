@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 from ai_config.dispatch.planner import AGENT_PROFILES
+from ai_config.executor import ToolExecutor
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +63,9 @@ def _save_step_context(
     context_dir: Path, step_id: str, result: dict[str, Any]
 ) -> None:
     """Save a step's output to the context directory for downstream steps."""
+    output = result.get("output", "")
+    if not isinstance(output, str):
+        output = json.dumps(output, ensure_ascii=False, default=str)
     ctx_file = context_dir / f"{step_id}.json"
     ctx_file.write_text(
         json.dumps(
@@ -69,7 +73,7 @@ def _save_step_context(
                 "step_id": step_id,
                 "agent": result.get("agent", ""),
                 "status": result.get("status", ""),
-                "output_summary": result.get("output", "")[:3000],
+                "output_summary": output[:3000],
             },
             ensure_ascii=False,
             indent=2,
@@ -191,6 +195,80 @@ def _run_agent(
         }
 
 
+def _run_tool_step(step: dict[str, Any], state: dict[str, Any]) -> dict[str, Any]:
+    repo_root = Path(state.get("repo_root") or state.get("working_directory", ".")).resolve()
+    executor = ToolExecutor(repo_root=repo_root)
+    tool_records = state.get("tool_records", [])
+    if isinstance(tool_records, list):
+        executor.register_records(tool_records)
+
+    tool_id = str(step.get("tool_id", ""))
+    action = str(step.get("action", "run"))
+    params = dict(step.get("params", {}) or {})
+    working_directory = str(step.get("working_directory", state.get("working_directory", ".")))
+    return executor.tools_call(tool_id=tool_id, action=action, params=params, cwd=working_directory)
+
+
+def _execute_step_payload(
+    step: dict[str, Any],
+    state: dict[str, Any],
+    context_dir: Path | None,
+    *,
+    retry_count: int = 0,
+) -> dict[str, Any]:
+    execution_backend = str(step.get("execution_backend", "agent"))
+    step_id = step.get("step_id", "step-unknown")
+
+    if execution_backend == "tool":
+        run_result = _run_tool_step(step, state)
+        error_payload = run_result.get("error")
+        error_text = ""
+        if error_payload:
+            if isinstance(error_payload, dict):
+                error_text = str(error_payload.get("message", ""))[:1000]
+            else:
+                error_text = str(error_payload)[:1000]
+
+        entry = {
+            "step_id": step_id,
+            "agent": "tool_executor",
+            "tool_id": step.get("tool_id", ""),
+            "action": step.get("action", "run"),
+            "status": run_result.get("status", "error"),
+            "output": run_result.get("output"),
+            "error": error_text,
+            "error_details": error_payload,
+            "retry_count": retry_count,
+        }
+        if context_dir and entry["status"] == "success":
+            _save_step_context(context_dir, step_id, entry)
+        return entry
+
+    agent = step.get("agent", "gemini")
+    prompt = step.get("prompt", "")
+    working_dir = step.get("working_directory", state.get("working_directory", "."))
+    timeout = step.get("timeout_seconds", 300)
+
+    if context_dir:
+        deps = step.get("depends_on", [])
+        context_text = _load_context_for_step(context_dir, deps)
+        if context_text:
+            prompt = prompt + context_text
+
+    run_result = _run_agent(agent, prompt, working_dir, timeout)
+    entry = {
+        "step_id": step_id,
+        "agent": agent,
+        "status": run_result["status"],
+        "output": run_result["output"][:2000],
+        "error": run_result["error"][:1000] if run_result.get("error") else "",
+        "retry_count": retry_count,
+    }
+    if context_dir and run_result["status"] == "success":
+        _save_step_context(context_dir, step_id, entry)
+    return entry
+
+
 # ---------------------------------------------------------------------------
 # Parallel dispatch helpers
 # ---------------------------------------------------------------------------
@@ -225,44 +303,17 @@ def _execute_parallel_batch(
 ) -> list[dict[str, Any]]:
     """Execute multiple steps concurrently using ThreadPoolExecutor."""
     results: list[dict[str, Any]] = [None] * len(indices)  # type: ignore
-    working_dir = state.get("working_directory", ".")
 
     def _run_one(batch_pos: int, step_idx: int) -> None:
         step = plan[step_idx]
         step_id = step.get("step_id", f"step-{step_idx + 1}")
-        agent = step.get("agent", "gemini")
-        prompt = step.get("prompt", "")
-        wd = step.get("working_directory", working_dir)
-        timeout = step.get("timeout_seconds", 300)
-
-        # Inject context from dependencies
-        if context_dir:
-            deps = step.get("depends_on", [])
-            context_text = _load_context_for_step(context_dir, deps)
-            if context_text:
-                prompt = prompt + context_text
-
         logger.info(
             "=== Parallel Step %s: [%s] %s ===",
             step_idx + 1,
-            agent,
+            step.get("agent", step.get("tool_id", "tool_executor")),
             step_id,
         )
-
-        run_result = _run_agent(agent, prompt, wd, timeout)
-        entry = {
-            "step_id": step_id,
-            "agent": agent,
-            "status": run_result["status"],
-            "output": run_result["output"][:2000],
-            "error": run_result["error"][:1000] if run_result.get("error") else "",
-            "retry_count": 0,
-        }
-
-        if context_dir and run_result["status"] == "success":
-            _save_step_context(context_dir, step_id, entry)
-
-        results[batch_pos] = entry
+        results[batch_pos] = _execute_step_payload(step, state, context_dir, retry_count=0)
 
     max_workers = min(len(indices), 4)
     with ThreadPoolExecutor(max_workers=max_workers) as pool:
@@ -344,10 +395,7 @@ def dispatch_step(state: dict[str, Any]) -> dict[str, Any]:
     # --- Sequential dispatch (single step) ---
     step = plan[current_step]
     step_id = step.get("step_id", f"step-{current_step + 1}")
-    agent = step.get("agent", "gemini")
-    prompt = step.get("prompt", "")
-    working_dir = step.get("working_directory", state.get("working_directory", "."))
-    timeout = step.get("timeout_seconds", 300)
+    agent = step.get("agent", step.get("tool_id", "tool_executor"))
 
     # Check dependencies
     depends_on = step.get("depends_on", [])
@@ -379,27 +427,9 @@ def dispatch_step(state: dict[str, Any]) -> dict[str, Any]:
             }
 
     # Inject context from dependency steps
-    context_text = _load_context_for_step(context_dir, depends_on)
-    if context_text:
-        prompt = prompt + context_text
-
     logger.info("=== Step %d/%d: [%s] %s ===", current_step + 1, len(plan), agent, step_id)
-
-    run_result = _run_agent(agent, prompt, working_dir, timeout)
     retry_count = state.get("step_retry_count", 0)
-
-    result_entry = {
-        "step_id": step_id,
-        "agent": agent,
-        "status": run_result["status"],
-        "output": run_result["output"][:2000],
-        "error": run_result["error"][:1000] if run_result.get("error") else "",
-        "retry_count": retry_count,
-    }
-
-    # Save context for downstream steps
-    if run_result["status"] == "success":
-        _save_step_context(context_dir, step_id, result_entry)
+    result_entry = _execute_step_payload(step, state, context_dir, retry_count=retry_count)
 
     results = list(state.get("step_results", []))
     results.append(result_entry)

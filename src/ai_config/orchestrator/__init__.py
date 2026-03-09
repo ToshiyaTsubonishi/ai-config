@@ -1,1 +1,1 @@
-"""Orchestrator: LangGraph-based task planner and executor."""
+"""Orchestrator: planning-first task planner and executor interfaces."""

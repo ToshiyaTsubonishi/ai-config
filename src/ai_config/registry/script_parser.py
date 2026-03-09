@@ -9,6 +9,7 @@ from pathlib import Path
 
 from ai_config.registry.path_metadata import infer_source_repo_and_domain
 from ai_config.registry.models import ToolRecord
+from ai_config.registry.normalization import EXECUTION_TARGETS, normalize_target
 
 logger = logging.getLogger(__name__)
 
@@ -161,8 +162,12 @@ def parse_script_file(script_path: Path, repo_root: Path) -> ToolRecord | None:
         f"extension:{suffix.lstrip('.')}",
     ]
 
-    if layer in {"codex", "gemini", "antigravity", "external", "shared"}:
-        tags.append(f"target:{layer}")
+    enabled_targets: list[str] = []
+    if layer in EXECUTION_TARGETS:
+        normalized_target = normalize_target(layer)
+        if normalized_target:
+            enabled_targets.append(normalized_target)
+            tags.append(f"target:{normalized_target}")
 
     record_id = f"skill_script:{rel_posix}"
     return ToolRecord(
@@ -179,6 +184,7 @@ def parse_script_file(script_path: Path, repo_root: Path) -> ToolRecord | None:
             "executable": True,
             "skill_name": skill_name,
             "script_extension": suffix,
+            "enabled_targets": enabled_targets,
         },
         invoke={
             "backend": "skill_script",

@@ -28,6 +28,7 @@ def _toolchain_adapters(repo_root: Path) -> list[ToolRecord]:
                 "domain": "toolchain",
                 "catalog_only": False,
                 "executable": True,
+                "enabled_targets": ["codex"],
             },
             invoke={
                 "backend": "cli",
@@ -36,7 +37,7 @@ def _toolchain_adapters(repo_root: Path) -> list[ToolRecord]:
                 "timeout_ms": 120000,
                 "env_keys": [],
             },
-            tags=["toolchain:codex", "capability:cli_execution"],
+            tags=["toolchain:codex", "target:codex", "capability:cli_execution"],
         ),
         ToolRecord(
             id="toolchain:gemini_cli",
@@ -50,6 +51,7 @@ def _toolchain_adapters(repo_root: Path) -> list[ToolRecord]:
                 "domain": "toolchain",
                 "catalog_only": False,
                 "executable": True,
+                "enabled_targets": ["gemini_cli"],
             },
             invoke={
                 "backend": "cli",
@@ -58,7 +60,7 @@ def _toolchain_adapters(repo_root: Path) -> list[ToolRecord]:
                 "timeout_ms": 120000,
                 "env_keys": [],
             },
-            tags=["toolchain:gemini_cli", "capability:cli_execution"],
+            tags=["toolchain:gemini_cli", "target:gemini_cli", "capability:cli_execution"],
         ),
         ToolRecord(
             id="toolchain:antigravity",
@@ -72,6 +74,7 @@ def _toolchain_adapters(repo_root: Path) -> list[ToolRecord]:
                 "domain": "toolchain",
                 "catalog_only": False,
                 "executable": True,
+                "enabled_targets": ["antigravity"],
             },
             invoke={
                 "backend": "cli",
@@ -80,7 +83,7 @@ def _toolchain_adapters(repo_root: Path) -> list[ToolRecord]:
                 "timeout_ms": 120000,
                 "env_keys": [],
             },
-            tags=["toolchain:antigravity", "capability:cli_execution"],
+            tags=["toolchain:antigravity", "target:antigravity", "capability:cli_execution"],
         ),
     ]
 

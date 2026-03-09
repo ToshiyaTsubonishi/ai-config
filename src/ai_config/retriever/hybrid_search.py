@@ -14,6 +14,7 @@ from rank_bm25 import BM25Okapi
 
 from ai_config.registry.index_builder import EMBEDDING_DIM, EMBEDDING_MODEL
 from ai_config.registry.models import ToolRecord, load_records
+from ai_config.registry.normalization import normalize_targets
 
 logger = logging.getLogger(__name__)
 
@@ -184,10 +185,10 @@ class HybridRetriever:
         if tool_kinds and record.tool_kind not in tool_kinds:
             return False
         if targets:
-            target_values = set(record.metadata.get("enabled_targets", []) or [])
-            tag_targets = {tag.split(":", 1)[1] for tag in record.tags if tag.startswith("target:")}
+            target_values = set(normalize_targets(record.metadata.get("enabled_targets", []) or []))
+            tag_targets = normalize_targets(tag.split(":", 1)[1] for tag in record.tags if tag.startswith("target:"))
             target_values.update(tag_targets)
-            if not target_values.intersection(targets):
+            if not target_values.intersection(normalize_targets(targets)):
                 return False
         if capabilities:
             caps = set(record.metadata.get("capabilities", []) or [])

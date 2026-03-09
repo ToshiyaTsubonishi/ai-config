@@ -61,8 +61,14 @@ ai-config-mcp-server --repo-root .
 # オーケストレーター (検索のみ)
 ai-config-agent "ESLint の設定を確認したい" --search-only
 
-# オーケストレーター (フル実行)
+# オーケストレーター (plan のみ)
+ai-config-agent "codex で実行して" --top-k 8 --plan-only
+
+# オーケストレーター (plan 作成 → 承認済み plan 実行)
 ai-config-agent "codex で実行して" --top-k 8 --max-retries 2
+
+# 承認済み plan の再実行
+ai-config-agent --execute-plan ./approved-plan.json
 ```
 
 ## ディレクトリ構成

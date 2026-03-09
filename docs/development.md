@@ -24,7 +24,7 @@ ai-config/
 │   ├── dispatch/            # マルチエージェント・ディスパッチ
 │   ├── build_index.py       # インデックス構築 CLI
 │   └── source_manager.py    # 外部ソース管理 CLI
-├── tests/                   # テストスイート (71 テスト)
+├── tests/                   # テストスイート
 ├── config/                  # 設定ファイル
 ├── workflows/               # ワークフロー定義 (YAML)
 ├── skills/                  # スキルコレクション
@@ -53,8 +53,10 @@ ai-config/
 | `test_dispatch_graph.py` | dispatch/graph, evaluator | 12 |
 | `test_dispatch_planner.py` | dispatch/planner | 10 |
 | `test_dispatch_workflow.py` | dispatch/workflow, dispatcher | 13 |
+| `test_dispatch_approved_plan.py` | dispatch approved-plan execution | 1 |
 | `test_orchestrator_repair_loop.py` | orchestrator (統合) | 2 |
 | `test_orchestrator_router.py` | orchestrator/router | 3 |
+| `test_orchestrator_plan_artifacts.py` | orchestrator plan schema / planner / validator | 3 |
 | `test_executor_adapters.py` | executor | 4 |
 | `test_mcp_server_tools.py` | mcp_server/tools | 5 |
 | `test_cli_smoke.py` | CLI 統合 | 2 |
