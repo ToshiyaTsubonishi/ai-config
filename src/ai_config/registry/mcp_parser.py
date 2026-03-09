@@ -45,6 +45,7 @@ _MCP_DESCRIPTIONS: dict[str, str] = {
     "mongodb": "MongoDB database queries and management",
     "terraform": "Terraform infrastructure-as-code operations",
     "webflow": "Webflow CMS and site management",
+    "raindrop": "Raindrop.io bookmark collections, items, tags, and search via the hosted MCP endpoint",
     "gemini_cloud_assist": "Google Cloud troubleshooting and investigation",
     "e-stat": "Japanese government statistics (e-Stat) data retrieval",
     "reinfo": "Japanese real estate price data and location info",

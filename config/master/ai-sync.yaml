@@ -113,6 +113,16 @@ mcp_servers:
       NOTION_API_KEY: ""
     timeout_ms: 30000
 
+  raindrop:
+    transport: "stdio"
+    command: "bash"
+    args:
+      - "-lc"
+      - 'if [ -n "${RAINDROP_API_TOKEN}" ]; then npx -y mcp-remote --header "Authorization: Bearer ${RAINDROP_API_TOKEN}" https://api.raindrop.io/rest/v2/ai/mcp; else npx -y mcp-remote https://api.raindrop.io/rest/v2/ai/mcp; fi'
+    env:
+      RAINDROP_API_TOKEN: ""
+    timeout_ms: 30000
+
   microsoft-learn-mcp:
     transport: "stdio"
     command: "npx"
