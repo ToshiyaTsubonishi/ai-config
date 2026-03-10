@@ -15,9 +15,13 @@ import json
 import logging
 import sys
 from pathlib import Path
+from typing import Any
 
+from ai_config.executor import ExecutorError, ToolExecutor
+from ai_config.mcp_server.downstream_client import DownstreamMCPClient
 from ai_config.mcp_server.tools import DEFAULT_TOP_K, ToolIndex
 from ai_config.registry.index_builder import DEFAULT_INDEX_DIR
+from ai_config.runtime_env import load_runtime_env
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +53,23 @@ def _get_mcp():
 # ---------------------------------------------------------------------------
 
 
-def create_server(index_dir: Path):
+def _json_error(error: ExecutorError | Exception) -> str:
+    if isinstance(error, ExecutorError):
+        return json.dumps({"status": "error", "error": error.to_dict()}, ensure_ascii=False)
+    return json.dumps(
+        {
+            "status": "error",
+            "error": {
+                "code": "UNEXPECTED_ERROR",
+                "message": str(error),
+                "details": {},
+            },
+        },
+        ensure_ascii=False,
+    )
+
+
+def create_server(index_dir: Path, repo_root: Path):
     """Create and configure the MCP server with tool definitions."""
     FastMCP = _get_mcp()
 
@@ -62,6 +82,11 @@ def create_server(index_dir: Path):
     )
 
     tool_index = ToolIndex(index_dir)
+    executor = ToolExecutor(repo_root=repo_root)
+    downstream = DownstreamMCPClient(repo_root=repo_root)
+
+    def _refresh_records() -> None:
+        executor.register_records(tool_index.records)
 
     @mcp.tool()
     def search_tools(query: str, top_k: int = DEFAULT_TOP_K) -> str:
@@ -109,6 +134,40 @@ def create_server(index_dir: Path):
         total = len(tool_index.records)
         return json.dumps({"total": total})
 
+    @mcp.tool()
+    def execute_registry_tool(tool_id: str, action: str = "run", params: dict[str, Any] | None = None) -> str:
+        """Execute a registry-backed tool via the shared executor."""
+        try:
+            _refresh_records()
+            result = executor.tools_call(tool_id=tool_id, action=action, params=params or {})
+            return json.dumps(result, ensure_ascii=False)
+        except Exception as error:
+            return _json_error(error)
+
+    @mcp.tool()
+    async def list_mcp_server_tools(tool_id: str, refresh: bool = False) -> str:
+        """List tools exposed by an indexed downstream MCP server."""
+        try:
+            record = tool_index.get_record(tool_id)
+            if record is None:
+                return json.dumps({"status": "error", "error": {"code": "EXECUTOR_TOOL_NOT_FOUND", "message": f"Tool '{tool_id}' not found.", "details": {"tool_id": tool_id}}}, ensure_ascii=False)
+            result = await downstream.list_tools_async(record, refresh=refresh)
+            return json.dumps({"status": "success", "output": result}, ensure_ascii=False)
+        except Exception as error:
+            return _json_error(error)
+
+    @mcp.tool()
+    async def call_mcp_server_tool(tool_id: str, tool_name: str, arguments: dict[str, Any] | None = None) -> str:
+        """Call a specific tool on an indexed downstream MCP server."""
+        try:
+            record = tool_index.get_record(tool_id)
+            if record is None:
+                return json.dumps({"status": "error", "error": {"code": "EXECUTOR_TOOL_NOT_FOUND", "message": f"Tool '{tool_id}' not found.", "details": {"tool_id": tool_id}}}, ensure_ascii=False)
+            result = await downstream.call_tool_async(record, tool_name, arguments or {})
+            return json.dumps({"status": "success", "output": result}, ensure_ascii=False)
+        except Exception as error:
+            return _json_error(error)
+
     return mcp
 
 
@@ -118,6 +177,7 @@ def create_server(index_dir: Path):
 
 
 def main(argv: list[str] | None = None) -> None:
+    load_runtime_env()
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
@@ -150,7 +210,7 @@ def main(argv: list[str] | None = None) -> None:
     logger.info("Repo root: %s", repo_root)
     logger.info("Index dir: %s", index_dir)
 
-    mcp = create_server(index_dir)
+    mcp = create_server(index_dir, repo_root)
     mcp.run(transport=args.transport)
 
 

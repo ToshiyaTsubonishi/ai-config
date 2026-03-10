@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from ai_config.executor import ToolExecutor
+from ai_config.orchestrator.candidate_bias import boost_hits
 from ai_config.orchestrator.router import (
     SPECIALIST_CANDIDATE_THRESHOLD,
     SPECIALIST_GENERAL,
@@ -114,6 +115,7 @@ def _retrieve_hits(
         domains=filters.get("domains"),
         executable_only=executable_only,
     )
+    hits = boost_hits(query, hits)
     return hits, {
         "tool_kinds": intent.tool_kinds,
         "targets": intent.targets,

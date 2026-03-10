@@ -10,13 +10,13 @@
 
 ### 初回セットアップ
 
-```bash
+```powershell
 git clone https://github.com/ToshiyaTsubonishi/ai-config.git
 cd ai-config
-bash scripts/setup.sh
+powershell -ExecutionPolicy Bypass -File scripts/setup.ps1
 ```
 
-`scripts/setup.sh` は以下を行います:
+`scripts/setup.ps1` / `scripts/setup.sh` は以下を行います:
 1. Python 仮想環境（`.venv`）の作成
 2. 依存パッケージのインストール
 3. `.env.example` を `.env` にコピー（初回のみ）
@@ -42,15 +42,14 @@ AI_CONFIG_ANTIGRAVITY_CMD=antigravity
 
 ### AI ツールへの登録
 
-```bash
+```powershell
 # 全ツールに一括登録
-bash scripts/register.sh
+powershell -ExecutionPolicy Bypass -File scripts/register.ps1
 
 # 個別登録
-bash scripts/register.sh claude
-bash scripts/register.sh antigravity
-bash scripts/register.sh gemini_cli
-bash scripts/register.sh codex
+powershell -ExecutionPolicy Bypass -File scripts/register.ps1 antigravity
+powershell -ExecutionPolicy Bypass -File scripts/register.ps1 gemini_cli
+powershell -ExecutionPolicy Bypass -File scripts/register.ps1 codex
 ```
 
 登録後、各 AI ツールから `ai-config-selector` の 4 つのツール（`search_tools` / `get_tool_detail` / `list_categories` / `get_tool_count`）が利用可能になります。
@@ -233,6 +232,8 @@ Steps:
 ```
 
 ### `ai-config-dispatch` — マルチエージェント・ディスパッチ
+
+Windows / PowerShell では `.venv\Scripts\ai-config-dispatch.cmd ...` を使う。
 
 ```bash
 # タスクを分解・実行

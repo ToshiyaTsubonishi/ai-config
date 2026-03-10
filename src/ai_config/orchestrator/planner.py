@@ -19,6 +19,7 @@ from ai_config.orchestrator.plan_schema import (
     PlanValidationResult,
     parse_plan_text,
 )
+from ai_config.orchestrator.candidate_bias import boost_hits
 from ai_config.orchestrator.router import (
     SPECIALIST_CANDIDATE_THRESHOLD,
     SPECIALIST_GENERAL,
@@ -427,6 +428,7 @@ class OrchestrationPlanner:
             domains=filters.get("domains"),
             executable_only=executable_only,
         )
+        hits = boost_hits(query, hits)
         return hits, {
             "tool_kinds": intent.tool_kinds,
             "targets": intent.targets,

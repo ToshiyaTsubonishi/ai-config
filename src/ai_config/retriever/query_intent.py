@@ -31,6 +31,33 @@ def infer_query_intent(query: str) -> QueryIntent:
         tool_kinds.add("toolchain_adapter")
         capabilities.add("cli_execution")
 
+    if any(
+        token in q
+        for token in (
+            "fix",
+            "bug",
+            "test",
+            "build",
+            "review",
+            "refactor",
+            "implement",
+            "debug",
+            "repair",
+            "patch",
+            "修正",
+            "バグ",
+            "テスト",
+            "ビルド",
+            "レビュー",
+            "リファクタ",
+            "実装",
+            "デバッグ",
+            "検証",
+        )
+    ):
+        tool_kinds.add("toolchain_adapter")
+        capabilities.add("cli_execution")
+
     if "codex" in q:
         targets.add("codex")
     if "gemini" in q:

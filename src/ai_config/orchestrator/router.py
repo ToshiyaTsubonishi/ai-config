@@ -68,7 +68,8 @@ _SPECIALIST_FILTERS: dict[str, dict[str, Any]] = {
         "tool_kinds": ["skill", "mcp_server"],
     },
     SPECIALIST_SOFTWARE_ENGINEERING: {
-        "domains": ["shared", "custom", "engineering", "development", "devops", "testing"],
+        "domains": ["shared", "custom", "engineering", "development", "devops", "testing", "toolchain"],
+        "tool_kinds": ["skill", "skill_script", "mcp_server", "toolchain_adapter"],
     },
     SPECIALIST_DATA_ANALYTICS: {
         "domains": ["data", "analytics", "finance", "enterprise-search"],

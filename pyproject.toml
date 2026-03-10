@@ -26,6 +26,7 @@ ai-config-agent = "ai_config.orchestrator.cli:main"
 ai-config-sources = "ai_config.source_manager:main"
 ai-config-mcp-server = "ai_config.mcp_server.server:main"
 ai-config-dispatch = "ai_config.dispatch.cli:main"
+ai-config-doctor = "ai_config.doctor:main"
 
 [build-system]
 requires = ["hatchling"]

@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
-import os
-import re
-import shutil
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from ai_config.executor.adapters import AntigravityAdapter, CodexAdapter, GeminiCliAdapter
+from ai_config.executor.command_resolution import (
+    BASE_ALLOWED_COMMANDS as DEFAULT_ALLOWED_COMMANDS,
+    SAFE_BASE_ENV as DEFAULT_SAFE_BASE_ENV,
+    default_allowed_command_names,
+    mask_sensitive,
+    resolve_command_spec,
+)
 from ai_config.executor.errors import ExecutorError, ExecutorErrorCode
 from ai_config.registry.models import ToolRecord
 
@@ -29,21 +33,8 @@ class ExecutionResult:
 class ToolExecutor:
     """Single execution interface for orchestrator and CLI clients."""
 
-    BASE_ALLOWED_COMMANDS = {
-        "npx",
-        "docker",
-        "terraform-mcp-server",
-        "cgc",
-        "pwsh",
-        "powershell",
-        "bash",
-        "sh",
-        "node",
-        "python",
-        "python3",
-    }
-
-    SAFE_BASE_ENV = {"PATH", "PATHEXT", "SYSTEMROOT", "WINDIR", "TEMP", "TMP", "HOME", "USERPROFILE", "OS", "COMSPEC"}
+    BASE_ALLOWED_COMMANDS = DEFAULT_ALLOWED_COMMANDS
+    SAFE_BASE_ENV = DEFAULT_SAFE_BASE_ENV
 
     def __init__(self, repo_root: Path | None = None, records: list[ToolRecord | dict[str, Any]] | None = None):
         self.repo_root = (repo_root or Path(".")).resolve()
@@ -69,20 +60,10 @@ class ToolExecutor:
 
     @staticmethod
     def _mask_sensitive(text: str, secret_values: list[str]) -> str:
-        masked = text
-        for secret in secret_values:
-            if not secret or len(secret) < 6:
-                continue
-            masked = masked.replace(secret, "***")
-        masked = re.sub(r"(?i)(api[_-]?key|token|secret|password)\s*[:=]\s*\S+", r"\1=***", masked)
-        return masked
+        return mask_sensitive(text, secret_values)
 
     def _allowed_command_names(self) -> set[str]:
-        names = set(self.BASE_ALLOWED_COMMANDS)
-        for adapter in self.adapters.values():
-            cmd = adapter.command()
-            names.add(Path(cmd).name.lower())
-        return names
+        return default_allowed_command_names(adapter.command() for adapter in self.adapters.values())
 
     def run_command(
         self,
@@ -92,78 +73,45 @@ class ToolExecutor:
         env_keys: list[str] | None = None,
         cwd: str | Path | None = None,
     ) -> dict[str, Any]:
-        cmd_name = Path(command).name.lower()
-        if cmd_name not in self._allowed_command_names():
-            raise ExecutorError(
-                ExecutorErrorCode.EXECUTOR_NOT_ALLOWED,
-                f"Command not allowlisted: {command}",
-                details={"command": command},
-            )
-
-        executable = command
-        if not Path(command).is_absolute():
-            resolved = shutil.which(command)
-            if not resolved:
-                raise ExecutorError(
-                    ExecutorErrorCode.EXECUTOR_NOT_AVAILABLE,
-                    f"Command not found: {command}",
-                    details={"command": command},
-                )
-            executable = resolved
-        elif not Path(command).exists():
-            raise ExecutorError(
-                ExecutorErrorCode.EXECUTOR_NOT_AVAILABLE,
-                f"Command path not found: {command}",
-                details={"command": command},
-            )
-
-        safe_env: dict[str, str] = {}
-        for key in self.SAFE_BASE_ENV:
-            value = os.environ.get(key)
-            if value is not None:
-                safe_env[key] = value
-        allowed_env_values: list[str] = []
-        for key in env_keys or []:
-            value = os.environ.get(key)
-            if value is not None:
-                safe_env[key] = value
-                allowed_env_values.append(value)
-
-        # Execution context
-        run_cwd = (self.repo_root / (cwd or ".")).resolve()
-        if not run_cwd.exists():
-            run_cwd = self.repo_root
+        resolved = resolve_command_spec(
+            command=command,
+            args=args,
+            repo_root=self.repo_root,
+            env_keys=env_keys,
+            cwd=cwd,
+            allowed_command_names=self._allowed_command_names(),
+        )
 
         try:
             proc = subprocess.run(
-                [executable, *args],
-                cwd=run_cwd,
-                env=safe_env,
+                [resolved.executable, *resolved.args],
+                cwd=resolved.cwd,
+                env=resolved.env,
                 capture_output=True,
                 text=True,
                 timeout=max(timeout_ms, 1000) / 1000,
             )
         except subprocess.TimeoutExpired as exc:
-            masked_args = [self._mask_sensitive(a, allowed_env_values) for a in args]
+            masked_args = [self._mask_sensitive(a, resolved.allowed_env_values) for a in resolved.args]
             raise ExecutorError(
                 ExecutorErrorCode.EXECUTOR_TIMEOUT,
-                self._mask_sensitive(f"Command timed out: {command}", allowed_env_values),
+                self._mask_sensitive(f"Command timed out: {resolved.original_command}", resolved.allowed_env_values),
                 details={"timeout_ms": timeout_ms, "args": masked_args},
             ) from exc
         except OSError as exc:
             raise ExecutorError(
                 ExecutorErrorCode.EXECUTOR_RUNTIME_ERROR,
-                self._mask_sensitive(f"Failed to execute command: {command}", allowed_env_values),
+                self._mask_sensitive(f"Failed to execute command: {resolved.original_command}", resolved.allowed_env_values),
                 details={"error": str(exc)},
             ) from exc
 
-        stdout = self._mask_sensitive(proc.stdout or "", allowed_env_values)
-        stderr = self._mask_sensitive(proc.stderr or "", allowed_env_values)
+        stdout = self._mask_sensitive(proc.stdout or "", resolved.allowed_env_values)
+        stderr = self._mask_sensitive(proc.stderr or "", resolved.allowed_env_values)
         if proc.returncode != 0:
-            masked_args = [self._mask_sensitive(a, allowed_env_values) for a in args]
+            masked_args = [self._mask_sensitive(a, resolved.allowed_env_values) for a in resolved.args]
             raise ExecutorError(
                 ExecutorErrorCode.EXECUTOR_RUNTIME_ERROR,
-                self._mask_sensitive(f"Command failed: {command}", allowed_env_values),
+                self._mask_sensitive(f"Command failed: {resolved.original_command}", resolved.allowed_env_values),
                 details={
                     "exit_code": proc.returncode,
                     "stderr": stderr[:2000],

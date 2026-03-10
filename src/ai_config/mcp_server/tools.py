@@ -74,10 +74,15 @@ class ToolIndex:
 
     def get_detail(self, tool_id: str) -> dict[str, Any] | None:
         """Get full detail for a specific tool by ID."""
+        record = self.get_record(tool_id)
+        return record.to_dict() if record is not None else None
+
+    def get_record(self, tool_id: str) -> ToolRecord | None:
+        """Get the raw ToolRecord for a specific tool by ID."""
         self._ensure_loaded()
         for record in self._records:
             if record.id == tool_id:
-                return record.to_dict()
+                return record
         return None
 
     def get_categories(self) -> dict[str, Any]:

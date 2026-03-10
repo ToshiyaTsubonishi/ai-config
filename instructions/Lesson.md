@@ -22,3 +22,12 @@
 - **影響**: `'list' object has no attribute 'strip'` で LLM プランニングが毎回フォールバックに落ちていた
 - **修正**: `_extract_text()` ヘルパー関数を追加。`list` の場合は各パーツの `.text` を結合する
 - **ルール**: LLM レスポンスの `content` フィールドは常に `str | list` の両方をハンドルする
+
+## 2026-03-11: 読み取り専用の複数観点検証でも dispatch を使う
+
+### ミス 4: repo inspection / validation を direct 実行してしまった
+
+- **状況**: Windows setup / MCP registration / downstream MCP / instruction sync のように複数の観点を横断する読み取り専用タスクを受けた
+- **期待動作**: `ai-config-selector` で候補を確認したうえで、`.venv\Scripts\ai-config-dispatch.cmd` を使って検証を分担し、証拠を集約する
+- **実際の動作**: 読み取り専用だから trivial と判断して direct に調査してしまった
+- **ルール**: 読み取り専用でも、2つ以上の観点・サブシステムを横断する repo inspection / setup validation / MCP validation は非自明タスクとして dispatch を優先する

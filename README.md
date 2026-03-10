@@ -25,26 +25,47 @@ AI Tool (Claude Code / Codex / Antigravity / Gemini CLI)
 
 ## セットアップ
 
-```bash
+```powershell
 git clone https://github.com/ToshiyaTsubonishi/ai-config.git
 cd ai-config
-bash scripts/setup.sh
+powershell -ExecutionPolicy Bypass -File scripts/setup.ps1
 ```
+
+Unix-like 環境では `bash scripts/setup.sh` も利用できます。
 
 ## 各 AI ツールに登録
 
-```bash
+```powershell
 # 全ツールに一括登録
-bash scripts/register.sh
+powershell -ExecutionPolicy Bypass -File scripts/register.ps1
 
 # 個別登録
-bash scripts/register.sh claude
-bash scripts/register.sh antigravity
-bash scripts/register.sh gemini_cli
-bash scripts/register.sh codex
+powershell -ExecutionPolicy Bypass -File scripts/register.ps1 antigravity
+powershell -ExecutionPolicy Bypass -File scripts/register.ps1 gemini_cli
+powershell -ExecutionPolicy Bypass -File scripts/register.ps1 codex
 ```
 
+Unix-like 環境では `bash scripts/register.sh ...` も利用できます。
+
 ## CLI ツール
+
+Windows では `scripts/setup.ps1` が `.venv\Scripts\*.cmd` ランナーを生成します。以下は PowerShell 例です。
+
+```powershell
+# インデックス構築 (default プロファイル)
+.venv\Scripts\ai-config-index.cmd --repo-root . --profile default
+
+# MCP サーバー起動 (通常は AI ツールが自動起動)
+.venv\Scripts\ai-config-mcp-server.cmd --repo-root .
+
+# ディスパッチ
+.venv\Scripts\ai-config-dispatch.cmd "バグを修正してテストを実行して"
+
+# 環境診断
+.venv\Scripts\ai-config-doctor.cmd --repo-root .
+```
+
+Unix-like 環境では従来どおり PATH 上の CLI を使えます。
 
 ```bash
 # インデックス構築 (default プロファイル)
@@ -124,17 +145,17 @@ ai-config-index --repo-root . --profile default
 
 ## Agent/Gemini/Lesson 同期
 
-`instructions/` を Git の正本として管理し、`scripts/sync-instructions.sh` で実運用ファイルと同期します。
+`instructions/` を Git の正本として管理し、`scripts/sync-instructions.ps1` または `scripts/sync-instructions.sh` で実運用ファイルと同期します。
 
-```bash
+```powershell
 # 同期状態を確認
-bash scripts/sync-instructions.sh status
+powershell -ExecutionPolicy Bypass -File scripts/sync-instructions.ps1 status
 
 # 実運用ファイル -> instructions/ に取り込み
-bash scripts/sync-instructions.sh pull
+powershell -ExecutionPolicy Bypass -File scripts/sync-instructions.ps1 pull
 
 # instructions/ -> 実運用ファイルへ反映
-bash scripts/sync-instructions.sh push
+powershell -ExecutionPolicy Bypass -File scripts/sync-instructions.ps1 push
 ```
 
 ## インデックスプロファイル

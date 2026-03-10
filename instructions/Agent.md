@@ -39,8 +39,13 @@
 ### 7. ai-config-selector / dispatch の標準運用
 - 作業開始時に必ず AI Agent Selector（`ai-config-selector`）で `search_tools` を実行し、適切な SKILL / MCP を確認してから着手する
 - 候補ツールが見つかった場合は、`get_tool_detail` で実行手順と注意点を確認して作業に反映する
-- 3ステップ以上の作業・調査・検証は `ai-config-dispatch` を優先して使い、必要なら並列 dispatch を活用する
+- 3ステップ以上、または複数の観点・サブシステムをまたぐ作業・調査・検証は `ai-config-dispatch` を優先して使い、必要なら並列 dispatch を活用する
+- Windows では bare command が通らない場合があるので、その場合は `.venv\Scripts\ai-config-dispatch.cmd` を使う
 - 単純作業を除き、まず「dispatch で分割した方が速く安全か」を検討してから実装に入る
+- ソフトウェア実装・調査・レビュー・検証の依頼では、ユーザーが明示しなくても dispatch を第一候補として扱う
+- 読み取り専用の repo inspection / setup validation / MCP validation でも、2つ以上の観点を確認するなら非自明タスクとして dispatch を第一候補にし、必要なら `.venv\Scripts\ai-config-dispatch.cmd` を先に実行する
+- ユーザーが dispatch を明示的に禁止した場合だけ、dispatch を使わずに直接実行する
+- selector で見つけた MCP が実行可能な場合は、必要に応じて downstream MCP の tool list / tool call まで確認してから結論を出す
 
 ---
 

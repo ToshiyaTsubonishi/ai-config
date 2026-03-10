@@ -23,27 +23,11 @@
 - **修正**: `_extract_text()` ヘルパー関数を追加。`list` の場合は各パーツの `.text` を結合する
 - **ルール**: LLM レスポンスの `content` フィールドは常に `str | list` の両方をハンドルする
 
-## 2026-03-09: Managed MCP は selector-first を守る
+## 2026-03-11: 読み取り専用の複数観点検証でも dispatch を使う
 
-### ミス 1: managed MCP を user-facing config に直接追加した
+### ミス 4: repo inspection / validation を direct 実行してしまった
 
-- **状況**: `config/master/ai-sync.yaml` に `raindrop` を追加した際、検索対象として index 化するだけでなく、Codex / Gemini / Antigravity の実設定にも直接 `raindrop` を追記した
-- **期待動作**: `ai-config-selector` から選択できる managed MCP として登録し、ユーザーが明示的に求めない限り各クライアントの直接 MCP 設定は増やさない
-- **実際の動作**: `~/.codex/config.toml`, `~/.gemini/settings.json`, `~/.gemini/antigravity/mcp_config.json` に `raindrop` を直接登録してしまった
-- **ルール**: managed MCP の追加時は「selector の catalog 追加」と「各クライアントへの直接登録」を分けて考える。明示要求がない限り、user-facing config には `ai-config-selector` だけを残す
-
-## 2026-03-09: 環境セットアップでは Claude と legacy skill 残骸も確認する
-
-### ミス 1: user-facing config の対象から Claude を外して考えていた
-
-- **状況**: 環境セットアップ対象を Codex / Gemini / Antigravity に寄せて考え、`~/.claude.json` を確認していなかった
-- **期待動作**: 実環境セットアップでは `~/.claude.json`, `~/.codex/config.toml`, `~/.gemini/settings.json`, `~/.gemini/antigravity/mcp_config.json` を最初に確認する
-- **実際の動作**: Claude Code の設定ファイルを後から見つけて対象に追加した
-- **ルール**: ローカル AI ツール設定を触るときは、まず Claude / Codex / Gemini / Antigravity の実ファイル位置を確認してから作業する
-
-### ミス 2: legacy skill symlink ディレクトリを setup 対象として先に考慮していなかった
-
-- **状況**: `~/.claude/skills`, `~/.gemini/skills`, `~/.gemini/antigravity/global_skills` に旧方式の symlink skill が残っていた
-- **期待動作**: 現在の selector-first 運用では直置き skill は不要なので、環境セットアップ時に残骸として確認・削除する
-- **実際の動作**: ユーザー指摘後に cleanup 対象として扱った
-- **ルール**: user-facing config をセットアップする際は、設定ファイルだけでなく legacy skill ディレクトリの残骸有無も確認する
+- **状況**: Windows setup / MCP registration / downstream MCP / instruction sync のように複数の観点を横断する読み取り専用タスクを受けた
+- **期待動作**: `ai-config-selector` で候補を確認したうえで、`.venv\Scripts\ai-config-dispatch.cmd` を使って検証を分担し、証拠を集約する
+- **実際の動作**: 読み取り専用だから trivial と判断して direct に調査してしまった
+- **ルール**: 読み取り専用でも、2つ以上の観点・サブシステムを横断する repo inspection / setup validation / MCP validation は非自明タスクとして dispatch を優先する
