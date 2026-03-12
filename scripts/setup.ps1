@@ -131,6 +131,7 @@ Write-ModuleWrapper -Name "ai-config-doctor" -Module "ai_config.doctor" -PythonV
 Write-ModuleWrapper -Name "ai-config-index" -Module "ai_config.build_index" -PythonVersionTag $venvVersionTag
 Write-ModuleWrapper -Name "ai-config-mcp-server" -Module "ai_config.mcp_server.server" -PythonVersionTag $venvVersionTag
 Write-ModuleWrapper -Name "ai-config-sources" -Module "ai_config.source_manager" -PythonVersionTag $venvVersionTag
+Write-ModuleWrapper -Name "ai-config-vendor-skills" -Module "ai_config.vendor.cli" -PythonVersionTag $venvVersionTag
 
 Write-Host "Building tool index..."
 & $indexCmd --repo-root $RepoRoot

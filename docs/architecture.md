@@ -12,8 +12,9 @@ src/ai_config/
 ├── orchestrator/     # LangGraph ベースのオーケストレーション
 ├── executor/         # ツール実行エンジン
 ├── dispatch/         # マルチエージェント・ディスパッチ
+├── vendor/           # skill import/update/provenance の vendor layer
 ├── build_index.py    # インデックス構築 CLI
-└── source_manager.py # 外部ソース管理
+└── source_manager.py # MCP-only source 管理 / legacy cleanup
 ```
 
 ## モジュール詳細
@@ -46,6 +47,8 @@ class ToolRecord:
 | `mcp_parser.py` | MCP サーバー | `config/master/ai-sync.yaml` |
 | `external_mcp_catalog_parser.py` | 外部 MCP カタログ | `skills/external/**/.mcp.json` |
 | `path_metadata.py` | メタデータ推定 | ファイルパスからレイヤー・ドメインを推定 |
+
+`skills/external` は引き続き registry の stable scan target です。skill の fetch / re-import / provenance は vendor layer が担当し、registry 側は scan-only を維持します。
 
 #### インデックスビルダー (`registry/index_builder.py`)
 

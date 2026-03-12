@@ -100,15 +100,16 @@ skills/custom/technology/api-design/SKILL.md
 
 ### 方法 3: 外部スキルリポジトリ
 
-`config/sources.yaml` に追加:
+Phase 1 では `ai-config-vendor-skills` で取り込みます。
 
-```yaml
-sources:
-  my-skills:
-    type: skill
-    url: https://github.com/user/skills.git
-    path: skills/external/my-skills
-    branch: main
+```bash
+ai-config-vendor-skills --repo-root . import https://github.com/user/skills.git my-skills
+```
+
+既存 checkout から移行する場合のみ、temporary な migration utility を使います。
+
+```bash
+ai-config-vendor-skills --repo-root . bootstrap-legacy --all
 ```
 
 ## 新しいワークフローの追加

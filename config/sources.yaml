@@ -1,7 +1,8 @@
 version: "1.0.0"
 
-# External source repositories managed as git submodules.
-# Run `ai-config-sources sync` to clone/update all declared sources.
+# MCP source repositories managed as git submodules.
+# Skill entries remain only as legacy/delegated manifest records in Phase 1.
+# Run `ai-config-sources sync` to manage MCP sources.
 
 sources:
   # --- Skills ---

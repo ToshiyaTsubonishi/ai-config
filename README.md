@@ -108,7 +108,7 @@ ai-config/
 ├── skills/               # スキルコレクション (510+)
 ├── config/
 │   ├── master/ai-sync.yaml  # ツールカタログ設定
-│   └── sources.yaml         # 外部スキルソース定義
+│   └── sources.yaml         # MCP source 定義 + legacy skill entries
 ├── .index/               # 構築済みインデックス
 ├── instructions/         # Agent / Gemini / Lesson のGit管理ファイル
 ├── scripts/
@@ -125,9 +125,24 @@ ai-config/
 
 ## 外部ソース管理
 
-`config/sources.yaml` に外部スキルリポジトリを定義し、`ai-config-sources sync` で同期します。
+Phase 1 では `vercel-labs/skills` を直接導入せず、repo 内の vendor CLI で `skills/external` を管理します。これは upstream に `--path` がなく、selector-first を維持したまま stable scan target を残すためです。
 
-主なソース:
+スキル import / update / remove:
+
+```bash
+# 既存 legacy checkout の provenance を backfill する migration utility
+ai-config-vendor-skills --repo-root . bootstrap-legacy --all
+
+# 新しい skill repo を取り込む
+ai-config-vendor-skills --repo-root . import streamlit/agent-skills streamlit
+
+# provenance に基づいて更新する
+ai-config-vendor-skills --repo-root . update --all
+```
+
+`config/sources.yaml` と `ai-config-sources` は MCP source 管理と legacy config cleanup のみ担当します。skill entries は互換・観測用に残りますが、`skills/external` の実ファイルは管理しません。
+
+主な repo-managed skill sources:
 
 - `streamlit/agent-skills`
 - `remotion-dev/skills`
@@ -139,6 +154,7 @@ ai-config/
 推奨運用:
 
 ```bash
+ai-config-vendor-skills --repo-root . update --all
 ai-config-sources --repo-root . sync
 ai-config-index --repo-root . --profile default
 ```

@@ -1,15 +1,8 @@
-"""Source Manager: sync external skill/MCP repositories as git submodules.
+"""Source Manager: manage MCP sources and legacy source manifest cleanup.
 
-Reads config/sources.yaml and ensures each declared source is present as a
-git submodule under the repository root.  Supports add / update / remove /
-list operations.
-
-.. deprecated::
-    Skill-related functionality (``type: skill`` entries) is being migrated
-    to ``vercel-labs/skills`` as the upstream skill plumbing layer.
-    MCP source management (``type: mcp`` entries) will be retained.
-    See ``docs/constitution.md`` §3 "Non-Core" and the implementation plan
-    for details.
+Reads config/sources.yaml and manages only MCP repositories as git submodules.
+Skill repositories remain visible in the manifest for compatibility, but their
+import/update/remove lifecycle is delegated to ai-config-vendor-skills.
 """
 
 from __future__ import annotations
@@ -75,6 +68,10 @@ def load_manifest(repo_root: Path, manifest_rel: str = DEFAULT_MANIFEST) -> Sour
             )
         )
     return SourceManifest(version=raw.get("version", "1.0.0"), sources=entries)
+
+
+def _managed_mcp_entries(manifest: SourceManifest) -> list[SourceEntry]:
+    return [entry for entry in manifest.sources if entry.source_type == "mcp"]
 
 
 # ---------------------------------------------------------------------------
@@ -151,12 +148,20 @@ def sync_sources(repo_root: Path, manifest_rel: str = DEFAULT_MANIFEST, *, dry_r
     """
     manifest = load_manifest(repo_root, manifest_rel)
     existing = _existing_submodule_paths(repo_root)
-    declared_paths = {e.path for e in manifest.sources}
+    managed_entries = _managed_mcp_entries(manifest)
+    declared_paths = {entry.path for entry in managed_entries}
 
     result: dict[str, list[str]] = {"added": [], "updated": [], "removed": [], "errors": []}
 
-    # Add or update declared sources
-    for entry in manifest.sources:
+    delegated_skills = [entry for entry in manifest.sources if entry.source_type == "skill"]
+    if delegated_skills:
+        logger.info(
+            "Skipping %d delegated skill entries; use ai-config-vendor-skills for skills/external lifecycle management.",
+            len(delegated_skills),
+        )
+
+    # Add or update declared MCP sources
+    for entry in managed_entries:
         if entry.path in existing:
             if dry_run:
                 logger.info("[DRY RUN] Would update: %s", entry.path)
@@ -176,8 +181,8 @@ def sync_sources(repo_root: Path, manifest_rel: str = DEFAULT_MANIFEST, *, dry_r
                 else:
                     result["errors"].append(entry.path)
 
-    # Remove submodules under managed prefixes that are no longer declared
-    managed_prefixes = ("skills/external/", "mcp/external/")
+    # Remove only MCP submodules under managed prefixes that are no longer declared
+    managed_prefixes = ("mcp/external/",)
     for sub_path in existing:
         if any(sub_path.startswith(p) for p in managed_prefixes) and sub_path not in declared_paths:
             if dry_run:
@@ -199,13 +204,14 @@ def list_sources(repo_root: Path, manifest_rel: str = DEFAULT_MANIFEST) -> list[
 
     rows: list[dict[str, str]] = []
     for entry in manifest.sources:
+        status = "delegated" if entry.source_type == "skill" else ("synced" if entry.path in existing else "pending")
         rows.append({
             "name": entry.name,
             "type": entry.source_type,
             "url": entry.url,
             "path": entry.path,
             "branch": entry.branch,
-            "status": "synced" if entry.path in existing else "pending",
+            "status": status,
         })
     return rows
 
@@ -217,15 +223,15 @@ def list_sources(repo_root: Path, manifest_rel: str = DEFAULT_MANIFEST) -> list[
 def main(argv: list[str] | None = None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 
-    parser = argparse.ArgumentParser(description="Manage external skill/MCP sources.")
+    parser = argparse.ArgumentParser(description="Manage MCP sources and legacy source manifest cleanup.")
     parser.add_argument("--repo-root", type=Path, default=Path("."), help="Repository root path")
     parser.add_argument("--manifest", default=DEFAULT_MANIFEST, help="Manifest file relative path")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    sync_p = sub.add_parser("sync", help="Sync all declared sources (add/update/remove submodules)")
+    sync_p = sub.add_parser("sync", help="Sync declared MCP sources (skill entries are delegated)")
     sync_p.add_argument("--dry-run", action="store_true", help="Show what would be done without making changes")
 
-    sub.add_parser("list", help="List all declared sources and their status")
+    sub.add_parser("list", help="List declared sources and their status")
 
     add_p = sub.add_parser("add", help="Add a new source to the manifest")
     add_p.add_argument("name", help="Source name (e.g. 'my-skills')")
@@ -260,12 +266,18 @@ def main(argv: list[str] | None = None) -> None:
             print(f"{r['name']:<20} {r['type']:<8} {r['status']:<10} {r['path']}")
 
     elif args.command == "add":
+        if args.type == "skill":
+            print(
+                "Skill source management moved to ai-config-vendor-skills. "
+                "Use that CLI for skills/external imports."
+            )
+            sys.exit(1)
         manifest_path = repo_root / args.manifest
         raw = yaml.safe_load(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {"version": "1.0.0", "sources": {}}
         if raw.get("sources") is None:
             raw["sources"] = {}
 
-        default_prefix = "skills/external" if args.type == "skill" else "mcp/external"
+        default_prefix = "mcp/external"
         path = args.path or f"{default_prefix}/{args.name}"
 
         raw["sources"][args.name] = {
@@ -288,10 +300,17 @@ def main(argv: list[str] | None = None) -> None:
         if args.name not in sources:
             print(f"Source '{args.name}' not found in manifest.")
             sys.exit(1)
+        removed_entry = dict(sources[args.name] or {})
         del sources[args.name]
         manifest_path.write_text(yaml.dump(raw, default_flow_style=False, allow_unicode=True), encoding="utf-8")
-        print(f"Removed source '{args.name}' from manifest.")
-        print(f"Run 'ai-config-sources sync' to clean up the submodule.")
+        print(f"Removed source '{args.name}' from {args.manifest}")
+        if removed_entry.get("type") == "skill":
+            print(
+                "Legacy skill entry cleanup only. "
+                "skills/external files are unchanged; use ai-config-vendor-skills remove if needed."
+            )
+        else:
+            print("Run 'ai-config-sources sync' to clean up the MCP submodule.")
 
 
 if __name__ == "__main__":

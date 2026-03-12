@@ -70,12 +70,14 @@ AI ツール（スキルの内容を読んで実行）
 - **ディレクトリ指定実行**: `working_directory` を指定して、プロジェクトの特定ディレクトリでツールを実行可能
 - 専門分野（ソフトウェア工学、データ分析、ナレッジワーク）に基づく **ルーティング**
 
-### 4. 外部ソース管理
+### 4. Vendor Layer
 
-外部のスキルリポジトリを git submodule として管理します。
+外部 skill repo は Phase 1 の vendor layer で repo 管理下に取り込みます。
 
-- `config/sources.yaml` に宣言的に定義
-- `ai-config-sources sync` で一括同期
+- `skills/external` を stable scan target として維持
+- `ai-config-vendor-skills` で import / update / remove
+- `bootstrap-legacy` は既存 checkout に provenance を付与する migration utility
+- `ai-config-sources` は MCP source 管理と legacy config cleanup のみ担当
 
 ## 全体像
 

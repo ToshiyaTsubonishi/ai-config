@@ -82,28 +82,47 @@ ai-config-index --repo-root . --profile default --watch
 | `default` | 通常運用向け（大規模スキルセットを除外） |
 | `full` | すべてのスキル・MCP を収録 |
 
-### 外部ソースの管理
+### 外部 skill の vendor layer 管理
+
+```bash
+# 既存 checkout に provenance を backfill する migration utility
+ai-config-vendor-skills --repo-root . bootstrap-legacy --all
+
+# skill repo の import
+ai-config-vendor-skills --repo-root . import user/skills my-skills
+
+# provenance に基づく update
+ai-config-vendor-skills --repo-root . update --all
+
+# vendor-managed checkout の remove
+ai-config-vendor-skills --repo-root . remove my-skills
+```
+
+`bootstrap-legacy` は migration utility です。既存 submodule / checkout へ `.import.json` を backfill するための一時的な経路であり、日常運用の中心にはしません。
+
+### MCP source と legacy config cleanup
 
 ```bash
 # ソース一覧の確認
 ai-config-sources --repo-root . list
 
-# 全ソースの同期（追加・更新・削除）
+# MCP source の同期
 ai-config-sources --repo-root . sync
 
 # 事前確認（変更は行わない）
 ai-config-sources --repo-root . sync --dry-run
 
-# 新しいソースの追加
-ai-config-sources --repo-root . add my-skills https://github.com/user/skills.git
+# 新しい MCP source の追加
+ai-config-sources --repo-root . add my-mcp https://github.com/user/mcp-server.git --type mcp
 
-# ソースの削除
-ai-config-sources --repo-root . remove my-skills
+# MCP source または legacy manifest entry の削除
+ai-config-sources --repo-root . remove my-mcp
 ```
 
 ### 推奨ワークフロー（ソース更新後）
 
 ```bash
+ai-config-vendor-skills --repo-root . update --all
 ai-config-sources --repo-root . sync
 ai-config-index --repo-root . --profile default
 ```
@@ -271,9 +290,22 @@ ai-config-dispatch --list-workflows
 ```bash
 ai-config-sources --repo-root . sync [--dry-run]
 ai-config-sources --repo-root . list
-ai-config-sources --repo-root . add <name> <url>
+ai-config-sources --repo-root . add <name> <url> --type mcp
 ai-config-sources --repo-root . remove <name>
 ```
+
+MCP source 管理と legacy manifest cleanup のみを担当します。skill 実ファイルの import / update / remove は扱いません。
+
+### `ai-config-vendor-skills` — 外部 skill vendor layer
+
+```bash
+ai-config-vendor-skills --repo-root . import <source> [local-name]
+ai-config-vendor-skills --repo-root . update --all
+ai-config-vendor-skills --repo-root . remove <local-name>
+ai-config-vendor-skills --repo-root . bootstrap-legacy --all
+```
+
+`bootstrap-legacy` は migration utility であり、恒久運用の主経路ではありません。
 
 ---
 

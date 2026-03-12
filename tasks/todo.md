@@ -1,5 +1,63 @@
 # TODO
 
+## 2026-03-12 Phase 1 Vendor Layer
+
+### Plan
+- [x] repo 内 vendor CLI / vendor library を追加し、skill import/update/remove/provenance の canonical 実装を作る
+- [x] `bootstrap-legacy` migration utility を追加し、既存 `skills/external/*` の provenance backfill 経路を作る
+- [x] provenance 確立を前提にした minimal E2E tests を追加し、index / retrieval の継続性を確認する
+- [x] `scripts/import-skill.sh` を vendor CLI 互換 wrapper に置き換える
+- [x] `ai-config-sources` を MCP-only + legacy config cleanup に縮退し、skill 実ファイル責務を外す
+- [x] docs を vendor layer / selector-first / migration utility 前提に更新する
+- [x] 対象テストと CLI 検証を実行し、レビューを記録する
+
+### Progress
+- [x] 調査
+- [x] vendor library
+- [x] provenance bootstrap
+- [x] minimal E2E
+- [x] wrapper
+- [x] source_manager 縮退
+- [x] docs
+- [x] 検証
+- [x] レビュー記録
+
+### Review
+- 更新ファイル:
+  - `src/ai_config/vendor/__init__.py`
+  - `src/ai_config/vendor/models.py`
+  - `src/ai_config/vendor/skill_vendor.py`
+  - `src/ai_config/vendor/cli.py`
+  - `src/ai_config/source_manager.py`
+  - `scripts/import-skill.sh`
+  - `pyproject.toml`
+  - `scripts/setup.ps1`
+  - `tests/test_vendor_skills.py`
+  - `tests/test_source_manager.py`
+  - `README.md`
+  - `docs/overview.md`
+  - `docs/architecture.md`
+  - `docs/operations.md`
+  - `docs/development.md`
+  - `config/sources.yaml`
+  - `tasks/todo.md`
+- 実装要約:
+  - `ai-config-vendor-skills` を追加し、repo 内 vendor CLI で import / update / remove / provenance を管理する形に移した
+  - `bootstrap-legacy` を migration utility として追加し、既存 `skills/external/*` と `.gitmodules` から `.import.json` を backfill できるようにした
+  - `scripts/import-skill.sh` は薄い互換 wrapper に置き換え、実ロジックを Python 側へ一本化した
+  - `ai-config-sources` は MCP-only + legacy config cleanup に縮退し、skill 実ファイルの削除責務を外した
+  - docs を vendor layer / selector-first / migration utility 前提に更新した
+- 検証コマンド:
+  - `.venv/bin/python -m pytest tests/test_vendor_skills.py -q`
+  - `.venv/bin/python -m pytest tests/test_vendor_skills.py tests/test_source_manager.py -q`
+  - `.venv/bin/python -m pytest tests/test_vendor_skills.py tests/test_source_manager.py tests/test_cli_smoke.py tests/test_registry_external_mcp_catalog_parser.py tests/test_retriever_rrf.py -q`
+  - `scripts/import-skill.sh <temp-local-git-repo> wrapper-demo --dry-run`
+- 検証結果:
+  - vendor layer の import / force re-import / orphan cleanup / bootstrap legacy / CLI bootstrap-update-index-search が通った
+  - `source_manager` の delegated skill listing、MCP-only sync、skill add reject、manifest-only remove が通った
+  - wrapper は `.venv` 再インストールなしでも `PYTHONPATH=src` 付きで新しい vendor CLI を呼び出せることを確認した
+  - 関連回帰テスト 17 件がすべて成功した
+
 ## 2026-03-11 Editor Restart Runtime Validation
 
 ### Plan
