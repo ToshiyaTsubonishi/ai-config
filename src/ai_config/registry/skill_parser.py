@@ -24,6 +24,18 @@ logger = logging.getLogger(__name__)
 SKILL_LAYERS = ("shared", "external", "imported", "custom", "codex", "antigravity", "gemini")
 TARGET_LAYERS = {"codex", "antigravity", "gemini"}
 
+# Dedup precedence: earlier entries win when the same skill id appears in
+# multiple layers.  custom (user-authored) beats external (imported repos).
+LAYER_PRECEDENCE = [
+    "custom",        # user-authored / customised skills
+    "shared",        # team / org shared skills
+    "codex",         # agent-specific
+    "gemini",        # agent-specific
+    "antigravity",   # agent-specific
+    "imported",      # imported via skills.sh or similar
+    "external",      # imported via scripts/import-skill.sh
+]
+
 
 def parse_skill_file(skill_md: Path, repo_root: Path) -> ToolRecord | None:
     """Parse a single SKILL.md into a ToolRecord.
@@ -122,23 +134,46 @@ def _fallback_frontmatter_parse(raw: str) -> tuple[dict[str, str], str]:
 
 
 def scan_skills(repo_root: Path) -> list[ToolRecord]:
-    """Recursively scan skills/ for SKILL.md files and parse them all."""
+    """Recursively scan skills/ for SKILL.md files and parse them all.
+
+    Scans layers in LAYER_PRECEDENCE order so that higher-priority layers
+    (e.g. custom) win dedup over lower-priority layers (e.g. external)
+    when two skills share the same id.
+    """
     skills_dir = repo_root / "skills"
     if not skills_dir.is_dir():
         logger.warning("skills/ directory not found at %s", skills_dir)
         return []
 
+    # Build ordered list of SKILL.md paths: precedence layers first, then rest.
+    ordered_paths: list[Path] = []
+    seen_paths: set[Path] = set()
+
+    for layer in LAYER_PRECEDENCE:
+        layer_dir = skills_dir / layer
+        if layer_dir.is_dir():
+            for p in sorted(layer_dir.rglob("SKILL.md")):
+                if p not in seen_paths:
+                    ordered_paths.append(p)
+                    seen_paths.add(p)
+
+    # Catch any layers not in LAYER_PRECEDENCE (future-proofing).
+    for p in sorted(skills_dir.rglob("SKILL.md")):
+        if p not in seen_paths:
+            ordered_paths.append(p)
+            seen_paths.add(p)
+
     records: list[ToolRecord] = []
     seen_ids: set[str] = set()
 
-    for skill_md in sorted(skills_dir.rglob("SKILL.md")):
+    for skill_md in ordered_paths:
         record = parse_skill_file(skill_md, repo_root)
         if record is None:
             continue
 
-        # Deduplicate by id (first occurrence wins)
+        # Deduplicate by id (first occurrence wins — guaranteed by layer order)
         if record.id in seen_ids:
-            logger.debug("Duplicate skill id %s, skipping %s", record.id, skill_md)
+            logger.debug("Duplicate skill id %s, skipping %s (lower precedence)", record.id, skill_md)
             continue
 
         seen_ids.add(record.id)
