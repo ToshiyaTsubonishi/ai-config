@@ -1,5 +1,55 @@
 # TODO
 
+## 2026-03-12 Vendor-Aware Observability
+
+### Plan
+- [x] vendor layer の shared inspection API を追加し、`status` と `doctor` で再利用する
+- [x] `ai-config-vendor-skills status` を追加し、local-only / non-destructive / network-free な vendor state 観測を実装する
+- [x] `status --json` に stable schema を持たせ、`schema_version` と `generated_at` を含める
+- [x] `ai-config-doctor` に vendor manifest / materialization / git hygiene / index presence / extra local / unmanaged local checks を追加する
+- [x] docs / tests / CLI 実行確認 / diff hygiene を完了し、レビューを記録する
+
+### Progress
+- [x] 調査
+- [x] inspection layer
+- [x] vendor status CLI
+- [x] doctor 拡張
+- [x] docs
+- [x] 検証
+- [x] レビュー記録
+
+### Review
+- 更新ファイル:
+  - `src/ai_config/vendor/models.py`
+  - `src/ai_config/vendor/skill_vendor.py`
+  - `src/ai_config/vendor/cli.py`
+  - `src/ai_config/doctor.py`
+  - `tests/test_vendor_skills.py`
+  - `tests/test_doctor.py`
+  - `README.md`
+  - `docs/operations.md`
+  - `tasks/todo.md`
+  - `tasks/lessons.md`
+- 実装要約:
+  - vendor layer に `inspect_vendor_state()` を追加し、manifest entry と local external dir を read-only に分類する shared inspection layer を作成した
+  - `ai-config-vendor-skills status` を追加し、human output と `schema_version` / `generated_at` 付き JSON 出力を提供した
+  - `ai-config-doctor` に vendor-aware checks を追加し、`extra_local` は pass with details、`unmanaged_local` は fail として扱うようにした
+  - `tasks/lessons.md` に observability API では severity と JSON contract を先に固定するルールを追記した
+- 検証コマンド:
+  - `PYTHONPATH=src .venv/bin/python -m pytest tests/test_vendor_skills.py tests/test_doctor.py tests/test_source_manager.py tests/test_cli_smoke.py tests/test_registry_external_mcp_catalog_parser.py tests/test_retriever_rrf.py -q`
+  - `PYTHONPATH=src .venv/bin/python -m ai_config.vendor.cli --repo-root . status`
+  - `PYTHONPATH=src .venv/bin/python -m ai_config.vendor.cli --repo-root . status --json`
+  - `PYTHONPATH=src .venv/bin/python - <<'PY' ... _vendor_observability_checks(Path('.').resolve()) ... PY`
+  - `PYTHONPATH=src .venv/bin/python -m ai_config.doctor --repo-root . --json`
+  - `git diff --check`
+- 検証結果:
+  - 関連回帰テスト 29 件がすべて成功した
+  - 実 repo の `ai-config-vendor-skills status` は 7 manifest entry すべて `ready`、`extra_local=0`、`unmanaged_local=0` を返した
+  - `status --json` は `schema_version=1`、UTC `generated_at`、stable summary / entries 構造を返した
+  - vendor-only doctor helper では `vendor_manifest` / `vendor_materialization` / `vendor_git_hygiene` / `vendor_index_presence` / `vendor_extra_local` / `vendor_unmanaged_local` がすべて pass だった
+  - full `ai-config-doctor --json` も vendor checks 自体は pass だったが、既存の instruction drift と `antigravity` CLI 未導入により全体 exit code は 1 になった
+  - `git diff --check` は clean だった
+
 ## 2026-03-12 Phase 2 Legacy Cleanup
 
 ### Plan

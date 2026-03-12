@@ -24,6 +24,10 @@ from ai_config.vendor.models import (
     VendorManifest,
     VendorManifestEntry,
     VendorProvenance,
+    VendorStatusEntry,
+    VendorStatusReport,
+    VendorStatusSummary,
+    VENDOR_STATUS_SCHEMA_VERSION,
     VendorSyncResult,
 )
 
@@ -244,6 +248,41 @@ def _is_git_submodule(repo_root: Path, rel_path: str) -> bool:
         if len(parts) >= 4 and parts[0] == "160000":
             return True
     return False
+
+
+def _is_git_ignored(repo_root: Path, rel_path: str) -> bool:
+    git_dir = repo_root / ".git"
+    if not git_dir.exists():
+        return False
+    proc = _run_git(["check-ignore", "-q", "--", rel_path], cwd=repo_root, check=False)
+    return proc.returncode == 0
+
+
+def _skill_count(target_dir: Path, provenance: VendorProvenance | None) -> int:
+    if provenance is not None and provenance.skill_count:
+        return provenance.skill_count
+    if not target_dir.exists():
+        return 0
+    return len(_find_skill_files(target_dir))
+
+
+def _build_status_summary(entries: list[VendorStatusEntry], *, total_manifest_entries: int) -> VendorStatusSummary:
+    summary = VendorStatusSummary(total_manifest_entries=total_manifest_entries)
+    known_statuses = {
+        "ready",
+        "needs_align",
+        "needs_sync",
+        "missing",
+        "legacy_submodule",
+        "missing_provenance",
+        "extra_local",
+        "unmanaged_local",
+    }
+    for entry in entries:
+        if entry.status not in known_statuses:
+            continue
+        setattr(summary, entry.status, getattr(summary, entry.status) + 1)
+    return summary
 
 
 def _remove_gitmodules_entry(repo_root: Path, rel_path: str) -> bool:
@@ -547,6 +586,148 @@ def load_vendor_manifest(repo_root: Path, manifest_rel: str = DEFAULT_VENDOR_MAN
             )
         )
     return VendorManifest(version=str(raw.get("version", "1.0.0")), sources=entries)
+
+
+def inspect_vendor_state(repo_root: Path, manifest_rel: str = DEFAULT_VENDOR_MANIFEST) -> VendorStatusReport:
+    """Inspect vendor-managed external skills without mutating repo state."""
+
+    repo_root = repo_root.resolve()
+    manifest_path = repo_root / manifest_rel
+    external_dir = _external_dir(repo_root)
+    manifest_errors: list[str] = []
+
+    try:
+        manifest = load_vendor_manifest(repo_root, manifest_rel)
+    except VendorError as error:
+        manifest = VendorManifest()
+        manifest_errors.append(str(error))
+
+    local_name_counts: dict[str, int] = {}
+    for entry in manifest.sources:
+        local_name_counts[entry.local_name] = local_name_counts.get(entry.local_name, 0) + 1
+    for local_name, count in sorted(local_name_counts.items()):
+        if count > 1:
+            manifest_errors.append(f"Duplicate local_name '{local_name}' appears {count} times in {manifest_rel}.")
+
+    entries: list[VendorStatusEntry] = []
+    managed_local_names = {entry.local_name for entry in manifest.sources}
+
+    for entry in manifest.sources:
+        target_dir = external_dir / entry.local_name
+        provenance_path = _provenance_path(target_dir)
+        rel_target = str(target_dir.relative_to(repo_root))
+        rel_provenance = str(provenance_path.relative_to(repo_root))
+        provenance = _existing_provenance(target_dir)
+        target_exists = target_dir.exists()
+        provenance_exists = provenance is not None
+        is_git_submodule = _is_git_submodule(repo_root, rel_target)
+        git_ignored = _is_git_ignored(repo_root, rel_target)
+
+        if not entry.ref:
+            manifest_errors.append(
+                f"Vendor manifest entry '{entry.name}' ({entry.local_name}) is missing ref."
+            )
+
+        if is_git_submodule:
+            status = "legacy_submodule"
+            message = "Target is still registered as a legacy git submodule."
+        elif not target_exists:
+            status = "missing"
+            message = "Target directory is missing; run sync-manifest to materialize it."
+        elif not provenance_exists:
+            status = "missing_provenance"
+            message = "Target directory exists without provenance metadata."
+        elif not entry.ref:
+            status = "needs_sync"
+            message = "Manifest entry is missing an exact ref; sync-manifest cannot verify reproducibility."
+        elif provenance.commit_sha != entry.ref:
+            status = "needs_sync"
+            message = "Local payload does not match the pinned manifest ref."
+        elif (
+            provenance.requested_ref != entry.ref
+            or provenance.source_url != entry.source_url
+            or (entry.branch and provenance.branch != entry.branch)
+        ):
+            status = "needs_align"
+            message = "Payload matches the pin, but provenance metadata is stale."
+        else:
+            status = "ready"
+            message = "Vendor-managed payload matches the pinned manifest ref."
+
+        entries.append(
+            VendorStatusEntry(
+                manifest_name=entry.name,
+                local_name=entry.local_name,
+                status=status,
+                source_url=entry.source_url,
+                branch=entry.branch,
+                target_dir=rel_target,
+                provenance_path=rel_provenance,
+                manifest_ref=entry.ref,
+                provenance_commit_sha=provenance.commit_sha if provenance else None,
+                provenance_requested_ref=provenance.requested_ref if provenance else None,
+                skill_count=_skill_count(target_dir, provenance),
+                target_exists=target_exists,
+                provenance_exists=provenance_exists,
+                is_git_submodule=is_git_submodule,
+                git_ignored=git_ignored,
+                is_manifest_managed=True,
+                message=message,
+            )
+        )
+
+    if external_dir.is_dir():
+        for target_dir in sorted(path for path in external_dir.iterdir() if path.is_dir() and not path.name.startswith(".")):
+            if target_dir.name in managed_local_names:
+                continue
+            provenance = _existing_provenance(target_dir)
+            rel_target = str(target_dir.relative_to(repo_root))
+            rel_provenance = str(_provenance_path(target_dir).relative_to(repo_root))
+            is_git_submodule = _is_git_submodule(repo_root, rel_target)
+            git_ignored = _is_git_ignored(repo_root, rel_target)
+
+            if is_git_submodule:
+                status = "legacy_submodule"
+                message = "Local external directory is still a legacy git submodule and is not in the manifest."
+            elif provenance is not None:
+                status = "extra_local"
+                message = "Vendor-managed local payload exists outside the curated manifest."
+            else:
+                status = "unmanaged_local"
+                message = "Local external content exists without manifest coverage or provenance metadata."
+
+            entries.append(
+                VendorStatusEntry(
+                    manifest_name=None,
+                    local_name=target_dir.name,
+                    status=status,
+                    source_url=provenance.source_url if provenance else "",
+                    branch=provenance.branch if provenance else "",
+                    target_dir=rel_target,
+                    provenance_path=rel_provenance,
+                    manifest_ref=None,
+                    provenance_commit_sha=provenance.commit_sha if provenance else None,
+                    provenance_requested_ref=provenance.requested_ref if provenance else None,
+                    skill_count=_skill_count(target_dir, provenance),
+                    target_exists=True,
+                    provenance_exists=provenance is not None,
+                    is_git_submodule=is_git_submodule,
+                    git_ignored=git_ignored,
+                    is_manifest_managed=False,
+                    message=message,
+                )
+            )
+
+    summary = _build_status_summary(entries, total_manifest_entries=len(manifest.sources))
+    return VendorStatusReport(
+        schema_version=VENDOR_STATUS_SCHEMA_VERSION,
+        generated_at=_utc_now(),
+        repo_root=str(repo_root),
+        manifest_path=str(manifest_path),
+        summary=summary,
+        entries=entries,
+        manifest_errors=manifest_errors,
+    )
 
 
 def sync_vendor_manifest(

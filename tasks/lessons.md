@@ -31,3 +31,12 @@
 - **期待動作**: `ai-config-selector` で候補を確認したうえで、`.venv\Scripts\ai-config-dispatch.cmd` を使って検証を分担し、証拠を集約する
 - **実際の動作**: 読み取り専用だから trivial と判断して direct に調査してしまった
 - **ルール**: 読み取り専用でも、2つ以上の観点・サブシステムを横断する repo inspection / setup validation / MCP validation は非自明タスクとして dispatch を優先する
+
+## 2026-03-12: 観測 API の契約は最初に固定する
+
+### ミス 5: observability の severity と JSON 互換性を後から補強する形になった
+
+- **状況**: vendor observability の実装計画に対して、`unmanaged_local` の doctor 扱いと `status --json` の安定 schema が後から明文化された
+- **期待動作**: local state を返す観測 API では、実装前に severity と JSON contract を固定する
+- **実際の動作**: 初期実装案では `extra_local` と `unmanaged_local` の扱い差、`schema_version` / `generated_at` を明示していなかった
+- **ルール**: 新しい observability/status API を追加するときは、実装前に「どの状態が fail/pass か」と「JSON schema version / generation timestamp」を必ず決めてから着手する

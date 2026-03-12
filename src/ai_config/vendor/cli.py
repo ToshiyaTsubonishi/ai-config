@@ -10,6 +10,7 @@ vendor-managed local artifacts.
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import sys
 from pathlib import Path
@@ -20,6 +21,7 @@ from ai_config.vendor.models import (
     LegacyCleanupResult,
     VendorImportResult,
     VendorImportSpec,
+    VendorStatusReport,
     VendorSyncResult,
 )
 from ai_config.vendor.skill_vendor import (
@@ -27,6 +29,7 @@ from ai_config.vendor.skill_vendor import (
     bootstrap_legacy_imports,
     cleanup_legacy_submodules,
     import_skill_repo,
+    inspect_vendor_state,
     load_vendor_manifest,
     remove_imported_skill,
     sync_vendor_manifest,
@@ -89,6 +92,41 @@ def _print_cleanup_result(result: LegacyCleanupResult) -> None:
         print(f"  provenance: {result.provenance_path}")
     for action in result.actions:
         print(f"  - {action}")
+
+
+def _print_status_report(report: VendorStatusReport) -> None:
+    summary = report.summary
+    print(f"Vendor status at {report.generated_at}")
+    print(f"  repo: {report.repo_root}")
+    print(f"  manifest: {report.manifest_path}")
+    print(
+        "  summary: "
+        f"ready={summary.ready} "
+        f"needs_align={summary.needs_align} "
+        f"needs_sync={summary.needs_sync} "
+        f"missing={summary.missing} "
+        f"legacy_submodule={summary.legacy_submodule} "
+        f"missing_provenance={summary.missing_provenance} "
+        f"extra_local={summary.extra_local} "
+        f"unmanaged_local={summary.unmanaged_local}"
+    )
+    if report.manifest_errors:
+        print("  manifest_errors:")
+        for error in report.manifest_errors:
+            print(f"    - {error}")
+
+    print(f"{'Local Name':<36} {'Status':<18} {'Ref':<12} {'Commit':<12} {'Skills':<6} {'Ignored':<7}")
+    print("-" * 100)
+    for entry in report.entries:
+        manifest_ref = (entry.manifest_ref or "-")[:12]
+        commit_sha = (entry.provenance_commit_sha or "-")[:12]
+        ignored = "yes" if entry.git_ignored else "no"
+        print(
+            f"{entry.local_name:<36} {entry.status:<18} {manifest_ref:<12} "
+            f"{commit_sha:<12} {entry.skill_count:<6} {ignored:<7}"
+        )
+        if entry.message and entry.status != "ready":
+            print(f"  {entry.message}")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -164,6 +202,17 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Apply the cleanup steps. Default is preview-only dry-run semantics.",
     )
+
+    status_p = sub.add_parser(
+        "status",
+        help="Inspect vendor-managed external skills and local payload state without mutating anything.",
+    )
+    status_p.add_argument(
+        "--manifest",
+        default=DEFAULT_VENDOR_MANIFEST,
+        help=f"Vendor manifest file relative path (default: {DEFAULT_VENDOR_MANIFEST})",
+    )
+    status_p.add_argument("--json", action="store_true", help="Print structured JSON output")
 
     return parser
 
@@ -250,6 +299,14 @@ def main(argv: list[str] | None = None) -> int:
                 _print_cleanup_result(result)
             if any(result.status == "blocked" for result in results):
                 return 1
+            return 0
+
+        if args.command == "status":
+            report = inspect_vendor_state(repo_root=repo_root, manifest_rel=args.manifest)
+            if args.json:
+                print(json.dumps(report.to_dict(), ensure_ascii=False, indent=2))
+            else:
+                _print_status_report(report)
             return 0
     except VendorError as error:
         logger.error("%s", error)

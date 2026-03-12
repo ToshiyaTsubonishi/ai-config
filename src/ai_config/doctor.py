@@ -18,6 +18,7 @@ from mcp import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
 
 from ai_config.runtime_env import load_runtime_env
+from ai_config.vendor.skill_vendor import inspect_vendor_state
 
 
 @dataclass
@@ -85,6 +86,20 @@ def _read_json(path: Path) -> dict[str, Any] | None:
     except Exception:
         return None
     return data if isinstance(data, dict) else None
+
+
+def _read_json_list(path: Path) -> list[dict[str, Any]] | None:
+    if not path.exists():
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    if not isinstance(data, list):
+        return None
+    if not all(isinstance(item, dict) for item in data):
+        return None
+    return [dict(item) for item in data]
 
 
 def _file_matches(left: Path, right: Path) -> bool:
@@ -336,6 +351,161 @@ def _dispatch_prereq_checks(repo_root: Path) -> list[CheckResult]:
     return results
 
 
+def _vendor_observability_checks(repo_root: Path) -> list[CheckResult]:
+    results: list[CheckResult] = []
+
+    try:
+        report = inspect_vendor_state(repo_root)
+    except Exception as error:
+        results.append(_fail("vendor_manifest", "Vendor observability inspection failed.", error=str(error)))
+        results.append(_skip("vendor_materialization", "Skipped because vendor inspection failed."))
+        results.append(_skip("vendor_git_hygiene", "Skipped because vendor inspection failed."))
+        results.append(_skip("vendor_index_presence", "Skipped because vendor inspection failed."))
+        results.append(_skip("vendor_extra_local", "Skipped because vendor inspection failed."))
+        results.append(_skip("vendor_unmanaged_local", "Skipped because vendor inspection failed."))
+        return results
+
+    if report.manifest_errors:
+        results.append(
+            _fail(
+                "vendor_manifest",
+                "Vendor manifest is invalid or incomplete.",
+                manifest_path=report.manifest_path,
+                errors=report.manifest_errors,
+            )
+        )
+    else:
+        results.append(
+            _pass(
+                "vendor_manifest",
+                "Vendor manifest is present and fully pinned.",
+                manifest_path=report.manifest_path,
+                total_manifest_entries=report.summary.total_manifest_entries,
+            )
+        )
+
+    materialization_problems = [
+        entry
+        for entry in report.entries
+        if entry.is_manifest_managed
+        and entry.status in {"needs_align", "needs_sync", "missing", "legacy_submodule", "missing_provenance"}
+    ]
+    if materialization_problems:
+        details = [
+            {
+                "local_name": entry.local_name,
+                "status": entry.status,
+                "message": entry.message,
+            }
+            for entry in materialization_problems
+        ]
+        remediation = "ai-config-vendor-skills --repo-root . sync-manifest"
+        if any(entry.status == "legacy_submodule" for entry in materialization_problems):
+            remediation = "ai-config-vendor-skills --repo-root . cleanup-legacy-submodule <local-name> --apply"
+        elif any(entry.status == "missing_provenance" for entry in materialization_problems):
+            remediation = (
+                "Legacy checkout なら bootstrap-legacy、そうでなければ unmanaged local content を確認してください。"
+            )
+        results.append(
+            _fail(
+                "vendor_materialization",
+                "Vendor-managed external skills need maintenance.",
+                remediation=remediation,
+                entries=details,
+            )
+        )
+    else:
+        results.append(
+            _pass(
+                "vendor_materialization",
+                "Vendor-managed external skills match the pinned manifest state.",
+                ready=report.summary.ready,
+            )
+        )
+
+    gitmodules_exists = (repo_root / ".gitmodules").exists()
+    legacy_entries = [entry.local_name for entry in report.entries if entry.status == "legacy_submodule"]
+    non_ignored_entries = [
+        entry.local_name for entry in report.entries if entry.is_manifest_managed and not entry.git_ignored
+    ]
+    if gitmodules_exists or legacy_entries or non_ignored_entries:
+        results.append(
+            _fail(
+                "vendor_git_hygiene",
+                "Vendor git hygiene checks failed.",
+                gitmodules_exists=gitmodules_exists,
+                legacy_submodules=legacy_entries,
+                not_git_ignored=non_ignored_entries,
+            )
+        )
+    else:
+        results.append(_pass("vendor_git_hygiene", "Vendor payloads are local artifacts and git ignored."))
+
+    index_dir = repo_root / ".index"
+    summary_path = index_dir / "summary.json"
+    records_path = index_dir / "records.json"
+    if not summary_path.exists() or not records_path.exists():
+        results.append(
+            _fail(
+                "vendor_index_presence",
+                "Index artifacts are missing; rebuild the index.",
+                missing=[str(path) for path in (summary_path, records_path) if not path.exists()],
+            )
+        )
+    else:
+        records = _read_json_list(records_path)
+        external_records = []
+        if records is not None:
+            external_records = [
+                record for record in records if str(record.get("source_path", "")).startswith("skills/external/")
+            ]
+        if external_records:
+            results.append(
+                _pass(
+                    "vendor_index_presence",
+                    "Current index contains external vendor-managed records.",
+                    external_record_count=len(external_records),
+                )
+            )
+        else:
+            results.append(
+                _fail(
+                    "vendor_index_presence",
+                    "Current index does not contain any skills/external records.",
+                    records_path=str(records_path),
+                )
+            )
+
+    extra_local = [entry.local_name for entry in report.entries if entry.status == "extra_local"]
+    if extra_local:
+        results.append(
+            _pass(
+                "vendor_extra_local",
+                "Extra local vendor payloads exist outside the curated manifest.",
+                entries=extra_local,
+            )
+        )
+    else:
+        results.append(_pass("vendor_extra_local", "No extra local vendor payloads were found."))
+
+    unmanaged_local = [entry.local_name for entry in report.entries if entry.status == "unmanaged_local"]
+    if unmanaged_local:
+        results.append(
+            _fail(
+                "vendor_unmanaged_local",
+                "Unmanaged local external content was found.",
+                entries=unmanaged_local,
+                remediation=(
+                    "意図した local artifact なら managed import に移し、不要なら手動削除してください。"
+                ),
+            )
+        )
+    else:
+        results.append(_pass("vendor_unmanaged_local", "No unmanaged local external content was found."))
+
+    return results
+
+
 def _codex_dispatch_check(repo_root: Path) -> CheckResult:
     prompt = (
         "Inspect this repository in read-only mode and verify four areas with evidence: "
@@ -418,6 +588,7 @@ def run_doctor(repo_root: Path, *, include_codex_dispatch: bool) -> list[CheckRe
     results.extend(_runtime_config_checks(repo_root))
     results.extend(_instruction_checks(repo_root))
     results.extend(_dispatch_prereq_checks(repo_root))
+    results.extend(_vendor_observability_checks(repo_root))
     results.extend(anyio.run(_run_selector_checks, repo_root))
     if include_codex_dispatch:
         results.append(_codex_dispatch_check(repo_root))

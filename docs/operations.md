@@ -89,6 +89,12 @@ ai-config-index --repo-root . --profile default --watch
 ### 外部 skill の vendor layer 管理
 
 ```bash
+# local-only / network-free の vendor state 確認
+ai-config-vendor-skills --repo-root . status
+
+# machine-readable status
+ai-config-vendor-skills --repo-root . status --json
+
 # pinned manifest を materialize / verify
 ai-config-vendor-skills --repo-root . sync-manifest
 
@@ -109,6 +115,31 @@ ai-config-vendor-skills --repo-root . remove my-skills
 `config/vendor_skills.yaml` に commit される curated entry では `ref` が必須です。branch head を勝手に追う運用にはしません。
 
 `bootstrap-legacy` と `cleanup-legacy-submodule` は migration utility です。既存 submodule / checkout へ `.import.json` を backfill し、legacy gitlink を local artifact に変換するための一時的な経路であり、日常運用の中心にはしません。
+
+### Vendor observability
+
+```bash
+# 日常確認: vendor layer だけを見る
+ai-config-vendor-skills --repo-root . status
+
+# JSON 出力: schema_version / generated_at を含む安定 schema
+ai-config-vendor-skills --repo-root . status --json
+
+# 包括診断: vendor / setup / index / selector をまとめて確認
+ai-config-doctor --repo-root .
+```
+
+使い分け:
+
+- `ai-config-vendor-skills status`: local-only / non-destructive / network-free な vendor state の確認
+- `ai-config-doctor`: vendor manifest / materialization / git hygiene / index presence を含む包括診断
+
+判定方針:
+
+- `extra_local` は pass with details
+- `unmanaged_local` は provenance 不在の unmanaged content として fail
+
+`unmanaged_local` は drift / shadowing / accidental local residue の可能性があるため、warning ではなく失敗として扱います。
 
 ### Legacy cleanup safety
 

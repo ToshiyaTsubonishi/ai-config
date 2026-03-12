@@ -9,6 +9,7 @@ from pathlib import Path
 PROVENANCE_FILENAME = ".import.json"
 PROVENANCE_SCHEMA_VERSION = 1
 DEFAULT_VENDOR_MANIFEST = "config/vendor_skills.yaml"
+VENDOR_STATUS_SCHEMA_VERSION = 1
 
 
 @dataclass(slots=True)
@@ -134,3 +135,57 @@ class LegacyCleanupResult:
     provenance_path: str = ""
     actions: list[str] = field(default_factory=list)
     message: str = ""
+
+
+@dataclass(slots=True)
+class VendorStatusEntry:
+    """Read-only inspection result for one vendor-managed or local external directory."""
+
+    manifest_name: str | None
+    local_name: str
+    status: str
+    source_url: str = ""
+    branch: str = ""
+    target_dir: str = ""
+    provenance_path: str = ""
+    manifest_ref: str | None = None
+    provenance_commit_sha: str | None = None
+    provenance_requested_ref: str | None = None
+    skill_count: int = 0
+    target_exists: bool = False
+    provenance_exists: bool = False
+    is_git_submodule: bool = False
+    git_ignored: bool = False
+    is_manifest_managed: bool = False
+    message: str = ""
+
+
+@dataclass(slots=True)
+class VendorStatusSummary:
+    """Aggregate counts for vendor inspection statuses."""
+
+    total_manifest_entries: int = 0
+    ready: int = 0
+    needs_align: int = 0
+    needs_sync: int = 0
+    missing: int = 0
+    legacy_submodule: int = 0
+    missing_provenance: int = 0
+    extra_local: int = 0
+    unmanaged_local: int = 0
+
+
+@dataclass(slots=True)
+class VendorStatusReport:
+    """Stable JSON/report surface for vendor-layer observability."""
+
+    schema_version: int
+    generated_at: str
+    repo_root: str
+    manifest_path: str
+    summary: VendorStatusSummary
+    entries: list[VendorStatusEntry] = field(default_factory=list)
+    manifest_errors: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, object]:
+        return asdict(self)

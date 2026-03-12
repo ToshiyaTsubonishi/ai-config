@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import shutil
 import subprocess
@@ -16,6 +17,7 @@ from ai_config.vendor.skill_vendor import (
     bootstrap_legacy_imports,
     cleanup_legacy_submodules,
     import_skill_repo,
+    inspect_vendor_state,
     sync_vendor_manifest,
     update_imported_skills,
 )
@@ -107,7 +109,7 @@ def test_import_skill_repo_force_reimport_preserves_imported_at_and_requested_re
 
     with patch("ai_config.vendor.skill_vendor._utc_now", return_value="2026-03-12T00:00:00Z"):
         first = import_skill_repo(
-            VendorImportSpec(source_url=str(upstream), local_name="demo", ref=ref),
+            VendorImportSpec(source_url=str(upstream), local_name="demo", branch="main", ref=ref),
             repo_root=repo_root,
         )
 
@@ -123,7 +125,7 @@ def test_import_skill_repo_force_reimport_preserves_imported_at_and_requested_re
 
     with patch("ai_config.vendor.skill_vendor._utc_now", return_value="2026-03-12T01:00:00Z"):
         second = import_skill_repo(
-            VendorImportSpec(source_url=str(upstream), local_name="demo", ref=ref, force=True),
+            VendorImportSpec(source_url=str(upstream), local_name="demo", branch="main", ref=ref, force=True),
             repo_root=repo_root,
         )
 
@@ -396,6 +398,224 @@ def test_cleanup_legacy_submodule_dry_run_then_apply_preserves_payload(tmp_path:
 
     all_results = cleanup_legacy_submodules(repo_root=repo_root, cleanup_all=True)
     assert all_results[0].status == "already_clean"
+
+
+def test_inspect_vendor_state_classifies_manifest_and_local_entries(tmp_path: Path) -> None:
+    repo_root = _init_git_repo_root(tmp_path / "repo")
+
+    ready_upstream = _init_git_repo(
+        tmp_path / "ready-upstream",
+        {"ready/SKILL.md": "---\nname: ready\ndescription: ready\n---\n# Ready\n"},
+    )
+    ready_ref = _run_git(ready_upstream, "rev-parse", "HEAD").stdout.strip()
+    import_skill_repo(
+        VendorImportSpec(source_url=str(ready_upstream), local_name="ready", branch="main", ref=ready_ref),
+        repo_root=repo_root,
+    )
+
+    align_upstream = _init_git_repo(
+        tmp_path / "align-upstream",
+        {"align/SKILL.md": "---\nname: align\ndescription: align\n---\n# Align\n"},
+    )
+    align_ref = _run_git(align_upstream, "rev-parse", "HEAD").stdout.strip()
+    import_skill_repo(
+        VendorImportSpec(source_url=str(align_upstream), local_name="align", branch="main", ref=align_ref),
+        repo_root=repo_root,
+    )
+    align_provenance_path = repo_root / "skills" / "external" / "align" / PROVENANCE_FILENAME
+    align_provenance = VendorProvenance.from_path(align_provenance_path)
+    VendorProvenance(
+        schema_version=align_provenance.schema_version,
+        source_url=align_provenance.source_url,
+        branch=align_provenance.branch,
+        requested_ref=None,
+        commit_sha=align_provenance.commit_sha,
+        original_paths=align_provenance.original_paths,
+        imported_at=align_provenance.imported_at,
+        updated_at=align_provenance.updated_at,
+        import_tool=align_provenance.import_tool,
+        skill_count=align_provenance.skill_count,
+        local_name=align_provenance.local_name,
+    ).write(align_provenance_path)
+
+    sync_upstream = _init_git_repo(
+        tmp_path / "sync-upstream",
+        {"sync/SKILL.md": "---\nname: sync\ndescription: sync\n---\n# Sync\n"},
+    )
+    old_sync_ref = _run_git(sync_upstream, "rev-parse", "HEAD").stdout.strip()
+    import_skill_repo(
+        VendorImportSpec(source_url=str(sync_upstream), local_name="sync", branch="main", ref=old_sync_ref),
+        repo_root=repo_root,
+    )
+    _write(sync_upstream / "sync" / "SKILL.md", "---\nname: sync\ndescription: sync v2\n---\n# Sync\n")
+    _commit_all(sync_upstream, "Advance sync")
+    new_sync_ref = _run_git(sync_upstream, "rev-parse", "HEAD").stdout.strip()
+
+    missing_provenance_dir = repo_root / "skills" / "external" / "missing-provenance"
+    _write(
+        missing_provenance_dir / "missing-provenance" / "SKILL.md",
+        "---\nname: missing-provenance\ndescription: missing provenance\n---\n# Missing\n",
+    )
+
+    extra_dir = repo_root / "skills" / "external" / "extra-local"
+    _write(extra_dir / "extra-local" / "SKILL.md", "---\nname: extra-local\ndescription: extra\n---\n# Extra\n")
+    VendorProvenance(
+        schema_version=1,
+        source_url="https://example.com/extra-local.git",
+        branch="main",
+        requested_ref="deadbeef",
+        commit_sha="deadbeef",
+        original_paths=["extra-local/SKILL.md"],
+        imported_at="2026-03-12T00:00:00Z",
+        updated_at="2026-03-12T00:00:00Z",
+        import_tool="test",
+        skill_count=1,
+        local_name="extra-local",
+    ).write(extra_dir / PROVENANCE_FILENAME)
+
+    unmanaged_dir = repo_root / "skills" / "external" / "manual-local"
+    _write(unmanaged_dir / "manual-local" / "SKILL.md", "---\nname: manual-local\ndescription: manual\n---\n# Manual\n")
+
+    _write_vendor_manifest(
+        repo_root,
+        sources={
+            "ready": {
+                "source_url": str(ready_upstream),
+                "local_name": "ready",
+                "branch": "main",
+                "ref": ready_ref,
+            },
+            "align": {
+                "source_url": str(align_upstream),
+                "local_name": "align",
+                "branch": "main",
+                "ref": align_ref,
+            },
+            "sync": {
+                "source_url": str(sync_upstream),
+                "local_name": "sync",
+                "branch": "main",
+                "ref": new_sync_ref,
+            },
+            "missing": {
+                "source_url": "https://example.com/missing.git",
+                "local_name": "missing",
+                "branch": "main",
+                "ref": "1234567890abcdef",
+            },
+            "missing-provenance": {
+                "source_url": "https://example.com/missing-provenance.git",
+                "local_name": "missing-provenance",
+                "branch": "main",
+                "ref": "fedcba0987654321",
+            },
+        },
+    )
+
+    report = inspect_vendor_state(repo_root)
+    status_by_name = {entry.local_name: entry.status for entry in report.entries}
+
+    assert status_by_name["ready"] == "ready"
+    assert status_by_name["align"] == "needs_align"
+    assert status_by_name["sync"] == "needs_sync"
+    assert status_by_name["missing"] == "missing"
+    assert status_by_name["missing-provenance"] == "missing_provenance"
+    assert status_by_name["extra-local"] == "extra_local"
+    assert status_by_name["manual-local"] == "unmanaged_local"
+    assert report.summary.total_manifest_entries == 5
+    assert report.summary.ready == 1
+    assert report.summary.needs_align == 1
+    assert report.summary.needs_sync == 1
+    assert report.summary.missing == 1
+    assert report.summary.missing_provenance == 1
+    assert report.summary.extra_local == 1
+    assert report.summary.unmanaged_local == 1
+    assert not report.manifest_errors
+    assert all(entry.git_ignored for entry in report.entries)
+
+
+def test_inspect_vendor_state_marks_legacy_submodule(tmp_path: Path) -> None:
+    upstream = _init_git_repo(
+        tmp_path / "upstream",
+        {"demo/SKILL.md": "---\nname: demo\ndescription: demo\n---\n# Demo\n"},
+    )
+    upstream_ref = _run_git(upstream, "rev-parse", "HEAD").stdout.strip()
+    repo_root = _init_git_repo_root(tmp_path / "repo")
+    _run_git(
+        repo_root,
+        "-c",
+        "protocol.file.allow=always",
+        "submodule",
+        "add",
+        "-f",
+        str(upstream),
+        "skills/external/demo",
+    )
+    _write_vendor_manifest(
+        repo_root,
+        sources={
+            "demo": {
+                "source_url": str(upstream),
+                "local_name": "demo",
+                "branch": "main",
+                "ref": upstream_ref,
+            }
+        },
+    )
+
+    report = inspect_vendor_state(repo_root)
+    assert report.entries[0].status == "legacy_submodule"
+
+
+def test_vendor_cli_status_json_schema(tmp_path: Path) -> None:
+    upstream = _init_git_repo(
+        tmp_path / "upstream",
+        {"demo/SKILL.md": "---\nname: demo\ndescription: demo\n---\n# Demo\n"},
+    )
+    ref = _run_git(upstream, "rev-parse", "HEAD").stdout.strip()
+    repo_root = _init_git_repo_root(tmp_path / "repo")
+    import_skill_repo(
+        VendorImportSpec(source_url=str(upstream), local_name="demo", branch="main", ref=ref),
+        repo_root=repo_root,
+    )
+    _write_vendor_manifest(
+        repo_root,
+        sources={
+            "demo": {
+                "source_url": str(upstream),
+                "local_name": "demo",
+                "branch": "main",
+                "ref": ref,
+            }
+        },
+    )
+
+    project_root = Path(__file__).resolve().parents[1]
+    env = dict(os.environ)
+    py_path = str(project_root / "src")
+    env["PYTHONPATH"] = py_path if not env.get("PYTHONPATH") else f"{py_path}{os.pathsep}{env['PYTHONPATH']}"
+
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "ai_config.vendor.cli",
+            "--repo-root",
+            str(repo_root),
+            "status",
+            "--json",
+        ],
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+    assert proc.returncode == 0, proc.stderr
+    payload = json.loads(proc.stdout)
+    assert payload["schema_version"] == 1
+    assert payload["generated_at"].endswith("Z")
+    assert payload["repo_root"] == str(repo_root.resolve())
+    assert payload["summary"]["total_manifest_entries"] == 1
+    assert payload["entries"][0]["status"] == "ready"
 
 
 def test_vendor_cli_sync_manifest_and_index_search(tmp_path: Path) -> None:
