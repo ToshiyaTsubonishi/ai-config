@@ -3,6 +3,13 @@
 Reads config/sources.yaml and ensures each declared source is present as a
 git submodule under the repository root.  Supports add / update / remove /
 list operations.
+
+.. deprecated::
+    Skill-related functionality (``type: skill`` entries) is being migrated
+    to ``vercel-labs/skills`` as the upstream skill plumbing layer.
+    MCP source management (``type: mcp`` entries) will be retained.
+    See ``docs/constitution.md`` §3 "Non-Core" and the implementation plan
+    for details.
 """
 
 from __future__ import annotations

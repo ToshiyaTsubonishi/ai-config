@@ -110,9 +110,13 @@ def _selector_json_payload(result: Any) -> dict[str, Any]:
 
 @asynccontextmanager
 async def _selector_session(repo_root: Path) -> AsyncIterator[ClientSession]:
-    selector_exe = repo_root / ".venv" / "Scripts" / "ai-config-mcp-server.cmd"
+    # Unix-like: .venv/bin/ai-config-mcp-server
+    selector_exe = repo_root / ".venv" / "bin" / "ai-config-mcp-server"
     if not selector_exe.exists():
-        selector_exe = repo_root / ".venv" / "Scripts" / "ai-config-mcp-server.exe"
+        # Windows: .venv/Scripts/ai-config-mcp-server.cmd or .exe
+        selector_exe = repo_root / ".venv" / "Scripts" / "ai-config-mcp-server.cmd"
+        if not selector_exe.exists():
+            selector_exe = repo_root / ".venv" / "Scripts" / "ai-config-mcp-server.exe"
     params = StdioServerParameters(
         command=str(selector_exe),
         args=["--repo-root", str(repo_root)],

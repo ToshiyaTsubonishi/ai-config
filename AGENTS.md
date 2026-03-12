@@ -3,6 +3,7 @@
 Canonical Codex instructions live in `instructions/Agent.md`.
 
 Before starting work in this repository:
+- Read `docs/constitution.md`.
 - Read `instructions/Agent.md`.
 - Read `tasks/lessons.md`.
 - Start with `ai-config-selector` and run `search_tools`.

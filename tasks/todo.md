@@ -1,5 +1,65 @@
 # TODO
 
+## 2026-03-11 Editor Restart Runtime Validation
+
+### Plan
+- [x] 再起動後の Codex 設定と MCP 登録状態を確認する
+- [x] `ai-config-selector` の到達性と基本ツール呼び出しを確認する
+- [x] `ai-config-dispatch` の実行経路を確認する
+- [x] 検証結果をレビューに記録する
+
+### Progress
+- [x] 調査
+- [x] 設定確認
+- [x] selector 検証
+- [x] dispatch 検証
+- [x] レビュー記録
+
+### Review
+- 確認項目:
+  - `~/.codex/config.toml` に `mcp_servers.ai-config-selector` が残っており、command は `/Users/tsytbns/Documents/GitHub/ai-config/.venv/bin/ai-config-mcp-server` を指している
+  - `.venv/bin/ai-config-mcp-server` と `.venv/bin/ai-config-dispatch` は実行可能のまま存在する
+- selector 検証:
+  - 現セッションで `search_tools` / `get_tool_detail` / `get_tool_count` / `list_categories` が成功した
+  - `get_tool_count` は `1298`、カテゴリ集計も正常に返った
+  - downstream MCP として `mcp:microsoft-learn-mcp` に対し `list_mcp_server_tools(refresh=true)` が成功し、3 tools を取得した
+  - 同 MCP に対し `call_mcp_server_tool("microsoft_docs_search", {"query":"Azure OpenAI quickstart"})` が成功した
+- dispatch 検証:
+  - `AI_CONFIG_GEMINI_CMD=echo AI_CONFIG_CODEX_CMD=echo .venv/bin/ai-config-dispatch "editor restart runtime validation" --workflow code-review --parallel` が成功した
+  - `design-review` / `security-review` / `test-review` の 3 step 並列 dispatch が完走した
+
+## 2026-03-11 Re-Setup And Selector/Dispatch Validation
+
+### Plan
+- [x] 現行の `.venv` / CLI ランナー / 依存状態を確認する
+- [x] `scripts/setup.sh` を再実行して環境を再セットアップする
+- [x] `ai-config-selector` の検索・詳細取得が意図通り機能することを確認する
+- [x] `ai-config-dispatch` の CLI 実行経路を確認し、意図したオーケストレーションが走ることを検証する
+- [x] 検証結果と残課題をレビューに記録する
+
+### Progress
+- [x] 調査
+- [x] 再セットアップ
+- [x] selector 検証
+- [x] dispatch 検証
+- [x] レビュー記録
+
+### Review
+- 実行コマンド:
+  - `bash scripts/setup.sh`
+  - `PYTHONPATH=src .venv/bin/python - <<'PY' ... local selector MCP call ... PY`
+  - `.venv/bin/python -m pytest tests/test_mcp_server_tools.py tests/test_mcp_server_extended.py tests/test_cli_smoke.py tests/test_dispatch_approved_plan.py tests/test_dispatch_graph.py tests/test_dispatch_planner.py tests/test_dispatch_workflow.py tests/test_dispatch_fixes.py -q`
+  - `AI_CONFIG_GEMINI_CMD=echo AI_CONFIG_CODEX_CMD=echo .venv/bin/ai-config-dispatch "selector/dispatch setup validation" --workflow bug-fix --trace --keep-context`
+  - `AI_CONFIG_GEMINI_CMD=echo AI_CONFIG_CODEX_CMD=echo .venv/bin/ai-config-dispatch "selector/dispatch setup validation" --workflow code-review --parallel --trace`
+- 検証結果:
+  - `scripts/setup.sh` は依存再インストールと `.index` 再構築まで成功し、`total_records=1298` を出力した
+  - ローカル `ai-config-selector` MCP server に対する `search_tools` / `get_tool_detail` / `get_tool_count` / `list_categories` 呼び出しが成功した
+  - `tests/test_mcp_server_extended.py` を含む対象テスト 63 件がすべて成功し、selector の downstream MCP `list_mcp_server_tools` / `call_mcp_server_tool` 経路も通過した
+  - `ai-config-dispatch` は `bug-fix` workflow で依存付き順次実行と `.dispatch/<session>` への context handoff を確認した
+  - `ai-config-dispatch` は `code-review` workflow で 3 step の並列 dispatch を確認した
+- 残留生成物:
+  - `--keep-context` 検証により `.dispatch/9a7aeb7d/` が残っている
+
 ## Plan
 - [x] `instructions/` ディレクトリを作成し、`Agent.md` / `Gemini.md` / `Lesson.md` の保管場所を追加する
 - [x] `Agent.md` 初版を `/Users/tsytbns/.codex/AGENTS.md` から作成し、`ai-config-selector` 参照と `ai-config-dispatch` 推奨ルールを追記する

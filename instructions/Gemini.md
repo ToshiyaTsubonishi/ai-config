@@ -1,3 +1,35 @@
+## ai-config の使命と原則
+
+> 詳細は `docs/constitution.md` を参照すること。
+
+ai-config is an AI agent capability control plane.
+
+Prioritize:
+- catalog / index / selector
+- ranking / retrieval / policy
+- planning / orchestration
+
+Do not over-invest in:
+- source fetching
+- update checks
+- install/remove UX
+- agent-specific path compatibility
+
+Default to selector-first, planning-first, and small-default operation.
+Treat direct agent installation as an exception, not the main model.
+Prefer upstream tooling over custom plumbing whenever possible.
+
+For each proposed change, classify it as:
+- keep and improve
+- delegate upstream
+- isolate
+- remove
+
+Optimize for selection quality, safety, clarity, and maintainability.
+Do not optimize for raw quantity of skills or integrations.
+
+---
+
 ## ワークフロー設計
 
 あなたは、コンテクストウィンドウにお応じてcodexコマンドや、geminiコマンドから別のAIツールを呼び出し、他のAIコーディングエージェントを使用できます。その場合、あなたはそれらエージェントをオーケストレーションする必要があります。

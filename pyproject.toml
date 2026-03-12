@@ -23,7 +23,7 @@ semantic = ["faiss-cpu>=1.9", "sentence-transformers>=3.0"]
 [project.scripts]
 ai-config-index = "ai_config.build_index:main"
 ai-config-agent = "ai_config.orchestrator.cli:main"
-ai-config-sources = "ai_config.source_manager:main"
+ai-config-sources = "ai_config.source_manager:main"  # deprecated for skills; see docs/constitution.md
 ai-config-mcp-server = "ai_config.mcp_server.server:main"
 ai-config-dispatch = "ai_config.dispatch.cli:main"
 ai-config-doctor = "ai_config.doctor:main"
