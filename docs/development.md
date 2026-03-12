@@ -23,7 +23,8 @@ ai-config/
 │   │   └── adapters/       # CLI アダプター (codex, gemini, antigravity)
 │   ├── dispatch/            # マルチエージェント・ディスパッチ
 │   ├── build_index.py       # インデックス構築 CLI
-│   └── source_manager.py    # 外部ソース管理 CLI
+│   ├── source_manager.py    # MCP-only source 管理 CLI
+│   └── vendor/             # external skill vendor layer
 ├── tests/                   # テストスイート
 ├── config/                  # 設定ファイル
 ├── workflows/               # ワークフロー定義 (YAML)
@@ -100,16 +101,24 @@ skills/custom/technology/api-design/SKILL.md
 
 ### 方法 3: 外部スキルリポジトリ
 
-Phase 1 では `ai-config-vendor-skills` で取り込みます。
+Phase 2 では `config/vendor_skills.yaml` と `ai-config-vendor-skills` で管理します。
 
 ```bash
-ai-config-vendor-skills --repo-root . import https://github.com/user/skills.git my-skills
+ai-config-vendor-skills --repo-root . import https://github.com/user/skills.git my-skills --ref <commit-or-tag>
 ```
 
-既存 checkout から移行する場合のみ、temporary な migration utility を使います。
+curated source として標準運用に載せる場合は `config/vendor_skills.yaml` に `branch + ref` を commit し、`sync-manifest` で materialize します。
+
+```bash
+ai-config-vendor-skills --repo-root . sync-manifest
+```
+
+既存 checkout から移行する場合のみ、migration utility を使います。
 
 ```bash
 ai-config-vendor-skills --repo-root . bootstrap-legacy --all
+ai-config-vendor-skills --repo-root . cleanup-legacy-submodule remotion
+ai-config-vendor-skills --repo-root . cleanup-legacy-submodule remotion --apply
 ```
 
 ## 新しいワークフローの追加

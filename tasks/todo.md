@@ -1,5 +1,76 @@
 # TODO
 
+## 2026-03-12 Phase 2 Legacy Cleanup
+
+### Plan
+- [x] `config/vendor_skills.yaml` と vendor manifest loader を追加し、skill source seed を branch+ref pin で管理する
+- [x] vendor CLI に `sync-manifest` と `cleanup-legacy-submodule` を追加し、no-prune default / safe cleanup 手順を実装する
+- [x] setup を vendor manifest materialization → index build に更新し、`--skip-vendor-sync` / `-SkipVendorSync` を追加する
+- [x] `.gitignore` / `.gitmodules` / `config/sources.yaml` を Phase 2 の MCP-only + vendor-managed artifact 方針に移行する
+- [x] staged cleanup を `remotion` 単体 dry-run/apply → all dry-run/apply の順で実施し、selector/index/git 状態を確認する
+- [x] docs / tests / review を更新し、Phase 2 完了条件を検証する
+
+### Progress
+- [x] 調査
+- [x] vendor manifest
+- [x] sync-manifest
+- [x] cleanup utility
+- [x] setup
+- [x] metadata transition
+- [x] staged cleanup
+- [x] docs
+- [x] 検証
+- [x] レビュー記録
+
+### Review
+- 更新ファイル:
+  - `src/ai_config/vendor/models.py`
+  - `src/ai_config/vendor/skill_vendor.py`
+  - `src/ai_config/vendor/cli.py`
+  - `src/ai_config/source_manager.py`
+  - `config/vendor_skills.yaml`
+  - `config/sources.yaml`
+  - `.gitignore`
+  - `skills/external/.gitkeep`
+  - `scripts/setup.sh`
+  - `scripts/setup.ps1`
+  - `tests/test_vendor_skills.py`
+  - `README.md`
+  - `docs/overview.md`
+  - `docs/architecture.md`
+  - `docs/operations.md`
+  - `docs/development.md`
+  - `tasks/todo.md`
+- 実装要約:
+  - `config/vendor_skills.yaml` を追加し、curated external skill source を exact `ref` で pin する Phase 2 manifest を導入した
+  - vendor layer に `requested_ref`、manifest loader、`sync-manifest`、`cleanup-legacy-submodule` を追加し、default no-prune / preview-first cleanup を実装した
+  - setup は vendor manifest materialization → default index build に更新し、`--skip-vendor-sync` / `-SkipVendorSync` を追加した
+  - `config/sources.yaml` は MCP-only に移行し、`.gitignore` と `skills/external/.gitkeep` で external payload を vendor-managed local artifact として扱う形にした
+  - actual repo で `remotion` 単体 cleanup 後に `--all` cleanup を実行し、legacy skill submodule をすべて local artifact に変換した
+- 検証コマンド:
+  - `.venv/bin/python -m pytest tests/test_vendor_skills.py -q`
+  - `.venv/bin/python -m pytest tests/test_vendor_skills.py tests/test_source_manager.py tests/test_cli_smoke.py tests/test_registry_external_mcp_catalog_parser.py tests/test_retriever_rrf.py -q`
+  - `.venv/bin/ai-config-vendor-skills --repo-root . cleanup-legacy-submodule remotion`
+  - `.venv/bin/ai-config-vendor-skills --repo-root . cleanup-legacy-submodule remotion --apply`
+  - `.venv/bin/ai-config-vendor-skills --repo-root . cleanup-legacy-submodule --all`
+  - `.venv/bin/ai-config-vendor-skills --repo-root . cleanup-legacy-submodule --all --apply`
+  - `.venv/bin/ai-config-vendor-skills --repo-root . sync-manifest`
+  - `bash scripts/setup.sh`
+  - `.venv/bin/ai-config-sources --repo-root . list`
+  - `.venv/bin/ai-config-sources --repo-root . sync --dry-run`
+  - `git submodule status`
+  - `git diff --check`
+- 検証結果:
+  - vendor tests 10 件、関連回帰テスト合計 23 件が成功した
+  - `cleanup-legacy-submodule` は single-repo dry-run/apply → all dry-run/apply の順で成功し、2 回目以降は `already_clean` で安全にスキップできる
+  - `sync-manifest` は cleanup 後の local payload を exact ref に対して network なしで `aligned` / `up_to_date` 判定できた
+  - `bash scripts/setup.sh` は vendor sync `up_to_date` → default profile index build を完走し、`total_records=1514` の index を再構築した
+  - `.index` に対する `HybridRetriever` / `ToolIndex` の `streamlit app skill` 検索が通り、external streamlit skill が返った
+  - `ai-config-sources list` は `No sources declared.`、`sync --dry-run` は空変更で、`config/sources.yaml` が MCP-only になっていることを確認した
+  - `git submodule status` は空になり、`.gitmodules` は削除された
+  - `git status --short --ignored skills/external` では external payload が `!!` で無視され、legacy submodule 内 `.import.json` による untracked noise は解消された
+  - `git diff --check` は clean だった
+
 ## 2026-03-12 Phase 1 Vendor Layer
 
 ### Plan
@@ -57,6 +128,11 @@
   - `source_manager` の delegated skill listing、MCP-only sync、skill add reject、manifest-only remove が通った
   - wrapper は `.venv` 再インストールなしでも `PYTHONPATH=src` 付きで新しい vendor CLI を呼び出せることを確認した
   - 関連回帰テスト 17 件がすべて成功した
+  - 追加の運用確認として `HEAD=91797b6` の clean working tree から `ai-config-vendor-skills --repo-root . bootstrap-legacy --all --dry-run` と `bootstrap-legacy --all` を実行し、7 つの legacy external checkout に `.import.json` が生成されることを確認した
+  - その後 `ai-config-index --repo-root . --profile default` が成功し、`total_records=1508`、`skills=820`、`external_mcp_catalog=154` を含む index rebuild が通った
+  - `.index` を使った `HybridRetriever` / `ToolIndex` の検索と local MCP selector の `search_tools('streamlit app skill')` が通り、external streamlit skill が検索結果に出ることを確認した
+  - `git diff --check` は clean だった
+  - 既存 external repo がまだ submodule なので、生成された `.import.json` は各 submodule 内の untracked file として見えている。これは Phase 1 の動作確認としては許容し、Phase 2 legacy cleanup の入力として扱う
 
 ## 2026-03-11 Editor Restart Runtime Validation
 

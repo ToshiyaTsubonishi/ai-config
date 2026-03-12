@@ -48,7 +48,18 @@ class ToolRecord:
 | `external_mcp_catalog_parser.py` | 外部 MCP カタログ | `skills/external/**/.mcp.json` |
 | `path_metadata.py` | メタデータ推定 | ファイルパスからレイヤー・ドメインを推定 |
 
-`skills/external` は引き続き registry の stable scan target です。skill の fetch / re-import / provenance は vendor layer が担当し、registry 側は scan-only を維持します。
+`skills/external` は引き続き registry の stable scan target です。skill の fetch / pinned materialization / re-import / provenance は vendor layer が担当し、registry 側は scan-only を維持します。
+
+### Vendor Manifest
+
+Phase 2 では `config/vendor_skills.yaml` が curated external skill source の正本です。
+
+- `branch` は tracking metadata
+- `ref` は exact pin であり、setup と `sync-manifest` はこれを優先する
+- `skills/external` は git submodule ではなく local artifact として扱う
+- provenance には `requested_ref` と resolved `commit_sha` を保存する
+
+この構成により、selector/index/retrieval の scan target を変えずに setup 再現性を維持します。
 
 #### インデックスビルダー (`registry/index_builder.py`)
 

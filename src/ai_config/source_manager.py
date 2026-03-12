@@ -1,8 +1,9 @@
-"""Source Manager: manage MCP sources and legacy source manifest cleanup.
+"""Source Manager: manage MCP sources and legacy manifest cleanup.
 
 Reads config/sources.yaml and manages only MCP repositories as git submodules.
-Skill repositories remain visible in the manifest for compatibility, but their
-import/update/remove lifecycle is delegated to ai-config-vendor-skills.
+Legacy skill entries may still be cleaned up from older manifests, but normal
+skill materialization now lives in config/vendor_skills.yaml and is handled by
+ai-config-vendor-skills.
 """
 
 from __future__ import annotations
@@ -237,7 +238,7 @@ def main(argv: list[str] | None = None) -> None:
     add_p.add_argument("name", help="Source name (e.g. 'my-skills')")
     add_p.add_argument("url", help="Git repository URL")
     add_p.add_argument("--type", choices=("skill", "mcp"), default="skill", help="Source type")
-    add_p.add_argument("--path", help="Local path (default: skills/external/<name> or mcp/external/<name>)")
+    add_p.add_argument("--path", help="Local path (default: mcp/external/<name>)")
     add_p.add_argument("--branch", default="main", help="Branch to track")
 
     rm_p = sub.add_parser("remove", help="Remove a source from the manifest")

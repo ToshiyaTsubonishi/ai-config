@@ -1,9 +1,10 @@
 """CLI for the repo-managed vendor layer.
 
-Phase 1 intentionally keeps skill plumbing inside this repository instead of
-directly adopting vercel-labs/skills. The missing --path support upstream is
-handled here by a repo-local vendor CLI that preserves skills/external as the
-stable scan target for selector/index/retrieval.
+Phase 2 keeps skill plumbing inside this repository instead of directly
+adopting vercel-labs/skills. The missing --path support upstream is handled
+here by a repo-local vendor CLI that preserves skills/external as the stable
+scan target for selector/index/retrieval while moving legacy submodules to
+vendor-managed local artifacts.
 """
 
 from __future__ import annotations
@@ -13,12 +14,22 @@ import logging
 import sys
 from pathlib import Path
 
-from ai_config.vendor.models import LegacyBootstrapResult, VendorImportResult, VendorImportSpec
+from ai_config.vendor.models import (
+    DEFAULT_VENDOR_MANIFEST,
+    LegacyBootstrapResult,
+    LegacyCleanupResult,
+    VendorImportResult,
+    VendorImportSpec,
+    VendorSyncResult,
+)
 from ai_config.vendor.skill_vendor import (
     VendorError,
     bootstrap_legacy_imports,
+    cleanup_legacy_submodules,
     import_skill_repo,
+    load_vendor_manifest,
     remove_imported_skill,
+    sync_vendor_manifest,
     update_imported_skills,
 )
 
@@ -54,11 +65,37 @@ def _print_bootstrap_result(result: LegacyBootstrapResult) -> None:
         print(f"  skills: {result.skill_count}")
 
 
+def _print_sync_result(result: VendorSyncResult) -> None:
+    print(f"{result.local_name}: {result.status}")
+    if result.message:
+        print(f"  {result.message}")
+    if result.source_url:
+        print(f"  source: {result.source_url}")
+    if result.target_dir:
+        print(f"  target: {result.target_dir}")
+    if result.provenance_path:
+        print(f"  provenance: {result.provenance_path}")
+    if result.requested_ref:
+        print(f"  ref: {result.requested_ref}")
+
+
+def _print_cleanup_result(result: LegacyCleanupResult) -> None:
+    print(f"{result.local_name}: {result.status}")
+    if result.message:
+        print(f"  {result.message}")
+    if result.target_dir:
+        print(f"  target: {result.target_dir}")
+    if result.provenance_path:
+        print(f"  provenance: {result.provenance_path}")
+    for action in result.actions:
+        print(f"  - {action}")
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
             "Manage repo-local external skill imports for ai-config. "
-            "Phase 1 keeps skills/external as the stable scan target instead of "
+            "Phase 2 keeps skills/external as the stable scan target instead of "
             "directly adopting vercel-labs/skills."
         )
     )
@@ -70,6 +107,7 @@ def build_parser() -> argparse.ArgumentParser:
     import_p.add_argument("source", help="GitHub repo, git URL, file URL, or local git checkout")
     import_p.add_argument("local_name", nargs="?", help="Local target directory name")
     import_p.add_argument("--branch", help="Branch to clone")
+    import_p.add_argument("--ref", help="Exact git ref or commit to materialize")
     import_p.add_argument("--force", action="store_true", help="Force re-import even if SHA is unchanged")
     import_p.add_argument("--dry-run", action="store_true", help="Show what would happen without writing files")
 
@@ -97,6 +135,36 @@ def build_parser() -> argparse.ArgumentParser:
     bootstrap_p.add_argument("--all", action="store_true", help="Backfill provenance for every skills/external/* repo")
     bootstrap_p.add_argument("--dry-run", action="store_true", help="Show what would happen without writing files")
 
+    sync_p = sub.add_parser(
+        "sync-manifest",
+        help=(
+            "Materialize config/vendor_skills.yaml into skills/external/. "
+            "Pinned refs are required; pruning is opt-in."
+        ),
+    )
+    sync_p.add_argument(
+        "--manifest",
+        default=DEFAULT_VENDOR_MANIFEST,
+        help=f"Vendor manifest file relative path (default: {DEFAULT_VENDOR_MANIFEST})",
+    )
+    sync_p.add_argument("--prune", action="store_true", help="Prune vendor-managed dirs not present in the manifest")
+    sync_p.add_argument("--dry-run", action="store_true", help="Show what would happen without writing files")
+
+    cleanup_p = sub.add_parser(
+        "cleanup-legacy-submodule",
+        help=(
+            "Temporary migration utility: preview-first conversion of legacy skill submodules into "
+            "local vendor artifacts. Run single-repo dry-run, single-repo --apply, verify, then --all."
+        ),
+    )
+    cleanup_p.add_argument("local_name", nargs="?", help="Specific legacy checkout to convert")
+    cleanup_p.add_argument("--all", action="store_true", help="Convert every legacy skill submodule under skills/external/")
+    cleanup_p.add_argument(
+        "--apply",
+        action="store_true",
+        help="Apply the cleanup steps. Default is preview-only dry-run semantics.",
+    )
+
     return parser
 
 
@@ -112,6 +180,7 @@ def main(argv: list[str] | None = None) -> int:
                     source_url=args.source,
                     local_name=args.local_name,
                     branch=args.branch,
+                    ref=args.ref,
                     force=args.force,
                     dry_run=args.dry_run,
                 ),
@@ -152,6 +221,35 @@ def main(argv: list[str] | None = None) -> int:
             )
             for result in results:
                 _print_bootstrap_result(result)
+            return 0
+
+        if args.command == "sync-manifest":
+            load_vendor_manifest(repo_root, args.manifest)
+            results = sync_vendor_manifest(
+                repo_root=repo_root,
+                manifest_rel=args.manifest,
+                prune=args.prune,
+                dry_run=args.dry_run,
+            )
+            for result in results:
+                _print_sync_result(result)
+            if any(result.status in {"imported", "updated", "pruned", "aligned"} for result in results):
+                print("Hint: Run 'ai-config-index --repo-root . --profile default' to rebuild the selector index.")
+            if any(result.status == "blocked" for result in results):
+                return 1
+            return 0
+
+        if args.command == "cleanup-legacy-submodule":
+            results = cleanup_legacy_submodules(
+                repo_root=repo_root,
+                local_name=args.local_name,
+                cleanup_all=args.all,
+                apply=args.apply,
+            )
+            for result in results:
+                _print_cleanup_result(result)
+            if any(result.status == "blocked" for result in results):
+                return 1
             return 0
     except VendorError as error:
         logger.error("%s", error)

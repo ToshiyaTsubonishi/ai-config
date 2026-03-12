@@ -8,6 +8,7 @@ from pathlib import Path
 
 PROVENANCE_FILENAME = ".import.json"
 PROVENANCE_SCHEMA_VERSION = 1
+DEFAULT_VENDOR_MANIFEST = "config/vendor_skills.yaml"
 
 
 @dataclass(slots=True)
@@ -17,6 +18,7 @@ class VendorImportSpec:
     source_url: str
     local_name: str | None = None
     branch: str | None = None
+    ref: str | None = None
     force: bool = False
     dry_run: bool = False
 
@@ -28,6 +30,7 @@ class VendorProvenance:
     schema_version: int
     source_url: str
     branch: str
+    requested_ref: str | None
     commit_sha: str
     original_paths: list[str]
     imported_at: str
@@ -47,10 +50,12 @@ class VendorProvenance:
         payload = json.loads(path.read_text(encoding="utf-8"))
         if not isinstance(payload, dict):
             raise ValueError(f"Invalid provenance payload: {path}")
+        requested_ref = payload.get("requested_ref")
         return cls(
             schema_version=int(payload.get("schema_version", PROVENANCE_SCHEMA_VERSION)),
             source_url=str(payload.get("source_url", "")),
             branch=str(payload.get("branch", "")),
+            requested_ref=None if requested_ref in (None, "") else str(requested_ref),
             commit_sha=str(payload.get("commit_sha", "")),
             original_paths=[str(item) for item in payload.get("original_paths", []) or []],
             imported_at=str(payload.get("imported_at", "")),
@@ -84,4 +89,48 @@ class LegacyBootstrapResult:
     target_dir: str = ""
     provenance_path: str = ""
     source_url: str = ""
+    message: str = ""
+
+
+@dataclass(slots=True)
+class VendorManifestEntry:
+    """A curated external skill source pinned for reproducible materialization."""
+
+    name: str
+    source_url: str
+    local_name: str
+    branch: str = "main"
+    ref: str | None = None
+
+
+@dataclass(slots=True)
+class VendorManifest:
+    """Manifest of curated external skill sources."""
+
+    version: str = "1.0.0"
+    sources: list[VendorManifestEntry] = field(default_factory=list)
+
+
+@dataclass(slots=True)
+class VendorSyncResult:
+    """Outcome of manifest-driven materialization and optional pruning."""
+
+    local_name: str
+    status: str
+    target_dir: str = ""
+    provenance_path: str = ""
+    source_url: str = ""
+    requested_ref: str | None = None
+    message: str = ""
+
+
+@dataclass(slots=True)
+class LegacyCleanupResult:
+    """Outcome of converting a legacy skill submodule into a local artifact."""
+
+    local_name: str
+    status: str
+    target_dir: str = ""
+    provenance_path: str = ""
+    actions: list[str] = field(default_factory=list)
     message: str = ""

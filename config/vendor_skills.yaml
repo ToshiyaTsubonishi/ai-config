@@ -1,0 +1,47 @@
+version: "1.0.0"
+
+# Curated external skill sources managed by ai-config-vendor-skills.
+# Each entry is pinned by exact ref for reproducible setup and selector coverage.
+
+sources:
+  streamlit:
+    source_url: "https://github.com/streamlit/agent-skills"
+    local_name: "streamlit"
+    branch: "main"
+    ref: "859bb0c124b6202953097a9cb1d71f555f2941a6"
+
+  remotion:
+    source_url: "https://github.com/remotion-dev/skills"
+    local_name: "remotion"
+    branch: "main"
+    ref: "937ffb32b148fdceef4b4184f975a708aab8d560"
+
+  anthropics-skills:
+    source_url: "https://github.com/anthropics/skills"
+    local_name: "anthropics-skills"
+    branch: "main"
+    ref: "b0cbd3df1533b396d281a6886d5132f623393a9c"
+
+  anthropics-knowledge-work-plugins:
+    source_url: "https://github.com/anthropics/knowledge-work-plugins"
+    local_name: "anthropics-knowledge-work-plugins"
+    branch: "main"
+    ref: "477c893b7a63f9ee021d2ccd55d89afd1c4b7c03"
+
+  antigravity-awesome-skills:
+    source_url: "https://github.com/sickn33/antigravity-awesome-skills"
+    local_name: "antigravity-awesome-skills"
+    branch: "main"
+    ref: "062972beb878b87922bc6c8d2623fca6815848b8"
+
+  nextlevelbuilder-ui-ux-pro-max-skill:
+    source_url: "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill"
+    local_name: "nextlevelbuilder-ui-ux-pro-max-skill"
+    branch: "main"
+    ref: "58f9dfcc71863757371abe2f66397604cb604c87"
+
+  claude-ads:
+    source_url: "https://github.com/AgriciDaniel/claude-ads"
+    local_name: "claude-ads"
+    branch: "main"
+    ref: "5d7c5d12b6f5a61771f17f8d4e67b2460e4afbbb"

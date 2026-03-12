@@ -18,6 +18,8 @@ build/
 .agents/
 Thumbs.db
 .DS_Store
+skills/external/*
+!skills/external/.gitkeep
 
 # Antigravity inventory: keep only reproducible minimal baseline
 inventory/antigravity/**

@@ -72,11 +72,13 @@ AI ツール（スキルの内容を読んで実行）
 
 ### 4. Vendor Layer
 
-外部 skill repo は Phase 1 の vendor layer で repo 管理下に取り込みます。
+外部 skill repo は Phase 2 で vendor-managed local artifact に固定します。
 
 - `skills/external` を stable scan target として維持
-- `ai-config-vendor-skills` で import / update / remove
-- `bootstrap-legacy` は既存 checkout に provenance を付与する migration utility
+- `config/vendor_skills.yaml` を curated source seed の正本にする
+- `ai-config-vendor-skills sync-manifest` で exact ref を materialize / verify する
+- `sync-manifest` は default で local external dir を消さず、`--prune` のときだけ明示的に prune する
+- `bootstrap-legacy` / `cleanup-legacy-submodule` は migration utility として残す
 - `ai-config-sources` は MCP source 管理と legacy config cleanup のみ担当
 
 ## 全体像

@@ -1,3 +1,7 @@
+param(
+    [switch]$SkipVendorSync
+)
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
@@ -133,8 +137,18 @@ Write-ModuleWrapper -Name "ai-config-mcp-server" -Module "ai_config.mcp_server.s
 Write-ModuleWrapper -Name "ai-config-sources" -Module "ai_config.source_manager" -PythonVersionTag $venvVersionTag
 Write-ModuleWrapper -Name "ai-config-vendor-skills" -Module "ai_config.vendor.cli" -PythonVersionTag $venvVersionTag
 
+if ($SkipVendorSync) {
+    Write-Warning "Skipping vendor manifest sync. External skill coverage may be incomplete."
+} else {
+    Write-Host "Syncing vendor-managed external skills..."
+    & $venvPython -m ai_config.vendor.cli --repo-root $RepoRoot sync-manifest
+    if ($LASTEXITCODE -ne 0) {
+        throw "Vendor manifest sync failed. The pinned ref materialization step did not complete. Retry with network access or rerun with -SkipVendorSync if partial external coverage is acceptable."
+    }
+}
+
 Write-Host "Building tool index..."
-& $indexCmd --repo-root $RepoRoot
+& $indexCmd --repo-root $RepoRoot --profile default
 
 Write-Host ""
 Write-Host "=== Setup complete ==="

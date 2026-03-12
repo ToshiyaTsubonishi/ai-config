@@ -6,6 +6,21 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_ROOT"
 
+SKIP_VENDOR_SYNC=0
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --skip-vendor-sync)
+      SKIP_VENDOR_SYNC=1
+      shift
+      ;;
+    *)
+      echo "ERROR: Unknown argument: $1"
+      echo "Usage: bash scripts/setup.sh [--skip-vendor-sync]"
+      exit 1
+      ;;
+  esac
+done
+
 echo "=== ai-config-sync setup ==="
 echo "Repo root: $REPO_ROOT"
 
@@ -50,9 +65,22 @@ echo "Installing ai-config..."
 python -m pip install --upgrade pip --quiet
 python -m pip install ".[dev]" --quiet
 
-# 4. Build index
+# 4. Materialize vendor-managed external skills
+if [ "$SKIP_VENDOR_SYNC" -eq 1 ]; then
+  echo "WARNING: Skipping vendor manifest sync. External skill coverage may be incomplete."
+else
+  echo "Syncing vendor-managed external skills..."
+  if ! .venv/bin/ai-config-vendor-skills --repo-root "$REPO_ROOT" sync-manifest; then
+    echo "ERROR: Vendor manifest sync failed."
+    echo "The pinned ref materialization step did not complete."
+    echo "Retry with network access or rerun with --skip-vendor-sync if you intentionally want partial external coverage."
+    exit 1
+  fi
+fi
+
+# 5. Build index
 echo "Building tool index..."
-ai-config-index --repo-root "$REPO_ROOT"
+ai-config-index --repo-root "$REPO_ROOT" --profile default
 
 echo ""
 echo "=== Setup complete ==="

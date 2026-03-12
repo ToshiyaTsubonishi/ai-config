@@ -1,54 +1,10 @@
 version: "1.0.0"
 
-# MCP source repositories managed as git submodules.
-# Skill entries remain only as legacy/delegated manifest records in Phase 1.
-# Run `ai-config-sources sync` to manage MCP sources.
+# MCP source repositories managed as git submodules by ai-config-sources.
+# External skill source seeds now live in config/vendor_skills.yaml and are
+# materialized into skills/external by ai-config-vendor-skills sync-manifest.
 
 sources:
-  # --- Skills ---
-  streamlit:
-    type: skill
-    url: https://github.com/streamlit/agent-skills
-    path: skills/external/streamlit
-    branch: main
-
-  remotion:
-    type: skill
-    url: https://github.com/remotion-dev/skills
-    path: skills/external/remotion
-    branch: main
-
-  anthropics-skills:
-    type: skill
-    url: https://github.com/anthropics/skills
-    path: skills/external/anthropics-skills
-    branch: main
-
-  anthropics-knowledge-work-plugins:
-    type: skill
-    url: https://github.com/anthropics/knowledge-work-plugins
-    path: skills/external/anthropics-knowledge-work-plugins
-    branch: main
-
-  antigravity-awesome-skills:
-    type: skill
-    url: https://github.com/sickn33/antigravity-awesome-skills
-    path: skills/external/antigravity-awesome-skills
-    branch: main
-
-  nextlevelbuilder-ui-ux-pro-max-skill:
-    type: skill
-    url: https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
-    path: skills/external/nextlevelbuilder-ui-ux-pro-max-skill
-    branch: main
-
-  claude-ads:
-    type: skill
-    url: https://github.com/AgriciDaniel/claude-ads
-    path: skills/external/claude-ads
-    branch: main
-
-  # --- MCP Servers ---
   # example-mcp:
   #   type: mcp
   #   url: https://github.com/example/mcp-server

@@ -31,7 +31,7 @@ cd ai-config
 powershell -ExecutionPolicy Bypass -File scripts/setup.ps1
 ```
 
-Unix-like 環境では `bash scripts/setup.sh` も利用できます。
+Unix-like 環境では `bash scripts/setup.sh` も利用できます。どちらの setup も、vendor manifest の pinned ref を `skills/external` に materialize してから default index を構築します。network が必要な ref materialization を意図的に飛ばす場合だけ `bash scripts/setup.sh --skip-vendor-sync` / `powershell ... -SkipVendorSync` を使います。
 
 ## 各 AI ツールに登録
 
@@ -104,11 +104,13 @@ ai-config/
 │   ├── orchestrator/     # LangGraph オーケストレーション
 │   ├── executor/         # ツール実行エンジン
 │   ├── build_index.py    # インデックス構築 CLI
-│   └── source_manager.py # 外部ソース管理
+│   ├── source_manager.py # MCP-only source 管理 / legacy manifest cleanup
+│   └── vendor/           # external skill vendor layer
 ├── skills/               # スキルコレクション (510+)
 ├── config/
 │   ├── master/ai-sync.yaml  # ツールカタログ設定
-│   └── sources.yaml         # MCP source 定義 + legacy skill entries
+│   ├── sources.yaml         # MCP source 定義
+│   └── vendor_skills.yaml   # pinned external skill manifest
 ├── .index/               # 構築済みインデックス
 ├── instructions/         # Agent / Gemini / Lesson のGit管理ファイル
 ├── scripts/
@@ -125,22 +127,37 @@ ai-config/
 
 ## 外部ソース管理
 
-Phase 1 では `vercel-labs/skills` を直接導入せず、repo 内の vendor CLI で `skills/external` を管理します。これは upstream に `--path` がなく、selector-first を維持したまま stable scan target を残すためです。
+Phase 2 でも `vercel-labs/skills` を直接導入しません。upstream に `--path` がないため、repo 内の vendor CLI で `skills/external` を vendor-managed local artifact として維持します。selector-first と stable scan target はそのままです。
 
-スキル import / update / remove:
+通常運用:
 
 ```bash
-# 既存 legacy checkout の provenance を backfill する migration utility
-ai-config-vendor-skills --repo-root . bootstrap-legacy --all
+# pinned manifest を materialize / verify
+ai-config-vendor-skills --repo-root . sync-manifest
 
-# 新しい skill repo を取り込む
-ai-config-vendor-skills --repo-root . import streamlit/agent-skills streamlit
-
-# provenance に基づいて更新する
+# manifest に pinned された provenance に基づいて再同期
 ai-config-vendor-skills --repo-root . update --all
+
+# vendor-managed checkout の remove
+ai-config-vendor-skills --repo-root . remove my-skills
 ```
 
-`config/sources.yaml` と `ai-config-sources` は MCP source 管理と legacy config cleanup のみ担当します。skill entries は互換・観測用に残りますが、`skills/external` の実ファイルは管理しません。
+追加の curated source seed は `config/vendor_skills.yaml` に `branch + ref` で pin します。標準の `sync-manifest` は manifest にない local external dir を消しません。削除は `--prune` の明示 opt-in だけです。
+
+移行専用コマンド:
+
+```bash
+# existing legacy checkout に provenance を backfill する migration utility
+ai-config-vendor-skills --repo-root . bootstrap-legacy --all
+
+# legacy skill submodule を local artifact に変換する migration utility
+ai-config-vendor-skills --repo-root . cleanup-legacy-submodule remotion
+ai-config-vendor-skills --repo-root . cleanup-legacy-submodule remotion --apply
+```
+
+`bootstrap-legacy` と `cleanup-legacy-submodule` は migration utility です。preview-first を前提に、単一 repo dry-run → 単一 repo `--apply` → 検証 → `--all` の順で使います。
+
+`config/sources.yaml` と `ai-config-sources` は MCP source 管理と legacy config cleanup のみ担当します。`skills/external` の実ファイル削除・更新責務は `ai-config-vendor-skills` 側です。
 
 主な repo-managed skill sources:
 
@@ -154,7 +171,7 @@ ai-config-vendor-skills --repo-root . update --all
 推奨運用:
 
 ```bash
-ai-config-vendor-skills --repo-root . update --all
+ai-config-vendor-skills --repo-root . sync-manifest
 ai-config-sources --repo-root . sync
 ai-config-index --repo-root . --profile default
 ```
