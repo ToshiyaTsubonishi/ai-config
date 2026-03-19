@@ -60,6 +60,8 @@ ai-config/
 | `test_orchestrator_plan_artifacts.py` | orchestrator plan schema / planner / validator | 3 |
 | `test_executor_adapters.py` | executor | 4 |
 | `test_mcp_server_tools.py` | mcp_server/tools | 5 |
+| `test_mcp_server_extended.py` | mcp_server HTTP/stdio integration | 3 |
+| `test_selector_serving.py` | Cloud Run selector-serving | 4 |
 | `test_cli_smoke.py` | CLI 統合 | 2 |
 | `test_index_builder_contract.py` | registry/index_builder | 1 |
 | `test_retriever_rrf.py` | retriever/hybrid_search | 1 |
@@ -70,6 +72,23 @@ ai-config/
 - **LLM 依存テスト**: `_get_llm()` を `lambda: None` にモンキーパッチしてフォールバック経路をテスト
 - **CLI テスト**: `subprocess.run` をモックして外部コマンド呼び出しを回避
 - **統合テスト**: `test_orchestrator_repair_loop.py` は `npx` が必要（なければ skip）
+
+### selector-serving のローカル確認
+
+```bash
+# build-time の前提を満たす
+ai-config-vendor-skills --repo-root . sync-manifest
+ai-config-index --repo-root . --profile default
+
+# Cloud Run と同じ serving target をローカル起動
+PORT=8080 ai-config-selector-serving --repo-root . --index-dir ./.index
+```
+
+確認先:
+
+- `http://127.0.0.1:8080/healthz`
+- `http://127.0.0.1:8080/readyz`
+- `http://127.0.0.1:8080/mcp`
 
 ## 新しいスキルの追加
 

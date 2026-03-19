@@ -13,12 +13,11 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 import sys
 from pathlib import Path
 from typing import Any
 
-from ai_config.executor import ExecutorError, ToolExecutor
-from ai_config.mcp_server.downstream_client import DownstreamMCPClient
 from ai_config.mcp_server.tools import DEFAULT_TOP_K, ToolIndex
 from ai_config.registry.index_builder import DEFAULT_INDEX_DIR
 from ai_config.runtime_env import load_runtime_env
@@ -53,7 +52,9 @@ def _get_mcp():
 # ---------------------------------------------------------------------------
 
 
-def _json_error(error: ExecutorError | Exception) -> str:
+def _json_error(error: Exception) -> str:
+    from ai_config.executor import ExecutorError
+
     if isinstance(error, ExecutorError):
         return json.dumps({"status": "error", "error": error.to_dict()}, ensure_ascii=False)
     return json.dumps(
@@ -69,25 +70,21 @@ def _json_error(error: ExecutorError | Exception) -> str:
     )
 
 
-def create_server(index_dir: Path, repo_root: Path):
-    """Create and configure the MCP server with tool definitions."""
-    FastMCP = _get_mcp()
-
-    mcp = FastMCP(
-        "ai-config-selector",
-        instructions=(
-            "Dynamic tool selector for ai-config. Searches thousands of "
-            "skills and MCP servers to find the best tools for your task."
-        ),
+def _tool_not_found_error(tool_id: str) -> str:
+    return json.dumps(
+        {
+            "status": "error",
+            "error": {
+                "code": "EXECUTOR_TOOL_NOT_FOUND",
+                "message": f"Tool '{tool_id}' not found.",
+                "details": {"tool_id": tool_id},
+            },
+        },
+        ensure_ascii=False,
     )
 
-    tool_index = ToolIndex(index_dir)
-    executor = ToolExecutor(repo_root=repo_root)
-    downstream = DownstreamMCPClient(repo_root=repo_root)
 
-    def _refresh_records() -> None:
-        executor.register_records(tool_index.records)
-
+def _register_selector_tools(mcp: Any, tool_index: ToolIndex) -> None:
     @mcp.tool()
     def search_tools(query: str, top_k: int = DEFAULT_TOP_K) -> str:
         """Search for tools matching a query.
@@ -134,6 +131,17 @@ def create_server(index_dir: Path, repo_root: Path):
         total = len(tool_index.records)
         return json.dumps({"total": total})
 
+
+def _register_extended_tools(mcp: Any, tool_index: ToolIndex, repo_root: Path) -> None:
+    from ai_config.executor import ToolExecutor
+    from ai_config.mcp_server.downstream_client import DownstreamMCPClient
+
+    executor = ToolExecutor(repo_root=repo_root)
+    downstream = DownstreamMCPClient(repo_root=repo_root)
+
+    def _refresh_records() -> None:
+        executor.register_records(tool_index.records)
+
     @mcp.tool()
     def execute_registry_tool(tool_id: str, action: str = "run", params: dict[str, Any] | None = None) -> str:
         """Execute a registry-backed tool via the shared executor."""
@@ -150,7 +158,7 @@ def create_server(index_dir: Path, repo_root: Path):
         try:
             record = tool_index.get_record(tool_id)
             if record is None:
-                return json.dumps({"status": "error", "error": {"code": "EXECUTOR_TOOL_NOT_FOUND", "message": f"Tool '{tool_id}' not found.", "details": {"tool_id": tool_id}}}, ensure_ascii=False)
+                return _tool_not_found_error(tool_id)
             result = await downstream.list_tools_async(record, refresh=refresh)
             return json.dumps({"status": "success", "output": result}, ensure_ascii=False)
         except Exception as error:
@@ -162,12 +170,42 @@ def create_server(index_dir: Path, repo_root: Path):
         try:
             record = tool_index.get_record(tool_id)
             if record is None:
-                return json.dumps({"status": "error", "error": {"code": "EXECUTOR_TOOL_NOT_FOUND", "message": f"Tool '{tool_id}' not found.", "details": {"tool_id": tool_id}}}, ensure_ascii=False)
+                return _tool_not_found_error(tool_id)
             result = await downstream.call_tool_async(record, tool_name, arguments or {})
             return json.dumps({"status": "success", "output": result}, ensure_ascii=False)
         except Exception as error:
             return _json_error(error)
 
+
+def create_server(
+    index_dir: Path,
+    repo_root: Path,
+    *,
+    include_extended_tools: bool = True,
+    host: str = "127.0.0.1",
+    port: int = 8000,
+    streamable_http_path: str = "/mcp",
+    stateless_http: bool = False,
+):
+    """Create and configure the MCP server with tool definitions."""
+    FastMCP = _get_mcp()
+
+    mcp = FastMCP(
+        "ai-config-selector",
+        instructions=(
+            "Dynamic tool selector for ai-config. Searches thousands of "
+            "skills and MCP servers to find the best tools for your task."
+        ),
+        host=host,
+        port=port,
+        streamable_http_path=streamable_http_path,
+        stateless_http=stateless_http,
+    )
+
+    tool_index = ToolIndex(index_dir)
+    _register_selector_tools(mcp, tool_index)
+    if include_extended_tools:
+        _register_extended_tools(mcp, tool_index, repo_root)
     return mcp
 
 
@@ -198,9 +236,30 @@ def main(argv: list[str] | None = None) -> None:
     )
     parser.add_argument(
         "--transport",
-        choices=("stdio",),
+        choices=("stdio", "streamable-http"),
         default="stdio",
         help="MCP transport (default: stdio)",
+    )
+    parser.add_argument(
+        "--host",
+        default="127.0.0.1",
+        help="Bind host for HTTP transports (default: 127.0.0.1)",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=int(os.getenv("PORT", "8000")),
+        help="Bind port for HTTP transports (default: 8000 or PORT env)",
+    )
+    parser.add_argument(
+        "--streamable-http-path",
+        default="/mcp",
+        help="Path for streamable HTTP MCP endpoint (default: /mcp)",
+    )
+    parser.add_argument(
+        "--stateless-http",
+        action="store_true",
+        help="Enable stateless streamable HTTP mode",
     )
     args = parser.parse_args(argv)
 
@@ -209,8 +268,17 @@ def main(argv: list[str] | None = None) -> None:
     logger.info("Starting ai-config-selector MCP server")
     logger.info("Repo root: %s", repo_root)
     logger.info("Index dir: %s", index_dir)
+    logger.info("Transport: %s", args.transport)
 
-    mcp = create_server(index_dir, repo_root)
+    mcp = create_server(
+        index_dir,
+        repo_root,
+        include_extended_tools=True,
+        host=args.host,
+        port=args.port,
+        streamable_http_path=args.streamable_http_path,
+        stateless_http=args.stateless_http,
+    )
     mcp.run(transport=args.transport)
 
 

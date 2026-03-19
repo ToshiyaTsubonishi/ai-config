@@ -144,7 +144,15 @@ AI ツールから呼び出される MCP 準拠のサーバーです。
 #### 通信方式
 
 - **stdio** トランスポート（標準入出力経由）
+- **streamable-http** トランスポート（HTTP 経由）
 - AI ツールが JSON-RPC でリクエスト → MCP サーバーが応答
+
+#### Deploy surface
+
+- `ai-config-mcp-server` は既存の full MCP surface です。default transport は `stdio` のまま維持します。
+- `ai-config-selector-serving` は Cloud Run 向けの薄い deploy surface です。selector read API だけを HTTP で公開し、executor / downstream MCP bridge は公開しません。
+- Cloud Run runtime は `skills/`、`config/`、`.index/` を read-only に参照します。`sync-manifest` と `ai-config-index` は build-time で完了させます。
+- `config/vendor_skills.yaml` と `skills/external` stable scan target は変えません。deploy surface を増やすだけで、core ownership は増やしません。
 
 ---
 

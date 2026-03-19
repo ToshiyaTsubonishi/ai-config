@@ -215,6 +215,32 @@ ai-config-mcp-server --repo-root .
 
 > 通常は AI ツールが自動起動するため、手動起動は不要です。
 
+HTTP transport で起動する場合:
+
+```bash
+ai-config-mcp-server \
+  --repo-root . \
+  --transport streamable-http \
+  --host 127.0.0.1 \
+  --port 8000 \
+  --streamable-http-path /mcp
+```
+
+### `ai-config-selector-serving` — Cloud Run selector-serving target
+
+```bash
+PORT=8080 ai-config-selector-serving --repo-root . --index-dir ./.index
+```
+
+- transport は `streamable-http` 固定です
+- MCP endpoint は `/mcp`
+- liveness は `/healthz`
+- readiness は `/readyz`
+- runtime では `sync-manifest` / `ai-config-index` を実行しません
+- `.index` の required artifacts が不足している場合は fail-fast で起動失敗します
+
+Cloud Run image build では `skills/external` の materialization と `.index` build を完了させてから runtime に渡します。runtime は `skills/`、`config/`、`.index/` を read-only に使うだけです。
+
 ### `ai-config-agent` — オーケストレーター
 
 ```bash

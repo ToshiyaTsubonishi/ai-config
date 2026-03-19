@@ -26,6 +26,7 @@ ai-config-agent = "ai_config.orchestrator.cli:main"
 ai-config-sources = "ai_config.source_manager:main"  # deprecated for skills; see docs/constitution.md
 ai-config-vendor-skills = "ai_config.vendor.cli:main"
 ai-config-mcp-server = "ai_config.mcp_server.server:main"
+ai-config-selector-serving = "ai_config.mcp_server.serving:main"
 ai-config-dispatch = "ai_config.dispatch.cli:main"
 ai-config-doctor = "ai_config.doctor:main"
 

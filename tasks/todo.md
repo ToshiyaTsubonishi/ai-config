@@ -1,5 +1,87 @@
 # TODO
 
+## 2026-03-19 Cloud Run Selector Serving
+
+### Plan
+- [x] MCP server factory を整理し、selector read tools と extended execution tools を分離する
+- [x] `streamable-http` transport と HTTP bind options を既存 `ai-config-mcp-server` に追加する
+- [x] strict runtime index validator と Cloud Run 用 `ai-config-selector-serving` entrypoint を追加する
+- [x] selector-serving の health/readiness endpoint と fail-fast behavior を追加する
+- [x] Cloud Run Dockerfile / deploy docs / repo docs を更新する
+- [x] selector-serving と既存 MCP server の HTTP/stdio 回帰テストを追加し、関連テストを実行する
+
+### Progress
+- [x] server refactor
+- [x] runtime validator
+- [x] selector-serving entrypoint
+- [x] tests
+- [x] Docker / deploy docs
+- [x] verification
+- [x] review
+
+### Review
+- 更新ファイル:
+  - `pyproject.toml`
+  - `src/ai_config/mcp_server/server.py`
+  - `src/ai_config/mcp_server/runtime.py`
+  - `src/ai_config/mcp_server/serving.py`
+  - `tests/test_mcp_server_extended.py`
+  - `tests/test_selector_serving.py`
+  - `deploy/cloudrun/Dockerfile`
+  - `deploy/cloudrun/README.md`
+  - `README.md`
+  - `docs/architecture.md`
+  - `docs/operations.md`
+  - `docs/development.md`
+  - `tasks/todo.md`
+- 実装要約:
+  - `create_server()` を shared factory 化し、selector read tools と extended execution/downstream MCP tools を分離した
+  - `ai-config-mcp-server` は `stdio` default を維持したまま `streamable-http` / host / port / path / stateless mode を受けられるようにした
+  - `validate_runtime_index()` を追加し、`.index` の required artifacts と `HybridRetriever` 初期化を startup で検証するようにした
+  - `ai-config-selector-serving` を追加し、Cloud Run では selector read API だけを `streamable-http` + `stateless_http=True` で公開し、`/healthz` と `/readyz` を追加した
+  - Dockerfile は image build 中に `sync-manifest` と `ai-config-index` を実行し、runtime は `skills/` / `config/` / `.index/` を read-only に使うだけの構成にした
+- 検証コマンド:
+  - `.venv/bin/python -m pytest tests/test_mcp_server_extended.py tests/test_selector_serving.py -q`
+  - `.venv/bin/python -m pytest tests/test_mcp_server_tools.py -q`
+  - `.venv/bin/python -m pytest tests/test_mcp_server_extended.py tests/test_selector_serving.py tests/test_mcp_server_tools.py tests/test_cli_smoke.py tests/test_index_builder_contract.py -q`
+  - `git diff --check`
+  - `.venv/bin/python -m pip install . --quiet`
+  - `.venv/bin/ai-config-selector-serving --help`
+  - `.venv/bin/ai-config-mcp-server --help`
+- 検証結果:
+  - selector-serving / MCP HTTP regression / CLI smoke / index contract を含む関連テスト 16 件が成功した
+  - `git diff --check` は clean だった
+  - `ai-config-selector-serving` と拡張後の `ai-config-mcp-server` の help 表示が正常に出た
+  - Docker image build 自体は network 依存の vendor materialization を含むため、このセッションでは未実行
+
+## 2026-03-12 Phase 4 Core Retrieval Quality
+
+### Plan
+- [ ] `implementation_plan.md` の残タスクを current architecture に再マップし、obsolete な vendor migration 項目と live な core 強化項目を切り分ける
+- [ ] default profile を前提にした retrieval evaluation corpus を追加し、代表クエリごとの期待 tool / skill を固定する
+- [ ] retriever の品質を測る指標と実行経路を追加する（少なくとも recall@k / MRR / sentinel query regression）
+- [ ] `HybridRetriever` の ranking 改善を行う（RRF weight / exact-match boost / intent-aware bias の順で小さく検証する）
+- [ ] `profile_loader` や planner に入れるべき改善は retrieval 評価の結果を見て次段に切り出す
+- [ ] docs / tests / benchmark 結果を残し、Phase 4 の次タスクを planner quality か profile policy かで再判定する
+
+### Progress
+- [x] `implementation_plan.md` の確認
+- [x] current repo 状態との比較
+- [ ] eval corpus
+- [ ] evaluation harness
+- [ ] retriever tuning
+- [ ] docs
+- [ ] review
+
+### Review
+- 判定:
+  - `implementation_plan.md` の vendor migration / source manager cleanup / legacy cleanup / observability は現 repo で概ね完了している
+  - 元計画のうち live な残項目は `retriever` 品質改善、`profile_loader` ポリシー拡張、`orchestrator` plan 品質向上
+  - 着手順は `retriever` → `profile_loader` / planner の順が妥当。candidate quality が安定していない状態で planner をいじると因果が見えにくくなるため
+- 次作業の推奨:
+  - まず selector / orchestrator / dispatch の共通入口である `HybridRetriever` の測定基盤と品質改善を優先する
+  - いきなり reranker を足すのではなく、評価 corpus と baseline を先に置き、RRF / lexical / exact-match の改善余地を確認してから追加の rerank 要否を判定する
+
 ## 2026-03-12 Vendor-Aware Observability
 
 ### Plan

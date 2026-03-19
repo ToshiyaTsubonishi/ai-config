@@ -2,12 +2,18 @@ from __future__ import annotations
 
 import json
 import os
+import socket
+import subprocess
 import sys
+import time
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 import anyio
 from mcp import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
+from mcp.client.streamable_http import streamable_http_client
 
 from ai_config.mcp_server.downstream_client import DownstreamMCPClient
 from ai_config.registry.index_builder import build_index
@@ -65,6 +71,12 @@ def _toolchain_record() -> ToolRecord:
     )
 
 
+def _free_port() -> int:
+    with socket.socket() as sock:
+        sock.bind(("127.0.0.1", 0))
+        return int(sock.getsockname()[1])
+
+
 def _build_records(repo_root: Path) -> list[ToolRecord]:
     skill_path = repo_root / "skills" / "shared" / "demo" / "SKILL.md"
     script_path = repo_root / "scripts" / "echo_script.py"
@@ -107,6 +119,33 @@ def _build_records(repo_root: Path) -> list[ToolRecord]:
     ]
 
 
+def _project_env() -> dict[str, str]:
+    project_root = Path(__file__).resolve().parents[1]
+    env = dict(os.environ)
+    py_path = str(project_root / "src")
+    env["PYTHONPATH"] = py_path if not env.get("PYTHONPATH") else f"{py_path}{os.pathsep}{env['PYTHONPATH']}"
+    return env
+
+
+def _wait_for_url(url: str, proc: subprocess.Popen[str], *, timeout: float = 10.0) -> None:
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        if proc.poll() is not None:
+            output = proc.stdout.read() if proc.stdout is not None else ""
+            raise AssertionError(f"Server exited before becoming ready:\n{output}")
+        try:
+            with urllib.request.urlopen(url, timeout=1):
+                return
+        except urllib.error.HTTPError as error:
+            if error.code < 500:
+                return
+            time.sleep(0.1)
+        except (urllib.error.URLError, TimeoutError):
+            time.sleep(0.1)
+    output = proc.stdout.read() if proc.stdout is not None else ""
+    raise AssertionError(f"Timed out waiting for {url}:\n{output}")
+
+
 async def _selector_call(repo_root: Path, index_dir: Path, env: dict[str, str]) -> dict[str, object]:
     toolchain_command, toolchain_args = _shell_echo_args("toolchain-ok")
     env["AI_CONFIG_CODEX_CMD"] = toolchain_command
@@ -139,6 +178,20 @@ async def _selector_call(repo_root: Path, index_dir: Path, env: dict[str, str]) 
                 "toolchain_result": json.loads(toolchain_result.content[0].text),
                 "listed": json.loads(listed.content[0].text),
                 "called": json.loads(called.content[0].text),
+            }
+
+
+async def _selector_http_call(port: int) -> dict[str, object]:
+    async with streamable_http_client(f"http://127.0.0.1:{port}/mcp") as (read, write, _get_session_id):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            tools = await session.list_tools()
+            search = await session.call_tool("search_tools", {"query": "demo skill", "top_k": 3})
+            detail = await session.call_tool("get_tool_detail", {"tool_id": "skill:demo"})
+            return {
+                "tool_names": [tool.name for tool in tools.tools],
+                "search": json.loads(search.content[0].text),
+                "detail": json.loads(detail.content[0].text),
             }
 
 
@@ -178,10 +231,7 @@ def test_selector_server_exposes_extended_tools_and_executes_records(monkeypatch
     index_dir = tmp_path / "index"
     build_index(records, index_dir, embedding_backend="hash", vector_backend="numpy")
 
-    project_root = Path(__file__).resolve().parents[1]
-    env = dict(os.environ)
-    py_path = str(project_root / "src")
-    env["PYTHONPATH"] = py_path if not env.get("PYTHONPATH") else f"{py_path}{os.pathsep}{env['PYTHONPATH']}"
+    env = _project_env()
     monkeypatch.setenv("AI_CONFIG_CODEX_CMD", _shell_echo_args("toolchain-ok")[0])
 
     payload = anyio.run(_selector_call, repo_root, index_dir, env)
@@ -211,3 +261,61 @@ def test_selector_server_exposes_extended_tools_and_executes_records(monkeypatch
     assert called["status"] == "success"
     assert called["output"]["result"]["isError"] is False
     assert "dummy:hi" in called["output"]["result"]["content"][0]["text"]
+
+
+def test_selector_server_supports_streamable_http_transport(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir(parents=True, exist_ok=True)
+    (repo_root / "config" / "master").mkdir(parents=True, exist_ok=True)
+    _write(repo_root / "config" / "master" / "ai-sync.yaml", "targets: {}\nmcp_servers: {}\n")
+    index_dir = tmp_path / "index"
+    build_index(_build_records(repo_root), index_dir, embedding_backend="hash", vector_backend="numpy")
+
+    port = _free_port()
+    proc = subprocess.Popen(
+        [
+            sys.executable,
+            "-m",
+            "ai_config.mcp_server.server",
+            "--repo-root",
+            str(repo_root),
+            "--index-dir",
+            str(index_dir),
+            "--transport",
+            "streamable-http",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            str(port),
+            "--streamable-http-path",
+            "/mcp",
+            "--stateless-http",
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        env=_project_env(),
+    )
+    try:
+        _wait_for_url(f"http://127.0.0.1:{port}/mcp", proc)
+        payload = anyio.run(_selector_http_call, port)
+    finally:
+        proc.terminate()
+        try:
+            proc.wait(timeout=10)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            proc.wait(timeout=10)
+
+    tool_names = set(payload["tool_names"])
+    assert {
+        "search_tools",
+        "get_tool_detail",
+        "list_categories",
+        "get_tool_count",
+        "execute_registry_tool",
+        "list_mcp_server_tools",
+        "call_mcp_server_tool",
+    }.issubset(tool_names)
+    assert payload["search"]["count"] >= 1
+    assert payload["detail"]["id"] == "skill:demo"
