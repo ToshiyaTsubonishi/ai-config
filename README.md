@@ -77,6 +77,7 @@ ai-config-agent execute-approved-plan --plan ./approved-plan.json --index-dir ./
 # stable contract schema
 ai-config-agent schema approved-plan
 ai-config-agent schema approved-plan-execution-request
+ai-config-agent schema approved-plan-execution-result
 ```
 
 互換のため、従来の `--search-only` / `--plan-only` / `--execute-plan` も当面は維持します。
@@ -86,6 +87,7 @@ ai-config-agent schema approved-plan-execution-request
 `ai-config` は dispatch を直接 import して実行しません。`DispatchCLIPlanExecutor` が subprocess boundary で `ai-config.dispatch.cli` を呼びます。
 
 - request contract: `ApprovedPlanExecutionRequest`
+- result contract: `ApprovedPlanExecutionResult`
 - transport: JSON file / JSON stdout
 - versioning: major version compatibility (`1.x.x`)
 - override: `AI_CONFIG_DISPATCH_CMD`
@@ -155,13 +157,21 @@ approved plan execution boundary は neutral contract module にあります。
 - module: `src/ai_config/contracts/approved_plan.py`
 - plan artifact: `ApprovedPlan`
 - execution request: `ApprovedPlanExecutionRequest`
+- execution result: `ApprovedPlanExecutionResult`
 
 versioning policy:
 
 - `kind` は固定 identifier
 - `schema_version` は semver 風の `major.minor.patch`
 - runtime は同一 major (`1.x.x`) だけ受け付ける
+- `1.x` での変更は additive のみ許可し、consumer は unknown optional field を無視する
 - breaking change は major を上げる
+
+dispatch ownership policy:
+
+- workflow assets (`workflows/*.yaml`) は dispatch repo 所有
+- runtime docs / troubleshooting / packaging metadata は dispatch repo 所有
+- ai-config には contracts / boundary adapter / planner integration docs を残す
 
 ## Directory Layout
 

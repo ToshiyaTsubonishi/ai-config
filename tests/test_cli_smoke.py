@@ -260,3 +260,28 @@ profiles:
     paths = [r["source_path"] for r in records_json]
     assert any("anthropics-skills" in p for p in paths)
     assert all("antigravity-awesome-skills" not in p for p in paths)
+
+
+def test_cli_schema_surface_includes_execution_result_contract(tmp_path: Path) -> None:
+    project_root = Path(__file__).resolve().parents[1]
+    env = dict(os.environ)
+    py_path = str(project_root / "src")
+    env["PYTHONPATH"] = py_path if not env.get("PYTHONPATH") else f"{py_path}{os.pathsep}{env['PYTHONPATH']}"
+
+    schema_proc = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "ai_config.orchestrator.cli",
+            "schema",
+            "approved-plan-execution-result",
+        ],
+        capture_output=True,
+        text=True,
+        env=env,
+        cwd=tmp_path,
+    )
+
+    assert schema_proc.returncode == 0, schema_proc.stderr
+    payload = json.loads(schema_proc.stdout)
+    assert payload["properties"]["kind"]["default"] == "ai-config.approved-plan-execution-result"

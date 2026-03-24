@@ -127,6 +127,7 @@ ai-config-agent plan "codex でバグを修正" --index-dir ./.index
 # schema inspection
 ai-config-agent schema approved-plan
 ai-config-agent schema approved-plan-execution-request
+ai-config-agent schema approved-plan-execution-result
 ```
 
 ### 5. Execute Approved Plan
@@ -159,6 +160,20 @@ ai-config-dispatch --execute-approved-plan ./approved-plan-request.json --json
 
 この入口は ai-config core から見た stable runtime boundary です。
 repo 内には compatibility 実装がありますが、将来的には external runtime に置き換える前提です。
+
+`--json` の stable payload:
+
+- `kind=ai-config.approved-plan-execution-result`
+- `schema_version=1.0.0`
+- `status=success|partial|error|aborted`
+- `error` は `error|aborted` のとき必須
+- `partial` は `replan_request` を返す
+- `plan_id` / `plan_revision` / request echo は input request と一致する
+
+CLI exit policy:
+
+- `success` / `partial`: exit 0
+- `error` / `aborted`: exit 1
 
 ## Health and Readiness
 
@@ -214,6 +229,12 @@ runtime では `sync-manifest` や `ai-config-index` を自動実行しません
 3. `AI_CONFIG_DISPATCH_CMD` が外部 runtime を指していないか確認する
 4. `ai-config-dispatch --execute-approved-plan ... --json` を直接叩いて境界の外側を切り分ける
 
+ownership decision:
+
+- workflow assets は dispatch repo 所有
+- runtime docs / packaging metadata は dispatch repo 所有
+- ai-config docs は contract と integration surface のみ持つ
+
 ## Migration Notes
 
 移行期間の互換経路:
@@ -228,3 +249,5 @@ runtime では `sync-manifest` や `ai-config-index` を自動実行しません
 - `ai-config-agent plan`
 - `ai-config-agent execute-approved-plan`
 - `ai-config-selector-serving`
+
+dispatch 別 repo 化の段階計画、`ApprovedPlanExecutionResult@1.0.0`、ownership decision は `docs/dispatch-externalization-plan.md` を参照してください。

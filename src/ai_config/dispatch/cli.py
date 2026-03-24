@@ -6,8 +6,15 @@ import argparse
 import json
 import logging
 import sys
+from typing import Any
+from uuid import uuid4
 
-from ai_config.contracts.approved_plan import load_approved_plan_execution_request
+from ai_config.contracts.approved_plan import (
+    ApprovedPlanExecutionRequest,
+    ApprovedPlanExecutionResult,
+    ApprovedPlanExecutionRuntime,
+    load_approved_plan_execution_request,
+)
 from ai_config.dispatch.graph import create_dispatch_agent
 from ai_config.dispatch.planner import detect_available_agents
 from ai_config.runtime_env import load_runtime_env
@@ -29,6 +36,68 @@ def _result_payload(result: dict[str, object]) -> dict[str, object]:
     }
 
 
+def _approved_plan_status(result: dict[str, Any]) -> str:
+    if result.get("abort"):
+        return "aborted"
+    if result.get("error"):
+        return "error"
+    if result.get("replan_request") is not None:
+        return "partial"
+    return "success"
+
+
+def _step_output_summary(raw_step: dict[str, Any]) -> str:
+    output = raw_step.get("output")
+    if output is None:
+        return ""
+    if isinstance(output, str):
+        return output
+    return json.dumps(output, ensure_ascii=False, default=str)
+
+
+def _approved_plan_result_payload(
+    request: ApprovedPlanExecutionRequest,
+    result: dict[str, Any],
+) -> dict[str, Any]:
+    status = _approved_plan_status(result)
+    top_level_error = None
+    if status in {"error", "aborted"}:
+        top_level_error = str(result.get("error") or result.get("final_report") or "dispatch runtime failure")
+
+    payload = ApprovedPlanExecutionResult(
+        request_kind=request.kind,
+        request_schema_version=request.schema_version,
+        plan_id=request.plan.plan_id,
+        plan_revision=request.plan.revision,
+        execution_id=str(result.get("execution_id") or f"exec-{uuid4().hex[:10]}"),
+        runtime=ApprovedPlanExecutionRuntime(name="ai-config-dispatch"),
+        status=status,
+        final_report=str(result.get("final_report") or ""),
+        step_results=[
+            {
+                "step_id": str(
+                    raw_step.get("step_id")
+                    or raw_step.get("id")
+                    or (raw_step.get("step", {}) if isinstance(raw_step.get("step"), dict) else {}).get("step_id")
+                    or ""
+                ),
+                "status": str(raw_step.get("status") or ("error" if raw_step.get("error") else "success")),
+                "agent": str(raw_step.get("agent") or ""),
+                "tool_id": str(raw_step.get("tool_id") or raw_step.get("tool", "") or ""),
+                "action": str(raw_step.get("action") or ""),
+                "retry_count": int(raw_step.get("retry_count", raw_step.get("retry_attempt", raw_step.get("retries", 0))) or 0),
+                "output_summary": str(raw_step.get("output_summary") or _step_output_summary(raw_step)),
+                "error": raw_step.get("error"),
+            }
+            for raw_step in (result.get("step_results") or [])
+            if isinstance(raw_step, dict)
+        ],
+        replan_request=result.get("replan_request") if status == "partial" else None,
+        error=top_level_error,
+    )
+    return payload.model_dump()
+
+
 def _print_result(result: dict[str, object], *, json_output: bool) -> None:
     payload = _result_payload(result)
     if json_output:
@@ -38,8 +107,12 @@ def _print_result(result: dict[str, object], *, json_output: bool) -> None:
     print(report)
 
 
-def _initial_state_from_request(request_path_or_json: str) -> dict[str, object]:
-    request = load_approved_plan_execution_request(request_path_or_json)
+def _initial_state_from_request(request_path_or_json: ApprovedPlanExecutionRequest | str) -> dict[str, object]:
+    request = (
+        request_path_or_json
+        if isinstance(request_path_or_json, ApprovedPlanExecutionRequest)
+        else load_approved_plan_execution_request(request_path_or_json)
+    )
     return {
         "user_prompt": request.plan.user_goal,
         "working_directory": request.working_directory,
@@ -152,14 +225,19 @@ def main(argv: list[str] | None = None) -> None:
         return
 
     if args.execute_approved_plan:
+        request = load_approved_plan_execution_request(args.execute_approved_plan)
         agent = create_dispatch_agent()
-        result = agent.invoke(_initial_state_from_request(args.execute_approved_plan))
+        result = agent.invoke(_initial_state_from_request(request))
         if args.trace:
             print("\nTRACE:")
             print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
             print()
-        _print_result(result, json_output=args.json)
-        if result.get("error"):
+        payload = _approved_plan_result_payload(request, result)
+        if args.json:
+            print(json.dumps(payload, ensure_ascii=False, indent=2, default=str))
+        else:
+            print(payload.get("final_report") or "(no report)")
+        if payload.get("status") in {"error", "aborted"}:
             sys.exit(1)
         return
 

@@ -13,6 +13,7 @@ from ai_config.contracts.approved_plan import (
     ApprovedPlan,
     ApprovedPlanExecutionRequest,
     approved_plan_execution_request_json_schema,
+    approved_plan_execution_result_json_schema,
     approved_plan_json_schema,
 )
 from ai_config.executor import DispatchCLIPlanExecutor
@@ -156,7 +157,7 @@ def _planner_from(index_dir: Path) -> OrchestrationPlanner:
 
 
 def _emit_execution_result(result: dict[str, Any]) -> None:
-    if result.get("status") == "error":
+    if result.get("status") in {"error", "aborted"}:
         message = str(result.get("error") or result.get("final_report") or "(execution failed)")
         print(message)
         sys.exit(1)
@@ -204,7 +205,7 @@ def _build_subcommand_parser() -> argparse.ArgumentParser:
     schema = subparsers.add_parser("schema", help="Print stable contract JSON schema")
     schema.add_argument(
         "kind",
-        choices=("approved-plan", "approved-plan-execution-request"),
+        choices=("approved-plan", "approved-plan-execution-request", "approved-plan-execution-result"),
         help="Contract schema to print",
     )
 
@@ -216,7 +217,12 @@ def _run_subcommand(argv: list[str]) -> None:
     args = parser.parse_args(argv)
 
     if args.command == "schema":
-        schema = approved_plan_json_schema() if args.kind == "approved-plan" else approved_plan_execution_request_json_schema()
+        if args.kind == "approved-plan":
+            schema = approved_plan_json_schema()
+        elif args.kind == "approved-plan-execution-request":
+            schema = approved_plan_execution_request_json_schema()
+        else:
+            schema = approved_plan_execution_result_json_schema()
         print(json.dumps(schema, ensure_ascii=False, indent=2))
         return
 

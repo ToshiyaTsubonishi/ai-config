@@ -14,6 +14,8 @@ APPROVED_PLAN_KIND = "ai-config.approved-plan"
 APPROVED_PLAN_SCHEMA_VERSION = "1.0.0"
 APPROVED_PLAN_EXECUTION_REQUEST_KIND = "ai-config.approved-plan-execution-request"
 APPROVED_PLAN_EXECUTION_REQUEST_SCHEMA_VERSION = "1.0.0"
+APPROVED_PLAN_EXECUTION_RESULT_KIND = "ai-config.approved-plan-execution-result"
+APPROVED_PLAN_EXECUTION_RESULT_SCHEMA_VERSION = "1.0.0"
 _SUPPORTED_SCHEMA_MAJOR = 1
 
 
@@ -229,6 +231,149 @@ class ApprovedPlanExecutionRequest(BaseModel):
         return self
 
 
+class ApprovedPlanExecutionRuntime(BaseModel):
+    """Execution runtime metadata echoed back by a stable result contract."""
+
+    name: str = Field(..., description="Stable runtime identifier")
+    version: str = Field(default="", description="Runtime package or build version")
+    transport: str = Field(default="subprocess_json", description="Boundary transport")
+
+    @model_validator(mode="after")
+    def _validate_runtime(self) -> ApprovedPlanExecutionRuntime:
+        if not self.name:
+            raise ValueError("runtime.name must not be empty.")
+        if not self.transport:
+            raise ValueError("runtime.transport must not be empty.")
+        return self
+
+
+class ApprovedPlanExecutionStepResult(BaseModel):
+    """Stable per-step execution outcome."""
+
+    step_id: str = Field(..., description="Stable step identifier from the approved plan")
+    status: Literal["success", "skipped", "error", "aborted", "timeout"] = "success"
+    agent: str = Field(default="", description="Execution agent or worker identifier")
+    tool_id: str = Field(default="", description="Resolved tool identifier")
+    action: str = Field(default="", description="Execution action")
+    retry_count: int = Field(default=0, ge=0, description="Number of retries consumed")
+    output_summary: str = Field(default="", description="Compact output summary")
+    error: str | None = Field(default=None, description="Step-level error message")
+
+    @model_validator(mode="before")
+    @classmethod
+    def _compat_from_runtime(cls, data: Any) -> Any:
+        if not isinstance(data, dict):
+            return data
+
+        payload = dict(data)
+        payload.setdefault("status", "error" if payload.get("error") else "success")
+        if "retry_count" not in payload:
+            payload["retry_count"] = payload.get("retry_attempt", payload.get("retries", 0))
+        if "output_summary" not in payload or payload.get("output_summary") is None:
+            output = payload.get("output")
+            if output is None:
+                payload["output_summary"] = ""
+            elif isinstance(output, str):
+                payload["output_summary"] = output
+            else:
+                payload["output_summary"] = json.dumps(output, ensure_ascii=False, default=str)
+        return payload
+
+    @model_validator(mode="after")
+    def _validate_step_status(self) -> ApprovedPlanExecutionStepResult:
+        if not self.step_id:
+            raise ValueError("step_id must not be empty.")
+        if self.error is not None and not self.error.strip():
+            self.error = None
+        if self.status in {"error", "aborted", "timeout"} and self.error is None:
+            raise ValueError(f"step {self.step_id} requires error when status={self.status}.")
+        if self.status in {"success", "skipped"} and self.error is not None:
+            raise ValueError(f"step {self.step_id} must not include error when status={self.status}.")
+        return self
+
+
+class ApprovedPlanExecutionResult(BaseModel):
+    """Stable execution result returned by a runtime boundary."""
+
+    kind: str = Field(default=APPROVED_PLAN_EXECUTION_RESULT_KIND)
+    schema_version: str = Field(default=APPROVED_PLAN_EXECUTION_RESULT_SCHEMA_VERSION)
+    request_kind: str = Field(default=APPROVED_PLAN_EXECUTION_REQUEST_KIND)
+    request_schema_version: str = Field(default=APPROVED_PLAN_EXECUTION_REQUEST_SCHEMA_VERSION)
+    plan_id: str
+    plan_revision: int = Field(..., ge=1)
+    execution_id: str
+    runtime: ApprovedPlanExecutionRuntime
+    status: Literal["success", "partial", "error", "aborted"] = "success"
+    final_report: str = ""
+    step_results: list[ApprovedPlanExecutionStepResult] = Field(default_factory=list)
+    replan_request: dict[str, Any] | None = None
+    error: str | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def _compat_defaults(cls, data: Any) -> Any:
+        if not isinstance(data, dict):
+            return data
+
+        payload = dict(data)
+        payload.setdefault("kind", APPROVED_PLAN_EXECUTION_RESULT_KIND)
+        payload.setdefault("schema_version", APPROVED_PLAN_EXECUTION_RESULT_SCHEMA_VERSION)
+        payload.setdefault("request_kind", APPROVED_PLAN_EXECUTION_REQUEST_KIND)
+        payload.setdefault("request_schema_version", APPROVED_PLAN_EXECUTION_REQUEST_SCHEMA_VERSION)
+        payload.setdefault("step_results", [])
+        payload.setdefault("final_report", "")
+        if "plan_revision" not in payload and payload.get("revision") is not None:
+            payload["plan_revision"] = payload.get("revision")
+        return payload
+
+    @model_validator(mode="after")
+    def _validate_contract(self) -> ApprovedPlanExecutionResult:
+        _ensure_supported_schema(
+            self.kind,
+            self.schema_version,
+            APPROVED_PLAN_EXECUTION_RESULT_KIND,
+        )
+        _ensure_supported_schema(
+            self.request_kind,
+            self.request_schema_version,
+            APPROVED_PLAN_EXECUTION_REQUEST_KIND,
+        )
+        if not self.plan_id:
+            raise ValueError("plan_id must not be empty.")
+        if not self.execution_id:
+            raise ValueError("execution_id must not be empty.")
+
+        step_ids = [step.step_id for step in self.step_results]
+        if len(step_ids) != len(set(step_ids)):
+            raise ValueError("Duplicate step result IDs are not allowed.")
+
+        terminal_step_failures = [
+            step.step_id for step in self.step_results if step.status in {"error", "aborted", "timeout"}
+        ]
+        if self.error is not None and not self.error.strip():
+            self.error = None
+
+        if self.status == "success":
+            if self.error is not None:
+                raise ValueError("status=success must not include top-level error.")
+            if self.replan_request is not None:
+                raise ValueError("status=success must not include replan_request.")
+            if terminal_step_failures:
+                raise ValueError("status=success must not include failed step results.")
+        elif self.status == "partial":
+            if self.error is not None:
+                raise ValueError("status=partial must not include top-level error.")
+            if self.replan_request is None:
+                raise ValueError("status=partial requires replan_request.")
+        elif self.status in {"error", "aborted"}:
+            if self.error is None:
+                raise ValueError(f"status={self.status} requires top-level error.")
+            if self.replan_request is not None:
+                raise ValueError(f"status={self.status} must not include replan_request.")
+
+        return self
+
+
 class PlanValidationResult(BaseModel):
     """Validation output for an approved plan artifact."""
 
@@ -276,12 +421,50 @@ def load_approved_plan_execution_request(raw_or_path: str | Path) -> ApprovedPla
     return ApprovedPlanExecutionRequest.model_validate_json(raw_text)
 
 
+def load_approved_plan_execution_result(raw_or_path: str | Path) -> ApprovedPlanExecutionResult:
+    path = Path(str(raw_or_path))
+    raw_text = path.read_text(encoding="utf-8") if path.exists() else str(raw_or_path)
+    return ApprovedPlanExecutionResult.model_validate_json(raw_text)
+
+
 def approved_plan_json_schema() -> dict[str, Any]:
     return ApprovedPlan.model_json_schema()
 
 
 def approved_plan_execution_request_json_schema() -> dict[str, Any]:
     return ApprovedPlanExecutionRequest.model_json_schema()
+
+
+def approved_plan_execution_result_json_schema() -> dict[str, Any]:
+    return ApprovedPlanExecutionResult.model_json_schema()
+
+
+def validate_execution_result_against_request(
+    result: ApprovedPlanExecutionResult | dict[str, Any],
+    request: ApprovedPlanExecutionRequest | dict[str, Any],
+) -> ApprovedPlanExecutionResult:
+    parsed_result = (
+        result if isinstance(result, ApprovedPlanExecutionResult) else ApprovedPlanExecutionResult.model_validate(result)
+    )
+    parsed_request = (
+        request if isinstance(request, ApprovedPlanExecutionRequest) else ApprovedPlanExecutionRequest.model_validate(request)
+    )
+
+    errors: list[str] = []
+    if parsed_result.request_kind != parsed_request.kind:
+        errors.append(f"request_kind mismatch: {parsed_result.request_kind} != {parsed_request.kind}")
+    if parsed_result.request_schema_version != parsed_request.schema_version:
+        errors.append(
+            "request_schema_version mismatch: "
+            f"{parsed_result.request_schema_version} != {parsed_request.schema_version}"
+        )
+    if parsed_result.plan_id != parsed_request.plan.plan_id:
+        errors.append(f"plan_id mismatch: {parsed_result.plan_id} != {parsed_request.plan.plan_id}")
+    if parsed_result.plan_revision != parsed_request.plan.revision:
+        errors.append(f"plan_revision mismatch: {parsed_result.plan_revision} != {parsed_request.plan.revision}")
+    if errors:
+        raise ValueError("Execution result/request mismatch: " + "; ".join(errors))
+    return parsed_result
 
 
 def collect_plan_tool_ids(plan: ApprovedPlan) -> set[str]:

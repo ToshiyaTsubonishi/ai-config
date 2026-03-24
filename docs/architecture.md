@@ -93,11 +93,13 @@ neutral contract module:
 
 - `ai_config.contracts.approved_plan.ApprovedPlan`
 - `ai_config.contracts.approved_plan.ApprovedPlanExecutionRequest`
+- `ai_config.contracts.approved_plan.ApprovedPlanExecutionResult`
 
 schema identifiers:
 
 - `ai-config.approved-plan`
 - `ai-config.approved-plan-execution-request`
+- `ai-config.approved-plan-execution-result`
 
 validation rules:
 
@@ -107,12 +109,15 @@ validation rules:
 4. dependency graph が DAG であること
 5. plan 中の `tool_id` が available tool record と整合すること
 6. `tool_records` を同梱する場合は referenced tool を全て覆うこと
+7. execution result の `plan_id` / `plan_revision` / request echo が request payload と一致すること
+8. execution result の `status` / `error` semantics が固定ルールに従うこと
 
 JSON schema は CLI から確認できます。
 
 ```bash
 ai-config-agent schema approved-plan
 ai-config-agent schema approved-plan-execution-request
+ai-config-agent schema approved-plan-execution-result
 ```
 
 ## Planner Flow
@@ -147,6 +152,20 @@ ai-config-agent execute-approved-plan
 - ai-config 側の import graph が安定する
 - subprocess / package / HTTP どの transport にも移行しやすい
 - approved plan request を事前 validation できる
+- approved plan result を boundary で reject / accept できる
+
+result contract semantics:
+
+- `success`: completed execution, no top-level `error`, no `replan_request`
+- `partial`: controlled replan requested, no top-level `error`
+- `error`: runtime failure, top-level `error` required
+- `aborted`: intentional stop, top-level `error` required
+
+ownership decision:
+
+- `workflows/*.yaml` は dispatch repo 所有
+- runtime docs / troubleshooting / packaging metadata は dispatch repo 所有
+- ai-config には contracts / boundary adapter / planner integration docs を残す
 
 ## Selector Serving
 
@@ -214,6 +233,8 @@ ai-config-dispatch
   - DAG / retry / context handoff
   - workflow templates
 ```
+
+dispatch の次フェーズ計画と assets / docs / packaging の repo 帰属は `docs/dispatch-externalization-plan.md` を参照してください。
 
 ## Near-Term Priorities
 

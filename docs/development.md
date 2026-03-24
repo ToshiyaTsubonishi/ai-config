@@ -36,6 +36,7 @@ stable boundary models は `contracts/approved_plan.py` に置きます。
 
 - `ApprovedPlan`
 - `ApprovedPlanExecutionRequest`
+- `ApprovedPlanExecutionResult`
 - JSON schema export helpers
 - structural validation
 
@@ -64,6 +65,14 @@ dispatch runtime への接続は `DispatchCLIPlanExecutor` が担います。
 
 将来 HTTP や external package に変えても、planner 側の public surface は変えない前提です。
 
+result compatibility policy:
+
+- result contract は `ai-config.approved-plan-execution-result@1.0.0`
+- consumer は `1.x.x` を受け付ける
+- additive field 追加は `1.x` で許可
+- required field / semantics の breaking change は major version を上げる
+- boundary adapter は request echo と `status` / `error` semantics を validate する
+
 ### 4. Selector-serving is first-class
 
 deploy や runtime observability を追加するときは、まず `ai-config-selector-serving` を起点に考えます。
@@ -91,6 +100,7 @@ ai-config-agent search "selector serving"
 python -m ai_config.orchestrator.cli search "eslint"
 python -m ai_config.orchestrator.cli plan "codex で修正"
 python -m ai_config.orchestrator.cli execute-approved-plan --plan ./approved-plan.json
+python -m ai_config.orchestrator.cli schema approved-plan-execution-result
 
 # runtime surface
 python -m ai_config.dispatch.cli --execute-approved-plan ./approved-plan-request.json --json
@@ -132,6 +142,7 @@ python -m ai_config.mcp_server.serving --repo-root . --index-dir ./.index
 |---|---|
 | `test_approved_plan_contract.py` | stable contract defaults / schema / validation |
 | `test_plan_boundary.py` | subprocess execution boundary |
+| `test_dispatch_cli_result_contract.py` | runtime CLI stable result payload |
 | `test_cli_smoke.py` | planner CLI search / plan / execute surfaces |
 | `test_dispatch_approved_plan.py` | approved plan execution runtime |
 | `test_dispatch_planner.py` | prompt-to-plan runtime behavior |
@@ -156,8 +167,10 @@ python -m ai_config.mcp_server.serving --repo-root . --index-dir ./.index
 ### Change dispatch integration
 
 1. preserve `ApprovedPlanExecutionRequest`
-2. preserve major-version compatibility
-3. change only `executor/plan_boundary.py`
+2. preserve `ApprovedPlanExecutionResult`
+3. preserve major-version compatibility
+4. keep workflow assets / runtime docs / packaging concerns out of ai-config core docs
+5. change only `executor/plan_boundary.py` unless contract evolves
 
 ## Notes on Legacy Paths
 

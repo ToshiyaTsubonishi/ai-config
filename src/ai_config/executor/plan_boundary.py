@@ -11,7 +11,12 @@ import tempfile
 from pathlib import Path
 from typing import Any, Protocol
 
-from ai_config.contracts.approved_plan import ApprovedPlanExecutionRequest
+from pydantic import ValidationError
+
+from ai_config.contracts.approved_plan import (
+    ApprovedPlanExecutionRequest,
+    validate_execution_result_against_request,
+)
 
 
 class ApprovedPlanExecutor(Protocol):
@@ -33,6 +38,17 @@ class DispatchCLIPlanExecutor:
         if override:
             return shlex.split(override)
         return [sys.executable, "-m", "ai_config.dispatch.cli"]
+
+    @staticmethod
+    def _error_result(message: str, *, final_report: str = "", returncode: int | None = None) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "status": "error",
+            "final_report": final_report,
+            "error": message,
+        }
+        if returncode is not None:
+            payload["returncode"] = returncode
+        return payload
 
     def execute_request(self, request: ApprovedPlanExecutionRequest | dict[str, Any]) -> dict[str, Any]:
         parsed = request if isinstance(request, ApprovedPlanExecutionRequest) else ApprovedPlanExecutionRequest.model_validate(request)
@@ -59,22 +75,33 @@ class DispatchCLIPlanExecutor:
 
         stdout = (result.stdout or "").strip()
         stderr = (result.stderr or "").strip()
-        if result.returncode != 0:
-            return {
-                "status": "error",
-                "final_report": "",
-                "error": stderr or stdout or f"Dispatch exited with status {result.returncode}",
-                "returncode": result.returncode,
-            }
-
         if not stdout:
-            return {"status": "error", "final_report": "", "error": "Dispatch returned no stdout payload."}
+            return self._error_result(
+                stderr or "Dispatch returned no stdout payload.",
+                returncode=result.returncode if result.returncode != 0 else None,
+            )
 
         try:
             payload = json.loads(stdout)
         except json.JSONDecodeError:
-            return {"status": "error", "final_report": stdout, "error": "Dispatch returned non-JSON output."}
+            return self._error_result(
+                "Dispatch returned non-JSON output.",
+                final_report=stdout,
+                returncode=result.returncode if result.returncode != 0 else None,
+            )
 
         if not isinstance(payload, dict):
-            return {"status": "error", "final_report": "", "error": "Dispatch returned an invalid JSON payload."}
-        return payload
+            return self._error_result(
+                "Dispatch returned an invalid JSON payload.",
+                returncode=result.returncode if result.returncode != 0 else None,
+            )
+
+        try:
+            validated = validate_execution_result_against_request(payload, parsed)
+        except (ValidationError, ValueError) as exc:
+            return self._error_result(
+                f"Invalid execution result payload: {exc}",
+                returncode=result.returncode if result.returncode != 0 else None,
+            )
+
+        return validated.model_dump()

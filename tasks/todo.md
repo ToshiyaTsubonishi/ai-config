@@ -1,5 +1,96 @@
 # TODO
 
+## 2026-03-24 ApprovedPlanExecutionResult Contract
+
+### Plan
+- [x] `ApprovedPlanExecutionResult` の stable 1.0 schema を contract module に追加する
+- [x] status / error semantics と compatibility policy を validator と docs で固定する
+- [x] dispatch CLI `--execute-approved-plan --json` を stable result contract 出力に更新する
+- [x] boundary adapter を result contract parse 前提に更新する
+- [x] contract / CLI / boundary tests と ownership docs 更新を完了する
+
+### Progress
+- [x] 現状確認
+- [x] failing tests
+- [x] contract 実装
+- [x] CLI / adapter 実装
+- [x] docs 更新
+- [x] 検証
+- [x] review
+
+### Review
+- 更新ファイル:
+  - `src/ai_config/contracts/approved_plan.py`
+  - `src/ai_config/contracts/__init__.py`
+  - `src/ai_config/dispatch/cli.py`
+  - `src/ai_config/executor/plan_boundary.py`
+  - `src/ai_config/orchestrator/cli.py`
+  - `tests/test_approved_plan_contract.py`
+  - `tests/test_plan_boundary.py`
+  - `tests/test_dispatch_cli_result_contract.py`
+  - `tests/test_cli_smoke.py`
+  - `README.md`
+  - `docs/README.md`
+  - `docs/architecture.md`
+  - `docs/development.md`
+  - `docs/operations.md`
+  - `docs/dispatch-externalization-plan.md`
+  - `tasks/todo.md`
+- 実施内容:
+  - `ApprovedPlanExecutionResult@1.0.0` と step/runtime submodel、schema export、request/result echo validation を contract layer に追加
+  - status / error semantics を `success|partial|error|aborted` に固定し、step-level では `timeout` を含む validator を追加
+  - `ai-config-dispatch --execute-approved-plan --json` を stable result payload 出力に更新し、`ai-config-agent schema approved-plan-execution-result` を追加
+  - boundary adapter が return code に依存せず structured result を validate し、malformed payload を reject するように更新
+  - workflow assets / runtime docs / packaging は dispatch repo 所有、ai-config は contracts / boundary adapter / integration docs を持つ方針を docs に反映
+- 検証:
+  - `PYTHONPATH=src .venv/bin/python -m pytest tests/test_approved_plan_contract.py tests/test_plan_boundary.py tests/test_dispatch_cli_result_contract.py tests/test_cli_smoke.py tests/test_dispatch_approved_plan.py -q`
+  - `PYTHONPATH=src .venv/bin/python -m pytest tests/test_dispatch_planner.py -q`
+  - `PYTHONPATH=src .venv/bin/python -m ai_config.orchestrator.cli schema approved-plan-execution-result`
+  - `python3 -m compileall src/ai_config/contracts/approved_plan.py src/ai_config/executor/plan_boundary.py src/ai_config/dispatch/cli.py src/ai_config/orchestrator/cli.py`
+  - `git diff --check`
+- 検証結果:
+  - focused contract / boundary / CLI / dispatch regression は pass
+  - schema surface は `approved-plan-execution-result` を返す
+  - diff hygiene は clean
+
+## 2026-03-24 Dispatch Externalization Phase Plan
+
+### Plan
+- [ ] 現状の dispatch runtime・workflow assets・docs・packaging の repo 依存を棚卸しする
+- [ ] `ApprovedPlanExecutionResult` の stable schema proposal と versioning / validation rule を定義する
+- [ ] workflow assets・runtime docs・packaging の repo 帰属を決め、ai-config 側に残すものを明文化する
+- [ ] dispatch の別 repo 化を段階的に進める migration plan を文書化する
+- [ ] 関連 docs index を更新し、残課題と前提条件を review に記録する
+
+### Progress
+- [x] 現状調査
+- [x] result schema proposal
+- [x] repo ownership decision
+- [x] migration plan doc
+- [x] review
+
+### Review
+- 更新ファイル:
+  - `docs/dispatch-externalization-plan.md`
+  - `docs/README.md`
+  - `docs/architecture.md`
+  - `docs/operations.md`
+  - `tasks/todo.md`
+- 実施内容:
+  - `ApprovedPlanExecutionResult` の stable schema proposal を文書化した
+  - workflow assets / runtime docs / packaging は dispatch repo 所有、contracts / boundary adapter / integration docs は ai-config 所有と決定した
+  - repo 内 compatibility runtime から external dispatch repo へ移す 5 phase の migration plan を作成した
+- 次フェーズの推奨順:
+  - `ApprovedPlanExecutionResult` を contract module に追加
+  - dispatch `--json` 出力を stable schema に置き換える
+  - `DispatchCLIPlanExecutor` を result model で受ける
+  - dispatch repo skeleton と packaging ownership を確定する
+- 検証:
+  - `git diff --check`
+- 検証結果:
+  - diff hygiene は clean
+  - docs index / architecture / operations から新しい plan doc へ辿れる状態にした
+
 ## 2026-03-24 Selector Platform Boundary Refactor
 
 ### Plan
