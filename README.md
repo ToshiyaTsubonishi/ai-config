@@ -1,29 +1,98 @@
 # ai-config
 
-AI ツール（Claude Code / Codex / Antigravity / Gemini CLI）の MCP とスキルを動的に検索・選択する MCP サーバー。
+AI agent 向けの **動的 Skill / MCP 選択基盤**。`ai-config` は selector platform と planner artifact generation に集中し、execution runtime は stable boundary の向こうへ逃がします。
 
-各 AI ツールに `ai-config-selector` を 1 つ登録するだけで、スキルと MCP サーバーを自然言語で検索して利用できます。
+## Core Responsibility
 
-## アーキテクチャ
+`ai-config` が正本として持つもの:
 
+- Skill / MCP source の catalog と ownership
+- vendor / import / provenance 管理
+- `ToolRecord` 正規化と registry
+- build-time index と runtime validation
+- hybrid retrieval / RAG
+- selector API / MCP server
+- `ai-config-selector-serving` という標準 HTTP deploy surface
+- planner library と approved plan artifact
+- downstream MCP catalog / lookup / bridge
+
+`ai-config` が直接抱え込まないもの:
+
+- approved plan の実行 runtime
+- plan execution の DAG / parallelism / retry / context handoff の詳細実装
+- dispatch repo の内部構造
+
+## Responsibility Split
+
+| Layer | Role | In This Repo |
+|---|---|---|
+| `selector` | Skill / MCP lookup, ranking, detail lookup, downstream MCP discovery | yes |
+| `planner` | candidate retrieval, plan artifact generation, plan validation, controlled replan | yes |
+| `execution` | approved plan boundary, subprocess / package contract, tool executor abstraction | yes |
+| `dispatch runtime` | approved plan execution, dependency DAG, parallelism, retry, context handoff | boundary only |
+
+標準フロー:
+
+1. Agent が `ai-config-selector` を呼んで候補を得る
+2. 必要なときだけ `ai-config-agent plan ...` で approved plan を作る
+3. 実行は `ai-config-agent execute-approved-plan ...` が stable boundary 経由で dispatch runtime に委譲する
+
+## Standard Surfaces
+
+### Selector MCP
+
+`ai-config-selector` は `ai-config-mcp-server` で公開される selector MCP です。
+
+- `search_tools`
+- `get_tool_detail`
+- `list_categories`
+- `get_tool_count`
+- `list_mcp_server_tools`
+- `call_mcp_server_tool`
+
+### Selector Serving
+
+`ai-config-selector-serving` は Cloud Run / HTTP 用の **標準 deploy surface** です。
+
+- endpoint: `/mcp`
+- health: `/healthz`
+- readiness: `/readyz`
+- runtime mode: read-only
+- startup で `.index` contract を fail-fast validation
+
+### Planner CLI
+
+`ai-config-agent` は search / plan / execute を明示的に分けた planner-facing CLI です。
+
+```bash
+# search only
+ai-config-agent search "eslint config" --index-dir ./.index
+
+# plan only
+ai-config-agent plan "codex でバグを修正" --index-dir ./.index
+
+# approved plan execution via stable boundary
+ai-config-agent execute-approved-plan --plan ./approved-plan.json --index-dir ./.index
+
+# stable contract schema
+ai-config-agent schema approved-plan
+ai-config-agent schema approved-plan-execution-request
 ```
-AI Tool (Claude Code / Codex / Antigravity / Gemini CLI)
-    │
-    └── ai-config-selector (MCP Server)
-            │
-            ├── search_tools(query)     → ツール検索
-            ├── get_tool_detail(id)     → 詳細取得
-            ├── list_categories()       → カテゴリ一覧
-            └── get_tool_count()        → 総数
-            │
-            └── .index/ (ハイブリッド検索エンジン)
-                    ├── records.json     (905+ ツールレコード)
-                    ├── faiss.bin        (ベクトルインデックス)
-                    ├── bm25.pkl         (BM25 インデックス)
-                    └── keyword_index.json (キーワード完全一致)
-```
 
-## セットアップ
+互換のため、従来の `--search-only` / `--plan-only` / `--execute-plan` も当面は維持します。
+
+### Dispatch Runtime Boundary
+
+`ai-config` は dispatch を直接 import して実行しません。`DispatchCLIPlanExecutor` が subprocess boundary で `ai-config.dispatch.cli` を呼びます。
+
+- request contract: `ApprovedPlanExecutionRequest`
+- transport: JSON file / JSON stdout
+- versioning: major version compatibility (`1.x.x`)
+- override: `AI_CONFIG_DISPATCH_CMD`
+
+この形にしてあるため、dispatch は将来的に別 repo / 別 package へ移設できます。
+
+## Setup
 
 ```powershell
 git clone https://github.com/ToshiyaTsubonishi/ai-config.git
@@ -31,241 +100,107 @@ cd ai-config
 powershell -ExecutionPolicy Bypass -File scripts/setup.ps1
 ```
 
-Unix-like 環境では `bash scripts/setup.sh` も利用できます。どちらの setup も、vendor manifest の pinned ref を `skills/external` に materialize してから default index を構築します。network が必要な ref materialization を意図的に飛ばす場合だけ `bash scripts/setup.sh --skip-vendor-sync` / `powershell ... -SkipVendorSync` を使います。
-
-Cloud Run 向けには build-time materialization / runtime read-only を前提にした `ai-config-selector-serving` を追加しています。runtime は `skills/`、`config/`、`.index/` を読むだけで、`sync-manifest` と `ai-config-index` は image build 時に完了させます。
-
-## 各 AI ツールに登録
-
-```powershell
-# 全ツールに一括登録
-powershell -ExecutionPolicy Bypass -File scripts/register.ps1
-
-# 個別登録
-powershell -ExecutionPolicy Bypass -File scripts/register.ps1 antigravity
-powershell -ExecutionPolicy Bypass -File scripts/register.ps1 gemini_cli
-powershell -ExecutionPolicy Bypass -File scripts/register.ps1 codex
-```
-
-Unix-like 環境では `bash scripts/register.sh ...` も利用できます。
-
-## CLI ツール
-
-Windows では `scripts/setup.ps1` が `.venv\Scripts\*.cmd` ランナーを生成します。以下は PowerShell 例です。
-
-```powershell
-# インデックス構築 (default プロファイル)
-.venv\Scripts\ai-config-index.cmd --repo-root . --profile default
-
-# MCP サーバー起動 (通常は AI ツールが自動起動)
-.venv\Scripts\ai-config-mcp-server.cmd --repo-root .
-
-# Cloud Run / HTTP serving target
-.venv\Scripts\ai-config-selector-serving.cmd --repo-root . --index-dir .\.index
-
-# ディスパッチ
-.venv\Scripts\ai-config-dispatch.cmd "バグを修正してテストを実行して"
-
-# 環境診断
-.venv\Scripts\ai-config-doctor.cmd --repo-root .
-
-# vendor status
-.venv\Scripts\ai-config-vendor-skills.cmd --repo-root . status
-```
-
-Unix-like 環境では従来どおり PATH 上の CLI を使えます。
+Unix-like 環境:
 
 ```bash
-# インデックス構築 (default プロファイル)
+git clone https://github.com/ToshiyaTsubonishi/ai-config.git
+cd ai-config
+bash scripts/setup.sh
+```
+
+setup が行うこと:
+
+1. 仮想環境作成
+2. dependency install
+3. `config/vendor_skills.yaml` の pinned ref を `skills/external` に materialize / verify
+4. default profile の index build
+
+network を避けたい場合だけ `--skip-vendor-sync` / `-SkipVendorSync` を使います。
+
+## Register MCP
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/register.ps1
+```
+
+Unix-like 環境:
+
+```bash
+bash scripts/register.sh all
+```
+
+## Daily Commands
+
+```bash
+# rebuild index
 ai-config-index --repo-root . --profile default
 
-# インデックス構築 (全件)
-ai-config-index --repo-root . --profile full
-
-# インデックス構築 (watch モード)
-ai-config-index --repo-root . --profile default --watch
-
-# MCP サーバー起動 (通常は AI ツールが自動起動)
+# selector MCP
 ai-config-mcp-server --repo-root .
 
-# HTTP transport で MCP サーバー起動
-ai-config-mcp-server --repo-root . --transport streamable-http --host 127.0.0.1 --port 8000
-
-# Cloud Run / selector-serving target
+# HTTP selector surface
 PORT=8080 ai-config-selector-serving --repo-root . --index-dir ./.index
 
-# vendor status
+# vendor observability
 ai-config-vendor-skills --repo-root . status
 
-# vendor status (JSON)
-ai-config-vendor-skills --repo-root . status --json
-
-# オーケストレーター (検索のみ)
-ai-config-agent "ESLint の設定を確認したい" --search-only
-
-# オーケストレーター (plan のみ)
-ai-config-agent "codex で実行して" --top-k 8 --plan-only
-
-# オーケストレーター (plan 作成 → 承認済み plan 実行)
-ai-config-agent "codex で実行して" --top-k 8 --max-retries 2
-
-# 承認済み plan の再実行
-ai-config-agent --execute-plan ./approved-plan.json
+# full doctor
+ai-config-doctor --repo-root .
 ```
 
-## ディレクトリ構成
+## Stable Contract
 
-```
+approved plan execution boundary は neutral contract module にあります。
+
+- module: `src/ai_config/contracts/approved_plan.py`
+- plan artifact: `ApprovedPlan`
+- execution request: `ApprovedPlanExecutionRequest`
+
+versioning policy:
+
+- `kind` は固定 identifier
+- `schema_version` は semver 風の `major.minor.patch`
+- runtime は同一 major (`1.x.x`) だけ受け付ける
+- breaking change は major を上げる
+
+## Directory Layout
+
+```text
 ai-config/
 ├── src/ai_config/
-│   ├── mcp_server/      # 動的選択 MCP サーバー
-│   ├── registry/         # ツールパーサー・インデックスビルダー
-│   ├── retriever/        # ハイブリッド検索 (BM25 + ベクトル + RRF)
-│   ├── orchestrator/     # LangGraph オーケストレーション
-│   ├── executor/         # ツール実行エンジン
-│   ├── build_index.py    # インデックス構築 CLI
-│   ├── source_manager.py # MCP-only source 管理 / legacy manifest cleanup
-│   └── vendor/           # external skill vendor layer
-├── skills/               # スキルコレクション (510+)
+│   ├── contracts/       # stable plan / execution contracts
+│   ├── mcp_server/      # selector MCP and selector-serving
+│   ├── registry/        # ToolRecord normalization and index build
+│   ├── retriever/       # hybrid retrieval / RAG
+│   ├── orchestrator/    # planner library and CLI
+│   ├── executor/        # tool executor and execution boundary adapters
+│   ├── dispatch/        # in-repo compatibility runtime; separate-repo candidate
+│   ├── vendor/          # external skill vendor layer
+│   ├── build_index.py
+│   ├── doctor.py
+│   └── source_manager.py
 ├── config/
-│   ├── master/ai-sync.yaml  # ツールカタログ設定
-│   ├── sources.yaml         # MCP source 定義
-│   └── vendor_skills.yaml   # pinned external skill manifest
-├── .index/               # 構築済みインデックス
-├── instructions/         # Agent / Gemini / Lesson のGit管理ファイル
-├── scripts/
-│   ├── setup.sh          # セットアップ
-│   ├── register.sh       # MCP 登録
-│   └── sync-instructions.sh # Agent/Gemini/Lesson 同期
-└── tests/                # テスト
+│   ├── master/ai-sync.yaml
+│   ├── index_profiles.yaml
+│   ├── sources.yaml
+│   └── vendor_skills.yaml
+├── docs/
+├── skills/
+├── workflows/
+└── tests/
 ```
 
-## ツールカタログ
+## External Skill / MCP Ownership
 
-`config/master/ai-sync.yaml` にマネージド MCP サーバー定義とスキルセットを記述します。
-これらは `ai-config-index` でインデックス化され、`ai-config-selector` MCP を通じて動的に検索されます。
+- `skills/external` は stable scan target のまま維持
+- `config/vendor_skills.yaml` が curated vendor source の正本
+- `ai-config-sources` は MCP source 管理と legacy cleanup のみ担当
+- external payload の import / update / provenance は `ai-config-vendor-skills` が担当
 
-## Cloud Run selector-serving
+## More Docs
 
-Cloud Run 用の `ai-config-selector-serving` は selector read API のみを公開します。
-
-- MCP endpoint: `/mcp`
-- health: `/healthz`
-- readiness: `/readyz`
-- runtime は read-only
-- `.index` 不在や contract mismatch は startup で fail-fast
-
-deploy 手順と Dockerfile は `deploy/cloudrun/README.md` と `deploy/cloudrun/Dockerfile` を参照してください。
-
-## 外部ソース管理
-
-Phase 2 でも `vercel-labs/skills` を直接導入しません。upstream に `--path` がないため、repo 内の vendor CLI で `skills/external` を vendor-managed local artifact として維持します。selector-first と stable scan target はそのままです。
-
-通常運用:
-
-```bash
-# local-only vendor state を確認
-ai-config-vendor-skills --repo-root . status
-
-# pinned manifest を materialize / verify
-ai-config-vendor-skills --repo-root . sync-manifest
-
-# manifest に pinned された provenance に基づいて再同期
-ai-config-vendor-skills --repo-root . update --all
-
-# vendor-managed checkout の remove
-ai-config-vendor-skills --repo-root . remove my-skills
-```
-
-追加の curated source seed は `config/vendor_skills.yaml` に `branch + ref` で pin します。標準の `sync-manifest` は manifest にない local external dir を消しません。削除は `--prune` の明示 opt-in だけです。
-
-移行専用コマンド:
-
-```bash
-# existing legacy checkout に provenance を backfill する migration utility
-ai-config-vendor-skills --repo-root . bootstrap-legacy --all
-
-# legacy skill submodule を local artifact に変換する migration utility
-ai-config-vendor-skills --repo-root . cleanup-legacy-submodule remotion
-ai-config-vendor-skills --repo-root . cleanup-legacy-submodule remotion --apply
-```
-
-`bootstrap-legacy` と `cleanup-legacy-submodule` は migration utility です。preview-first を前提に、単一 repo dry-run → 単一 repo `--apply` → 検証 → `--all` の順で使います。
-
-`config/sources.yaml` と `ai-config-sources` は MCP source 管理と legacy config cleanup のみ担当します。`skills/external` の実ファイル削除・更新責務は `ai-config-vendor-skills` 側です。
-
-運用確認の使い分け:
-
-- `ai-config-vendor-skills status`: local-only / network-free の vendor state 確認
-- `ai-config-doctor`: vendor / setup / index / selector を含む包括診断
-
-主な repo-managed skill sources:
-
-- `streamlit/agent-skills`
-- `remotion-dev/skills`
-- `anthropics/skills`
-- `anthropics/knowledge-work-plugins`
-- `sickn33/antigravity-awesome-skills`
-- `nextlevelbuilder/ui-ux-pro-max-skill`
-
-推奨運用:
-
-```bash
-ai-config-vendor-skills --repo-root . sync-manifest
-ai-config-sources --repo-root . sync
-ai-config-index --repo-root . --profile default
-```
-
-## Agent/Gemini/Lesson 同期
-
-`instructions/` を Git の正本として管理し、`scripts/sync-instructions.ps1` または `scripts/sync-instructions.sh` で実運用ファイルと同期します。
-
-```powershell
-# 同期状態を確認
-powershell -ExecutionPolicy Bypass -File scripts/sync-instructions.ps1 status
-
-# 実運用ファイル -> instructions/ に取り込み
-powershell -ExecutionPolicy Bypass -File scripts/sync-instructions.ps1 pull
-
-# instructions/ -> 実運用ファイルへ反映
-powershell -ExecutionPolicy Bypass -File scripts/sync-instructions.ps1 push
-```
-
-## インデックスプロファイル
-
-`config/index_profiles.yaml` でプロファイルごとの収録範囲を制御します。
-
-- `default`: 通常運用向け（`antigravity-awesome-skills` を除外）
-- `full`: すべて収録
-
-## custom スキル構成
-
-`skills/custom` はドメイン単位のディレクトリ分割に対応しています。
-
-例:
-
-- `skills/custom/human_resources/<skill>/SKILL.md`
-- `skills/custom/technology/<skill>/SKILL.md`
-- `skills/custom/banking_finance/<skill>/SKILL.md`
-
-## knowledge-work-plugins の MCP
-
-`skills/external/**/.mcp.json` をカタログとして索引化します。  
-この経路で取り込んだ MCP は **catalog-only** として扱い、検索結果には出ますが実行対象にはしません。
-
-## LLM 設定
-
-オーケストレーターの LLM モデルは環境変数 `GEMINI_MODEL` で指定します（デフォルト: `gemini-flash-latest`）。
-
-## 環境変数
-
-`.env.example` を `.env` にコピーして設定してください:
-
-- `GOOGLE_API_KEY` — オーケストレーター用
-- `GITHUB_PERSONAL_ACCESS_TOKEN` — GitHub MCP 用
-- その他 MCP サーバー固有のキー
-
-## 注意
-
-- `.env` はコミットしないでください（`.gitignore` 対象）
-- Python 3.11+ が必要です
+- [docs/overview.md](docs/overview.md)
+- [docs/architecture.md](docs/architecture.md)
+- [docs/operations.md](docs/operations.md)
+- [docs/development.md](docs/development.md)
+- [docs/constitution.md](docs/constitution.md)

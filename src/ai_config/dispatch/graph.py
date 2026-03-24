@@ -1,4 +1,4 @@
-"""LangGraph wiring for multi-agent dispatch orchestrator."""
+"""LangGraph wiring for the dispatch runtime."""
 
 from __future__ import annotations
 
@@ -42,7 +42,7 @@ def _route_after_replan(state: dict[str, Any]) -> str:
 # Graph construction
 # ---------------------------------------------------------------------------
 def build_dispatch_graph() -> StateGraph:
-    """Build the LangGraph state graph for multi-agent dispatch."""
+    """Build the LangGraph state graph for dispatch execution."""
     graph = StateGraph(DispatchState)
 
     # Nodes

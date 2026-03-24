@@ -1,307 +1,227 @@
 # ai-config アーキテクチャガイド
 
-## システム全体構成
+## Architecture Change Proposal
 
-ai-config は以下の主要モジュールで構成されています。
+このリファクタの目的は、`ai-config` を **動的な Skill / MCP 選択に特化した中核基盤** として明確化することです。
 
+方針:
+
+1. `ai-config` は selector / registry / retrieval / planner artifact に集中する
+2. Orchestrator は execution 主体ではなく planner library として縮退する
+3. Dispatch は approved plan execution runtime として分離可能な境界へ押し出す
+4. `ai-config-selector-serving` を標準 deploy surface とする
+
+## Responsibility Model
+
+| Concern | What it means | Owner |
+|---|---|---|
+| selector | Skill / MCP lookup, ranking, detail lookup, downstream MCP discovery | ai-config |
+| planner | candidate retrieval, plan artifact generation, plan validation, controlled replan | ai-config |
+| execution boundary | approved plan request contract, subprocess/package boundary, local abstraction | ai-config |
+| execution runtime | DAG scheduling, parallelism, retry, context handoff, plan execution | dispatch runtime |
+
+`ai-config` が differentiator として持つのは **正しい候補を出す能力** と **承認可能な plan artifact を作る能力** です。
+dispatch runtime は重要ですが、repo の中核責務ではありません。
+
+## Terms
+
+### Selector
+
+`selector` は ToolRecord catalog を検索して候補を返す層です。
+
+- `registry/`
+- `retriever/`
+- `mcp_server/tools.py`
+- `mcp_server/server.py`
+- `mcp_server/serving.py`
+
+### Planner
+
+`planner` は selector の候補を使って approved plan artifact を作る層です。
+
+- `orchestrator/planner.py`
+- `contracts/approved_plan.py`
+- `orchestrator/validator.py`
+
+Planner が行うこと:
+
+- candidate retrieval
+- plan artifact generation
+- plan validation
+- controlled replan
+
+Planner が行わないこと:
+
+- dispatch runtime の内部制御
+- dependency DAG 実行
+- context handoff の保持戦略
+
+### Execution Runtime
+
+`execution runtime` は approved plan を受け取って実行する層です。
+
+現在は repo 内に compatibility 実装として `dispatch/` が残っていますが、依存方向は次のとおりです。
+
+```text
+contracts -> orchestrator/planner
+contracts -> dispatch runtime
+orchestrator/cli -> executor/plan_boundary -> subprocess/package boundary -> dispatch runtime
 ```
+
+`ai-config` から `dispatch` を直接 import しないことが設計ルールです。
+
+## Core Modules
+
+```text
 src/ai_config/
-├── mcp_server/      # 動的選択 MCP サーバー
-├── registry/         # ツール登録・インデックス構築
-├── retriever/        # ハイブリッド検索エンジン
-├── orchestrator/     # LangGraph ベースのオーケストレーション
-├── executor/         # ツール実行エンジン
-├── dispatch/         # マルチエージェント・ディスパッチ
-├── vendor/           # skill import/update/provenance の vendor layer
-├── build_index.py    # インデックス構築 CLI
-└── source_manager.py # MCP-only source 管理 / legacy cleanup
+├── contracts/       # ApprovedPlan / ApprovedPlanExecutionRequest
+├── registry/        # ToolRecord normalization and index build
+├── retriever/       # hybrid retrieval / RAG
+├── mcp_server/      # selector MCP + selector-serving
+├── orchestrator/    # planner library and CLI
+├── executor/        # tool executor + dispatch boundary adapter
+├── dispatch/        # compatibility runtime; separate-repo candidate
+├── vendor/          # provenance / import / manifest ownership
+├── build_index.py
+├── doctor.py
+└── source_manager.py
 ```
 
-## モジュール詳細
+## Stable Contracts
 
-### 1. Registry（ツール登録）
+neutral contract module:
 
-スキルや MCP サーバーの情報をパースし、統一的な `ToolRecord` データモデルに変換します。
+- `ai_config.contracts.approved_plan.ApprovedPlan`
+- `ai_config.contracts.approved_plan.ApprovedPlanExecutionRequest`
 
-#### データモデル (`registry/models.py`)
+schema identifiers:
 
-```python
-@dataclass
-class ToolRecord:
-    id: str              # 例: "skill:deep-research", "mcp:firecrawl"
-    name: str            # ツール名
-    description: str     # 説明文
-    source_path: str     # リポジトリ内の相対パス
-    tool_kind: str       # skill | skill_script | mcp_server | toolchain_adapter
-    metadata: dict       # レイヤー、ドメイン、対象ターゲット等
-    invoke: dict         # 実行に必要な設定（コマンド、引数、環境変数等）
-    tags: list[str]      # 検索用タグ
+- `ai-config.approved-plan`
+- `ai-config.approved-plan-execution-request`
+
+validation rules:
+
+1. `kind` が期待値に一致すること
+2. `schema_version` が `1.x.x` の範囲であること
+3. step IDs が一意であること
+4. dependency graph が DAG であること
+5. plan 中の `tool_id` が available tool record と整合すること
+6. `tool_records` を同梱する場合は referenced tool を全て覆うこと
+
+JSON schema は CLI から確認できます。
+
+```bash
+ai-config-agent schema approved-plan
+ai-config-agent schema approved-plan-execution-request
 ```
 
-#### パーサー一覧
-
-| パーサー | 対象 | 入力 |
-|---|---|---|
-| `skill_parser.py` | スキル | `skills/**/SKILL.md` (frontmatter) |
-| `script_parser.py` | スクリプトスキル | `skills/**/scripts/*.py` 等 |
-| `mcp_parser.py` | MCP サーバー | `config/master/ai-sync.yaml` |
-| `external_mcp_catalog_parser.py` | 外部 MCP カタログ | `skills/external/**/.mcp.json` |
-| `path_metadata.py` | メタデータ推定 | ファイルパスからレイヤー・ドメインを推定 |
-
-`skills/external` は引き続き registry の stable scan target です。skill の fetch / pinned materialization / re-import / provenance は vendor layer が担当し、registry 側は scan-only を維持します。
-
-### Vendor Manifest
-
-Phase 2 では `config/vendor_skills.yaml` が curated external skill source の正本です。
-
-- `branch` は tracking metadata
-- `ref` は exact pin であり、setup と `sync-manifest` はこれを優先する
-- `skills/external` は git submodule ではなく local artifact として扱う
-- provenance には `requested_ref` と resolved `commit_sha` を保存する
-
-この構成により、selector/index/retrieval の scan target を変えずに setup 再現性を維持します。
-
-#### インデックスビルダー (`registry/index_builder.py`)
-
-収集した `ToolRecord` を検索可能なインデックスに変換します。
-
-**出力アーティファクト** (`.index/` ディレクトリ):
-
-| ファイル | 内容 | 用途 |
-|---|---|---|
-| `records.json` | 全ツールレコード (JSON) | マスターデータ |
-| `faiss.bin` | ベクトルインデックス or numpy 行列 | セマンティック検索 |
-| `bm25.pkl` | BM25Okapi インデックス | キーワード検索 |
-| `keyword_index.json` | トークン→ID マッピング | 完全一致検索 |
-| `summary.json` | メタデータ (フォーマットバージョン等) | 互換性確認 |
-
-**エンベディングバックエンド**:
-- `hash` (デフォルト): 依存なし、高速、近似ベクトル化
-- `sentence_transformer`: `intfloat/multilingual-e5-small` モデルによる高品質エンベディング
-
----
-
-### 2. Retriever（検索エンジン）
-
-**ハイブリッド検索 + RRF** によるツール検索を提供します。
-
-#### 検索フロー
-
-```
-クエリ "ESLint の設定"
-  │
-  ├── セマンティック検索 (ベクトル類似度)
-  │     → eslint-config (0.85), lint-setup (0.72), ...
-  │
-  ├── BM25 検索 (キーワードマッチ)
-  │     → eslint-config (8.2), eslint-fix (5.1), ...
-  │
-  └── キーワード完全一致
-        → eslint-config (exact match)
-  │
-  └── RRF 統合 (k=60)
-        → eslint-config (0.049), eslint-fix (0.016), ...
-```
-
-#### RRF（Reciprocal Rank Fusion）
-
-各検索手法のランク位置を統合するスコアリング手法:
-
-```
-RRF_score(d) = Σ 1 / (k + rank_i(d))
-```
-
-- `k = 60` (定数パラメータ)
-- 上位にランクされるほど高スコア
-- 複数の検索手法で上位なら相乗効果
-
-#### フィルタリング
-
-検索結果に対してフィルタを適用可能:
-
-- `tool_kinds`: ツール種別 (skill, mcp_server 等)
-- `targets`: 対象ツール (codex, antigravity 等)
-- `capabilities`: 機能 (cli_execution 等)
-- `source_repos`: ソースリポジトリ
-- `domains`: ドメイン
-- `executable_only`: 実行可能なツールのみ
-
----
-
-### 3. MCP Server（動的選択サーバー）
-
-AI ツールから呼び出される MCP 準拠のサーバーです。
-
-#### 公開ツール
-
-| ツール | 説明 | 引数 |
-|---|---|---|
-| `search_tools` | 自然言語でツール検索 | `query`, `top_k` (default: 5) |
-| `get_tool_detail` | ID でツール詳細取得 | `tool_id` |
-| `list_categories` | カテゴリ別の件数一覧 | なし |
-| `get_tool_count` | 総ツール数 | なし |
-
-#### 通信方式
-
-- **stdio** トランスポート（標準入出力経由）
-- **streamable-http** トランスポート（HTTP 経由）
-- AI ツールが JSON-RPC でリクエスト → MCP サーバーが応答
-
-#### Deploy surface
-
-- `ai-config-mcp-server` は既存の full MCP surface です。default transport は `stdio` のまま維持します。
-- `ai-config-selector-serving` は Cloud Run 向けの薄い deploy surface です。selector read API だけを HTTP で公開し、executor / downstream MCP bridge は公開しません。
-- Cloud Run runtime は `skills/`、`config/`、`.index/` を read-only に参照します。`sync-manifest` と `ai-config-index` は build-time で完了させます。
-- `config/vendor_skills.yaml` と `skills/external` stable scan target は変えません。deploy surface を増やすだけで、core ownership は増やしません。
-
----
-
-### 4. Dispatch（マルチエージェント・ディスパッチ）
-
-LangGraph ベースのステートグラフで、タスクを分解・実行します。
-現在は従来の CLI agent 分解に加えて、`OrchestrationPlan` を受け取って承認済み step を dependency order で実行する経路も持ちます。
-
-#### ステートグラフ
+## Planner Flow
 
 ```mermaid
-graph TD
-    A[plan_tasks] --> B{done?}
-    B -->|Yes| F[finalize]
-    B -->|No| C[dispatch_step]
-    C --> D[evaluate_step]
-    D --> E{result?}
-    E -->|done| F
-    E -->|needs_replanning| G[replan_tasks]
-    E -->|next| C
-    G --> H{replan ok?}
-    H -->|Yes| C
-    H -->|No/abort| F
-    F --> I[END]
+flowchart TD
+    A[search candidates] --> B[generate ApprovedPlan]
+    B --> C[validate plan artifact]
+    C -->|valid| D[return plan]
+    C -->|invalid| E[fallback plan]
+    E --> D
+    D --> F[optional controlled replan]
 ```
 
-#### 主要コンポーネント
+`orchestrator/planner.py` は planning artifact を返すライブラリです。
+標準 CLI surface は `search` / `plan` / `execute-approved-plan` を分離します。
 
-| ファイル | 役割 |
-|---|---|
-| `planner.py` | LLM でタスクを分解、または承認済み plan を実行用 step に正規化 |
-| `dispatcher.py` | CLI エージェント呼び出し、または approved plan の tool execution（逐次 / 並列） |
-| `evaluator.py` | ステップ結果の評価、リトライ / 再計画要求の判定 |
-| `workflow.py` | YAML ワークフロー定義の読み込み・展開 |
-| `graph.py` | LangGraph グラフ配線 |
-| `state.py` | ステート型定義 |
-| `cli.py` | CLI エントリポイント |
+## Execution Boundary
 
-#### 並列ディスパッチ
+`executor/plan_boundary.py` は dispatch runtime を呼ぶ唯一の場所です。
 
-依存関係のないステップを `ThreadPoolExecutor` で並列実行します。
-
-```
-Plan: [A(deps=[]), B(deps=[]), C(deps=[A,B])]
-  → Batch 1: A, B を並列実行
-  → Batch 2: C を実行（A, B の完了後）
+```text
+ai-config-agent execute-approved-plan
+  -> ApprovedPlanExecutionRequest
+  -> DispatchCLIPlanExecutor
+  -> python -m ai_config.dispatch.cli --execute-approved-plan <request.json> --json
 ```
 
-#### コンテキスト引き継ぎ
+この boundary の利点:
 
-各ステップの出力を `.dispatch/<session_id>/` に JSON として保存し、後続ステップのプロンプトに自動注入します。
+- dispatch の別 repo 化が可能
+- ai-config 側の import graph が安定する
+- subprocess / package / HTTP どの transport にも移行しやすい
+- approved plan request を事前 validation できる
 
----
+## Selector Serving
 
-### 5. Orchestrator（オーケストレーション）
+`ai-config-selector-serving` は selector platform の標準 HTTP surface です。
 
-ツールの検索 → 計画 → 実行 → 評価 → 修復 を自律的に繰り返す LangGraph グラフです。
-CLI の主経路は planning-first で、まず durable な `OrchestrationPlan` を作り、必要なら `--plan-only` で人間確認し、その後 dispatch に plan を渡して実行します。
+特性:
 
-#### ステートグラフ
+- read-only runtime
+- build-time index / runtime validation
+- `/healthz`
+- `/readyz`
+- `/mcp`
+- startup fail-fast on index contract mismatch
 
-```mermaid
-graph TD
-    A[route_specialist] --> B[retrieve_candidates]
-    B --> C[plan_steps]
-    C --> D{done?}
-    D -->|Yes| H[finalize]
-    D -->|No| E[execute_step]
-    E --> F[evaluate_step]
-    F --> G{result?}
-    G -->|done| H
-    G -->|needs_repair| I[repair_or_fallback]
-    G -->|next| E
-    I --> J{action?}
-    J -->|execute| E
-    J -->|re_retrieve| K[re_retrieve]
-    J -->|abort| H
-    K --> L{ok?}
-    L -->|Yes| C
-    L -->|No| H
-    H --> M[END]
+Cloud Run では `skills/`, `config/`, `.index/` を読むだけで、runtime で `sync-manifest` や `ai-config-index` は実行しません。
+
+## Vendor and Ownership
+
+- `config/vendor_skills.yaml` が curated vendor source の正本
+- `skills/external` は stable scan target
+- vendor provenance は `vendor/` が管理
+- registry は scan-only を維持
+
+この分離により、selection quality の改善と provenance 管理を独立に進められます。
+
+## CLI Surfaces
+
+### `ai-config-agent`
+
+- `search`
+- `plan`
+- `execute-approved-plan`
+- `run` (互換・ convenience)
+- `schema`
+
+### `ai-config-selector-serving`
+
+- selector read API のみ公開
+
+### `ai-config-dispatch`
+
+- prompt-to-plan runtime と approved plan execution runtime
+- separate repo / separate package candidate
+
+## Migration Direction
+
+移行期間の扱い:
+
+1. repo 内 `dispatch/` は compatibility runtime として残す
+2. `ai-config` は subprocess boundary でのみ呼ぶ
+3. contract と CLI を固定した後で別 repo へ移す
+4. 将来的に HTTP runtime や external package へ置き換えても `ai-config-agent` 側は変えない
+
+想定 repo split:
+
+```text
+ai-config-core
+  - contracts
+  - selector
+  - planner
+  - selector-serving
+
+ai-config-dispatch
+  - execution runtime
+  - DAG / retry / context handoff
+  - workflow templates
 ```
 
-#### スペシャリストルーティング
+## Near-Term Priorities
 
-クエリのキーワードから専門分野を判定し、検索結果をフィルタリングします。
+この設計以降の優先順位は次のとおりです。
 
-| スペシャリスト | キーワード例 | フィルタ |
-|---|---|---|
-| `software_engineering` | code, bug, test, react, python | engineering ドメイン優先 |
-| `data_analytics` | sql, data, dashboard, bigquery | data ドメイン優先 |
-| `knowledge_work` | sales, support, marketing | knowledge-work-plugins 優先 |
-| `general` | その他 | フィルタなし |
+1. retrieval / RAG quality
+2. selector-serving observability and readiness
+3. planner quality
+4. dispatch runtime externalization
 
-#### Planning-First Artifact
-
-`orchestrator/plan_schema.py` は次の構造化 artifact を定義します。
-
-- `ToolReference`: 選定された Skill / MCP / Adapter の要約
-- `PlanStep`: step 単位の目的、依存関係、期待出力、fallback
-- `OrchestrationPlan`: 承認可能な全体 plan（`plan_id`, `revision`, `candidate_tools`, `steps`）
-- `PlanValidationResult`: 実行前 validation の結果
-
-この artifact により、lookup と planning と execution の責務を分離します。
-
-- MCP Server: `search_tools` / `get_tool_detail` による capability lookup
-- Orchestrator: registry-backed plan generation / validation / controlled replan
-- Dispatch: 承認済み plan の実行
-
----
-
-### 6. Executor（実行エンジン）
-
-ツールを実際に実行するアダプター型のエンジンです。
-
-#### アダプター
-
-| アダプター | 対象 | 実行方法 |
-|---|---|---|
-| `CodexAdapter` | Codex CLI | `codex exec <prompt> --full-auto` |
-| `GeminiCliAdapter` | Gemini CLI | `gemini -p <prompt> --yolo` |
-| `AntigravityAdapter` | Antigravity | `antigravity --prompt <prompt>` |
-
-#### セキュリティ
-
-- **コマンドホワイトリスト**: 許可されたコマンドのみ実行可能
-- **環境変数フィルタ**: 安全な環境変数のみサブプロセスに渡す
-- **機密情報マスク**: 出力中の API キー等を自動マスク
-- **タイムアウト**: 実行時間の上限設定
-
----
-
-## データフロー全体図
-
-```
-  ソースコード・設定ファイル
-         │
-         ▼ (パース)
-  ToolRecord[] (統一データモデル)
-         │
-         ▼ (インデックス構築)
-  .index/ (records.json, faiss.bin, bm25.pkl, ...)
-         │
-         ▼ (検索)
-  HybridRetriever.search() → SearchHit[]
-         │
-    ┌────┴──────────────┐
-    │                   │
-    ▼                   ▼
-  MCP Server         Orchestrator
-  (AI ツール向け)      (自動実行)
-```
+planner 改善より前に retrieval quality を上げる前提で構成しています。候補 quality が弱い状態で planner だけを強化しても、根本改善にならないためです。

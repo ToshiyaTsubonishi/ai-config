@@ -11,13 +11,14 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from ai_config.orchestrator.plan_schema import (
+from ai_config.contracts.approved_plan import (
+    ApprovedPlan,
     FallbackStrategy,
-    OrchestrationPlan,
     PlanStep,
-    ToolReference,
     PlanValidationResult,
     parse_plan_text,
+    ToolReference,
+    render_approved_plan_summary,
 )
 from ai_config.orchestrator.candidate_bias import boost_hits
 from ai_config.orchestrator.router import (
@@ -70,7 +71,7 @@ class PlanningContext:
 
 @dataclass
 class PlanningResult:
-    plan: OrchestrationPlan
+    plan: ApprovedPlan
     validation: PlanValidationResult
     context: PlanningContext
     resolved_records: dict[str, ToolRecord]
@@ -207,7 +208,7 @@ class OrchestrationPlanner:
         *,
         top_k: int = 8,
         approval_required: bool = True,
-        previous_plan: OrchestrationPlan | None = None,
+        previous_plan: ApprovedPlan | None = None,
         replan_reason: dict[str, Any] | None = None,
     ) -> PlanningResult:
         context = self.retrieve_candidates(query, top_k=top_k)
@@ -221,7 +222,7 @@ class OrchestrationPlanner:
             if candidate.get("id") in context.candidate_records
         ]
 
-        plan = self._build_plan_with_llm(
+        plan = self.generate_plan_artifact(
             query=query,
             context=context,
             candidate_refs=candidate_refs,
@@ -237,11 +238,11 @@ class OrchestrationPlanner:
         if replan_reason:
             plan.replan_reason = json.dumps(replan_reason, ensure_ascii=False)
 
-        validation = validate_orchestration_plan(plan, self.records_by_id)
+        validation = self.validate_plan_artifact(plan)
         if not validation.valid:
             logger.warning("Planner output invalid, using deterministic fallback: %s", validation.errors)
             plan = self._fallback_plan(query=query, context=context, candidate_refs=candidate_refs, previous_plan=previous_plan)
-            validation = validate_orchestration_plan(plan, self.records_by_id)
+            validation = self.validate_plan_artifact(plan)
 
         if previous_plan is not None:
             changed_tools = describe_tool_changes(previous_plan, plan)
@@ -253,14 +254,50 @@ class OrchestrationPlanner:
         resolved_records = self.resolve_records_for_plan(plan)
         return PlanningResult(plan=plan, validation=validation, context=context, resolved_records=resolved_records)
 
-    def resolve_records_for_plan(self, plan: OrchestrationPlan) -> dict[str, ToolRecord]:
+    def resolve_records_for_plan(self, plan: ApprovedPlan) -> dict[str, ToolRecord]:
         tool_ids = collect_plan_tool_ids(plan)
         return {tool_id: self.records_by_id[tool_id] for tool_id in tool_ids if tool_id in self.records_by_id}
 
-    def load_plan_input(self, raw_or_path: str) -> OrchestrationPlan:
+    def load_plan_input(self, raw_or_path: str) -> ApprovedPlan:
         path = Path(raw_or_path)
         raw_text = path.read_text(encoding="utf-8") if path.exists() else raw_or_path
         return parse_plan_text(raw_text)
+
+    def generate_plan_artifact(
+        self,
+        *,
+        query: str,
+        context: PlanningContext,
+        candidate_refs: list[ToolReference],
+        previous_plan: ApprovedPlan | None,
+        replan_reason: dict[str, Any] | None,
+    ) -> ApprovedPlan:
+        return self._build_plan_with_llm(
+            query=query,
+            context=context,
+            candidate_refs=candidate_refs,
+            previous_plan=previous_plan,
+            replan_reason=replan_reason,
+        )
+
+    def validate_plan_artifact(self, plan: ApprovedPlan) -> PlanValidationResult:
+        return validate_orchestration_plan(plan, self.records_by_id)
+
+    def controlled_replan(
+        self,
+        query: str,
+        *,
+        top_k: int = 8,
+        previous_plan: ApprovedPlan,
+        replan_reason: dict[str, Any],
+    ) -> PlanningResult:
+        return self.create_plan(
+            query,
+            top_k=top_k,
+            approval_required=False,
+            previous_plan=previous_plan,
+            replan_reason=replan_reason,
+        )
 
     def _build_plan_with_llm(
         self,
@@ -268,9 +305,9 @@ class OrchestrationPlanner:
         query: str,
         context: PlanningContext,
         candidate_refs: list[ToolReference],
-        previous_plan: OrchestrationPlan | None,
+        previous_plan: ApprovedPlan | None,
         replan_reason: dict[str, Any] | None,
-    ) -> OrchestrationPlan:
+    ) -> ApprovedPlan:
         llm = self._get_llm()
         if llm is None:
             return self._fallback_plan(query=query, context=context, candidate_refs=candidate_refs, previous_plan=previous_plan)
@@ -321,7 +358,7 @@ class OrchestrationPlanner:
             )
 
         feasibility = draft.feasibility if draft.feasibility in {"full", "partial", "impossible"} else "partial"
-        return OrchestrationPlan(
+        return ApprovedPlan(
             user_goal=query,
             assumptions=draft.assumptions,
             specialist_route=context.specialist_route,
@@ -339,8 +376,8 @@ class OrchestrationPlanner:
         query: str,
         context: PlanningContext,
         candidate_refs: list[ToolReference],
-        previous_plan: OrchestrationPlan | None,
-    ) -> OrchestrationPlan:
+        previous_plan: ApprovedPlan | None,
+    ) -> ApprovedPlan:
         if not candidate_refs:
             payload: dict[str, Any] = {
                 "user_goal": query,
@@ -356,7 +393,7 @@ class OrchestrationPlanner:
             }
             if previous_plan is not None:
                 payload["plan_id"] = previous_plan.plan_id
-            return OrchestrationPlan.model_validate(payload)
+            return ApprovedPlan.model_validate(payload)
 
         primary = candidate_refs[0]
         primary_record = context.candidate_records[primary.tool_id]
@@ -400,7 +437,7 @@ class OrchestrationPlanner:
         }
         if previous_plan is not None:
             payload["plan_id"] = previous_plan.plan_id
-        return OrchestrationPlan.model_validate(payload)
+        return ApprovedPlan.model_validate(payload)
 
     def _retrieve_hits(
         self,
@@ -441,7 +478,7 @@ class OrchestrationPlanner:
         query: str,
         context: PlanningContext,
         candidate_refs: list[ToolReference],
-        previous_plan: OrchestrationPlan | None,
+        previous_plan: ApprovedPlan | None,
         replan_reason: dict[str, Any] | None,
     ) -> str:
         previous_plan_text = ""
@@ -509,34 +546,12 @@ def _strip_json_fence(text: str) -> str:
     return raw
 
 
-def render_plan_summary(plan: OrchestrationPlan) -> str:
+def render_plan_summary(plan: ApprovedPlan) -> str:
     """Render a concise human-readable summary for CLI output."""
-    lines = [
-        f"Plan ID: {plan.plan_id} (rev {plan.revision})",
-        f"Goal: {plan.user_goal}",
-        f"Specialist: {plan.specialist_route}",
-        f"Feasibility: {plan.feasibility}",
-        f"Approval required: {'yes' if plan.approval_required else 'no'}",
-        "",
-    ]
-    if plan.assumptions:
-        lines.append("Assumptions:")
-        lines.extend(f"- {assumption}" for assumption in plan.assumptions)
-        lines.append("")
-    if plan.steps:
-        lines.append("Steps:")
-        for step in plan.steps:
-            lines.append(
-                f"- {step.step_id}: {step.title} -> {step.tool_ref.tool_id} "
-                f"(depends_on={','.join(step.depends_on) or 'none'})"
-            )
-            lines.append(f"  expected: {step.expected_output or '(not specified)'}")
-    else:
-        lines.append("Steps: none")
-    return "\n".join(lines)
+    return render_approved_plan_summary(plan)
 
 
-def describe_tool_changes(previous_plan: OrchestrationPlan, new_plan: OrchestrationPlan) -> list[str]:
+def describe_tool_changes(previous_plan: ApprovedPlan, new_plan: ApprovedPlan) -> list[str]:
     """Describe tool selection changes between plan revisions."""
     previous_map = {step.step_id: step.tool_ref.tool_id for step in previous_plan.steps}
     changes: list[str] = []

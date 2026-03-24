@@ -1,123 +1,90 @@
 # ai-config 概要ガイド
 
-## ai-config とは？
+## ai-config とは
 
-**ai-config** は、AI コーディングツール（Codex、Antigravity、Gemini CLI）が使える **スキルと MCP サーバーを動的に検索・発見するためのプラットフォーム** です。
+`ai-config` は、AI agent が必要な Skill / MCP を **必要なときだけ動的に見つけるための selector platform** です。
 
-### ひとことで言うと
+ひとことで言うと:
 
-> 「AI ツールが必要なスキルを、必要なときに自分で見つけて使えるようにする仕組み」
+> AI agent のための capability broker
 
-### 背景にある課題
+## 何を解決するか
 
-AI コーディングツールには「スキル」や「MCP サーバー」と呼ばれる拡張機能があります。  
-しかし、数百〜数千のスキルをすべて事前に読み込むと:
+AI agent に大量の skill や MCP 情報を事前投入すると:
 
-- **AI のコンテキストウィンドウを圧迫** する（AI が同時に扱える情報量には上限がある）
-- スキルの追加・管理が **手作業で煩雑** になる
-- 不要なスキルが混ざり、AI の **判断精度が下がる**
+- コンテキストを圧迫する
+- 不要な候補が増える
+- selection quality が下がる
+- provenance や ownership が曖昧になる
 
-### ai-config の解決策
+`ai-config` は catalog / index / selector を通して、必要な候補だけを返します。
 
-ai-config は、AI ツールに **1 つだけ MCP サーバー（`ai-config-selector`）を登録** します。  
-AI は必要なときにこのサーバーに「○○ができるツールを探して」と依頼し、最適なものだけを取得します。
+## いまの設計の重心
 
-```
-AI ツール「ESLint の設定方法を知りたい」
-     ↓
-ai-config-selector「eslint-config スキルが見つかりました」
-     ↓
-AI ツール（スキルの内容を読んで実行）
-```
+### 1. Selector Platform
 
-## 主な機能
+- Skill / MCP catalog
+- ToolRecord normalization
+- hybrid retrieval / RAG
+- selector MCP
+- selector-serving
 
-### 1. 動的ツール検索（MCP サーバー）
+### 2. Planner Artifact
 
-905 以上のツールレコードをハイブリッド検索エンジンで検索します。
+- candidate retrieval
+- approved plan generation
+- plan validation
+- controlled replan
 
-- **ベクトル検索**: 意味的に近いツールを発見（「テストを書きたい」→ testing 系スキル）
-- **BM25 検索**: キーワードベースの全文検索
-- **キーワード完全一致**: ツール名や ID による正確な検索
-- **RRF（Reciprocal Rank Fusion）**: 3 つの検索結果を統合して最適なランキングを生成
+### 3. Boundary, not runtime
 
-### 2. マルチエージェント・ディスパッチ
-
-ユーザーの開発タスクを複数のステップに自動分解し、最適な AI エージェントに振り分けます。
-
-```
-ユーザー「バグを修正して」
-     ↓
-プランナー（LLM）
-     ├── Step 1: Gemini CLI で原因調査
-     ├── Step 2: Codex で修正実装
-     └── Step 3: Codex でテスト検証
-```
-
-**特徴:**
-- 依存関係のないステップは **並列実行** 可能
-- ステップ失敗時の **自動リトライ**（別エージェントへの切り替え含む）
-- 失敗時の **自動再計画**
-- **ワークフロー定義**（YAML）による定型パターンの再利用
-
-### 3. オーケストレーター
-
-検索したツールを実際に実行するための自動化エンジンです。
-
-- 検索 → 計画 → 実行 → 評価 → 修復 の **自律的ループ**
-- 失敗時の代替ツール試行
-- **安全な実行**: 実行コマンドや引数に含まれる秘密情報（API キーなど）をエラーログから自動的にマスク
-- **ディレクトリ指定実行**: `working_directory` を指定して、プロジェクトの特定ディレクトリでツールを実行可能
-- 専門分野（ソフトウェア工学、データ分析、ナレッジワーク）に基づく **ルーティング**
-
-### 4. Vendor Layer
-
-外部 skill repo は Phase 2 で vendor-managed local artifact に固定します。
-
-- `skills/external` を stable scan target として維持
-- `config/vendor_skills.yaml` を curated source seed の正本にする
-- `ai-config-vendor-skills sync-manifest` で exact ref を materialize / verify する
-- `sync-manifest` は default で local external dir を消さず、`--prune` のときだけ明示的に prune する
-- `bootstrap-legacy` / `cleanup-legacy-submodule` は migration utility として残す
-- `ai-config-sources` は MCP source 管理と legacy config cleanup のみ担当
+approved plan の execution runtime は重要ですが、`ai-config` の主役ではありません。
+実行は stable boundary 越しに dispatch runtime へ渡します。
 
 ## 全体像
 
-```
-┌─────────────────────────────────────┐
-│          AI ツール                    │
-│   (Codex / Antigravity / Gemini)    │
-└────────────┬────────────────────────┘
-             │ MCP 接続
-┌────────────▼────────────────────────┐
-│     ai-config-selector              │
-│     (MCP サーバー)                    │
-│                                     │
-│  search_tools()    → ツール検索      │
-│  get_tool_detail() → 詳細取得       │
-│  list_categories() → カテゴリ一覧    │
-│  get_tool_count()  → 総数           │
-└────────────┬────────────────────────┘
-             │
-┌────────────▼────────────────────────┐
-│     .index/ (検索エンジン)            │
-│                                     │
-│  records.json    905+ ツールレコード  │
-│  faiss.bin       ベクトルインデックス  │
-│  bm25.pkl        BM25 インデックス    │
-│  keyword_index   キーワード完全一致    │
-└─────────────────────────────────────┘
+```text
+Agent
+  -> ai-config-selector
+  -> candidate list
+  -> ai-config-agent plan
+  -> ApprovedPlan
+  -> ai-config-agent execute-approved-plan
+  -> ApprovedPlanExecutionRequest
+  -> dispatch runtime
 ```
 
-## 用語集
+## 用語
 
-| 用語 | 説明 |
+| 用語 | 意味 |
 |---|---|
-| **スキル (Skill)** | AI エージェントに特定の能力を与える指示書（Markdown 形式） |
-| **MCP サーバー** | AI ツールとの通信プロトコルに準拠した外部サービス。ツールの検索やデータ取得などを提供 |
-| **MCP (Model Context Protocol)** | AI ツールが外部のデータソースやサービスと接続するための標準規格 |
-| **インデックス** | スキルと MCP サーバーの情報を検索可能な形に整理したデータ |
-| **ディスパッチ** | タスクを複数の AI エージェントに分配して実行する仕組み |
-| **ワークフロー** | よく使うタスクパターンを YAML で定義したテンプレート |
-| **オーケストレーター** | ツールの検索・計画・実行を自動化するエンジン |
-| **RRF** | 複数の検索手法の結果を統合する手法（Reciprocal Rank Fusion） |
+| selector | Skill / MCP 候補を返す lookup 層 |
+| planner | approved plan artifact を作る層 |
+| execution boundary | plan を runtime に渡す stable contract |
+| dispatch runtime | approved plan を実行する外側の runtime |
+| selector-serving | selector read API を HTTP で公開する標準 surface |
+
+## 標準運用
+
+```bash
+ai-config-agent search "eslint config"
+ai-config-agent plan "codex で修正"
+ai-config-agent execute-approved-plan --plan ./approved-plan.json
+```
+
+selector-serving を使う deploy では:
+
+```bash
+PORT=8080 ai-config-selector-serving --repo-root . --index-dir ./.index
+```
+
+## この repo の価値
+
+`ai-config` の価値は、外部 runtime を自前で抱えることではなく:
+
+- 正しい候補を見せること
+- plan artifact を安定して作ること
+- provenance と ownership を維持すること
+- read-only runtime で安全に serving できること
+
+にあります。

@@ -1,1 +1,1 @@
-"""Orchestrator: planning-first task planner and executor interfaces."""
+"""Planner-first orchestration utilities and CLI surfaces."""

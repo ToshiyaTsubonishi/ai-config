@@ -1,4 +1,4 @@
-"""CLI entrypoint for multi-agent dispatch orchestrator."""
+"""CLI entrypoint for dispatch runtime execution."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ import json
 import logging
 import sys
 
+from ai_config.contracts.approved_plan import load_approved_plan_execution_request
 from ai_config.dispatch.graph import create_dispatch_agent
 from ai_config.dispatch.planner import detect_available_agents
 from ai_config.runtime_env import load_runtime_env
@@ -18,11 +19,54 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+def _result_payload(result: dict[str, object]) -> dict[str, object]:
+    return {
+        "status": "error" if result.get("error") else "success",
+        "final_report": result.get("final_report", ""),
+        "error": result.get("error"),
+        "step_results": result.get("step_results", []),
+        "replan_request": result.get("replan_request"),
+    }
+
+
+def _print_result(result: dict[str, object], *, json_output: bool) -> None:
+    payload = _result_payload(result)
+    if json_output:
+        print(json.dumps(payload, ensure_ascii=False, indent=2, default=str))
+        return
+    report = str(payload.get("final_report") or "(no report)")
+    print(report)
+
+
+def _initial_state_from_request(request_path_or_json: str) -> dict[str, object]:
+    request = load_approved_plan_execution_request(request_path_or_json)
+    return {
+        "user_prompt": request.plan.user_goal,
+        "working_directory": request.working_directory,
+        "repo_root": request.repo_root,
+        "approved_plan": request.plan.model_dump(),
+        "tool_records": request.tool_records,
+        "max_retries": request.max_retries,
+        "max_replans": 0,
+        "dry_run": False,
+        "parallel": request.parallel,
+        "keep_context": request.keep_context,
+        "step_results": [],
+        "replan_count": 0,
+        "replan_request": None,
+        "done": False,
+        "abort": False,
+        "needs_replanning": False,
+        "error": None,
+        "final_report": "",
+    }
+
+
 def main(argv: list[str] | None = None) -> None:
     load_runtime_env()
 
     parser = argparse.ArgumentParser(
-        description="Multi-agent dispatch orchestrator for AI coding tools"
+        description="Dispatch runtime for AI coding tools"
     )
     parser.add_argument("prompt", type=str, nargs="?", default="",
                         help="Development task to dispatch")
@@ -81,9 +125,19 @@ def main(argv: list[str] | None = None) -> None:
         action="store_true",
         help="Keep .dispatch/ context directory after execution",
     )
+    parser.add_argument(
+        "--execute-approved-plan",
+        type=str,
+        default="",
+        help="Stable approved-plan execution request as JSON file path or JSON string",
+    )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit machine-readable JSON result",
+    )
     args = parser.parse_args(argv)
 
-    # --- List workflows ---
     if args.list_workflows:
         from ai_config.dispatch.workflow import list_workflows
 
@@ -97,12 +151,22 @@ def main(argv: list[str] | None = None) -> None:
                 print(f"    Steps: {wf['steps']}  Path: {wf['path']}")
         return
 
+    if args.execute_approved_plan:
+        agent = create_dispatch_agent()
+        result = agent.invoke(_initial_state_from_request(args.execute_approved_plan))
+        if args.trace:
+            print("\nTRACE:")
+            print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
+            print()
+        _print_result(result, json_output=args.json)
+        if result.get("error"):
+            sys.exit(1)
+        return
+
     if not args.prompt and not args.workflow:
         parser.error("A prompt or --workflow is required.")
 
     preferred = [a.strip() for a in args.agents.split(",") if a.strip()] if args.agents else []
-
-    # Quick availability check
     available = detect_available_agents(preferred or None)
     if not available and not args.dry_run:
         logger.error(
@@ -112,12 +176,10 @@ def main(argv: list[str] | None = None) -> None:
 
     if available:
         logger.info("Available agents: %s", ", ".join(available))
-
     if args.parallel:
         logger.info("Parallel dispatch: ENABLED")
 
     agent = create_dispatch_agent()
-
     initial_state = {
         "user_prompt": args.prompt or f"Execute workflow: {args.workflow}",
         "working_directory": args.cwd,
@@ -144,8 +206,9 @@ def main(argv: list[str] | None = None) -> None:
         print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
         print()
 
-    report = result.get("final_report", "(no report)")
-    print(report)
+    _print_result(result, json_output=args.json)
+    if result.get("error"):
+        sys.exit(1)
 
 
 if __name__ == "__main__":

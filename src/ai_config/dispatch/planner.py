@@ -9,9 +9,11 @@ import os
 import shutil
 from typing import Any
 
-from ai_config.orchestrator.plan_schema import OrchestrationPlan
-from ai_config.orchestrator.planner import render_plan_summary
-from ai_config.orchestrator.validator import validate_orchestration_plan
+from ai_config.contracts.approved_plan import (
+    ApprovedPlan,
+    render_approved_plan_summary,
+    validate_approved_plan,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -202,7 +204,7 @@ def plan_tasks(state: dict[str, Any]) -> dict[str, Any]:
     approved_plan_raw = state.get("approved_plan")
 
     if approved_plan_raw:
-        approved_plan = OrchestrationPlan.model_validate(approved_plan_raw)
+        approved_plan = ApprovedPlan.model_validate(approved_plan_raw)
         available_tools = {
             str(record.get("id", "")): record
             for record in state.get("tool_records", [])
@@ -219,7 +221,7 @@ def plan_tasks(state: dict[str, Any]) -> dict[str, Any]:
                 for tool in approved_plan.candidate_tools
             }
 
-        validation = validate_orchestration_plan(approved_plan, available_tools)
+        validation = validate_approved_plan(approved_plan, available_tools)
         if not validation.valid:
             return {
                 "plan": [],
@@ -264,7 +266,7 @@ def plan_tasks(state: dict[str, Any]) -> dict[str, Any]:
         }
         if dry_run:
             result["done"] = True
-            result["final_report"] = "=== Approved Plan (dry-run) ===\n" + render_plan_summary(approved_plan)
+            result["final_report"] = "=== Approved Plan (dry-run) ===\n" + render_approved_plan_summary(approved_plan)
         return result
 
     available = detect_available_agents(preferred or None)

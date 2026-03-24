@@ -1,7 +1,7 @@
-"""Multi-agent dispatch orchestrator.
+"""Compatibility dispatch runtime.
 
-Decomposes user prompts into development steps and delegates each
-step to Antigravity / Gemini CLI / Codex CLI as autonomous workers.
+This package remains in-repo during the migration period, but core
+ai-config code reaches it only through the approved-plan boundary.
 """
 
 from ai_config.dispatch.graph import create_dispatch_agent

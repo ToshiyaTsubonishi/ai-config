@@ -1,4 +1,4 @@
-"""State definitions for the multi-agent dispatch graph."""
+"""State definitions for the dispatch runtime graph."""
 
 from __future__ import annotations
 
@@ -42,7 +42,7 @@ class StepResult:
 
 
 class DispatchState(TypedDict, total=False):
-    """LangGraph state for the dispatch orchestrator."""
+    """LangGraph state for the dispatch runtime."""
 
     user_prompt: str
     working_directory: str

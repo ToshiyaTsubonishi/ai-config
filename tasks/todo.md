@@ -1,5 +1,102 @@
 # TODO
 
+## 2026-03-24 Selector Platform Boundary Refactor
+
+### Plan
+- [ ] 現状の selector / planner / execution / dispatch の責務と依存を棚卸しし、差分を architecture docs に反映する
+- [ ] approved plan の stable contract を中立モジュールに切り出し、schema version / validation / subprocess boundary を定義する
+- [ ] orchestrator CLI を `search` / `plan` / `execute-approved-plan` 中心に再設計し、dispatch 直接 import をなくす
+- [ ] dispatch 側を approved plan execution runtime として接続し、ai-config からは execute abstraction 経由で呼ぶ
+- [ ] README / architecture / operations / development / overview / constitution を新方針に合わせて更新する
+- [ ] 関連テストと CLI smoke を更新し、移行上の残課題を review に記録する
+
+### Progress
+- [x] 現状調査
+- [x] contract 設計
+- [x] test 追加
+- [x] code 実装
+- [x] docs 更新
+- [x] 検証
+- [x] review
+
+### Review
+- 更新ファイル:
+  - `src/ai_config/contracts/approved_plan.py`
+  - `src/ai_config/executor/plan_boundary.py`
+  - `src/ai_config/orchestrator/cli.py`
+  - `src/ai_config/orchestrator/planner.py`
+  - `src/ai_config/orchestrator/plan_schema.py`
+  - `src/ai_config/orchestrator/validator.py`
+  - `src/ai_config/dispatch/cli.py`
+  - `src/ai_config/dispatch/planner.py`
+  - `src/ai_config/mcp_server/runtime.py`
+  - `README.md`
+  - `docs/architecture.md`
+  - `docs/operations.md`
+  - `docs/development.md`
+  - `docs/overview.md`
+  - `docs/constitution.md`
+  - `tests/test_approved_plan_contract.py`
+  - `tests/test_plan_boundary.py`
+  - `tests/test_cli_smoke.py`
+  - `tests/test_selector_serving.py`
+- 実装要約:
+  - approved plan と execution request を `contracts/` に切り出し、`kind` / `schema_version` / validation rule を中立 contract として定義した
+  - `orchestrator/cli.py` から `dispatch` 直接 import を削除し、`DispatchCLIPlanExecutor` の subprocess boundary に置き換えた
+  - `ai-config-agent` は `search` / `plan` / `execute-approved-plan` / `schema` を標準 surface にし、legacy flag を互換経路として残した
+  - `dispatch/` から `orchestrator/` への直接依存をなくし、contract module を介して approved plan を受ける runtime に寄せた
+  - `selector-serving` readiness payload に `surface` / `runtime_mode` / `required_artifacts` を追加し、標準 deploy surface の意味をコードでも明示した
+  - docs を selector platform / planner artifact / dispatch runtime boundary 前提へ更新した
+- 移行メモ:
+  - 現時点の dispatch は repo 内 compatibility runtime のまま残している
+  - `AI_CONFIG_DISPATCH_CMD` を使えば、将来 external dispatch runtime へ切り替えても planner 側の public surface を維持できる
+  - 次段では `dispatch` 側 request/response schema を repo 外へ持ち出す packaging と workflow asset の移送を行う
+- 検証コマンド:
+  - `PYTHONPATH=src .venv/bin/python -m pytest tests/test_approved_plan_contract.py tests/test_plan_boundary.py tests/test_cli_smoke.py tests/test_dispatch_approved_plan.py tests/test_dispatch_graph.py tests/test_dispatch_planner.py tests/test_dispatch_workflow.py tests/test_dispatch_fixes.py tests/test_orchestrator_plan_artifacts.py tests/test_orchestrator_router.py tests/test_orchestrator_toolchain_bias.py tests/test_selector_serving.py tests/test_mcp_server_extended.py tests/test_mcp_server_tools.py tests/test_index_builder_contract.py -q`
+  - `PYTHONPATH=src .venv/bin/python -m ai_config.orchestrator.cli --help`
+  - `PYTHONPATH=src .venv/bin/python -m ai_config.orchestrator.cli schema approved-plan-execution-request`
+  - `PYTHONPATH=src .venv/bin/python -m ai_config.dispatch.cli --help`
+  - `git diff --check`
+- 検証結果:
+  - 主要回帰テスト 80 件が成功した
+  - `ai-config-agent --help` は subcommand based surface を表示し、`schema` から contract JSON schema を確認できた
+  - `ai-config-dispatch --help` は `--execute-approved-plan` と `--json` を公開した
+  - `git diff --check` は clean だった
+
+## 2026-03-24 macOS Selector Registration Repair
+
+### Plan
+- [x] 現状の user-home 設定と repo 内セットアップ手順を確認し、未設定原因を特定する
+- [x] `scripts/register.sh` を使って macOS 向けの `ai-config-selector` 登録を修復する
+- [x] `search_tools` 到達性と主要設定ファイルの反映を確認する
+- [x] レビュー結果を `tasks/todo.md` に記録する
+
+### Progress
+- [x] 現状確認
+- [x] register 実行
+- [x] 動作確認
+- [x] review
+
+### Review
+- 原因:
+  - `~/.codex/config.toml` と `~/.gemini/settings.json`、`~/.gemini/antigravity/mcp_config.json` が `C:\Users\tsytbns\GitHub\ai-config\...` の旧 Windows パスを指していた
+  - macOS では shell PATH 上に `ai-config-selector` という別名 CLI は不要で、各 AI ツールが `ai-config-selector` という MCP 名で `ai-config-mcp-server` を起動する構成が正
+- 実行:
+  - `cp ~/.codex/config.toml ~/.codex/config.toml.20260324-selector-fix.bak`
+  - `cp ~/.gemini/settings.json ~/.gemini/settings.json.20260324-selector-fix.bak`
+  - `cp ~/.gemini/antigravity/mcp_config.json ~/.gemini/antigravity/mcp_config.json.20260324-selector-fix.bak`
+  - `cp ~/.claude.json ~/.claude.json.20260324-selector-fix.bak`
+  - `bash scripts/register.sh all`
+- 検証:
+  - `~/.codex/config.toml`
+  - `~/.gemini/settings.json`
+  - `~/.gemini/antigravity/mcp_config.json`
+  - `~/.claude.json`
+  - `PYTHONPATH=src .venv/bin/python - <<'PY' ... ClientSession ... search_tools/get_tool_detail ... PY`
+- 検証結果:
+  - 4 つの user-home 設定ファイルはすべて `/Users/tsytbns/Documents/GitHub/ai-config/.venv/bin/ai-config-mcp-server --repo-root /Users/tsytbns/Documents/GitHub/ai-config` を参照する状態になった
+  - ローカル selector MCP の `list_tools` / `search_tools` / `get_tool_detail` が成功し、base tools 7 個の公開と検索応答を確認した
+
 ## 2026-03-19 Cloud Run Selector Serving
 
 ### Plan

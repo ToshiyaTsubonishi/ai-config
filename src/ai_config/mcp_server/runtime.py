@@ -32,12 +32,15 @@ class RuntimeIndexStatus:
     def to_readiness_payload(self) -> dict[str, Any]:
         return {
             "status": "ready",
+            "surface": "selector-serving",
+            "runtime_mode": "read_only",
             "index_dir": self.index_dir,
             "record_count": self.record_count,
             "index_format_version": self.index_format_version,
             "profile": self.profile,
             "embedding_backend": self.embedding_backend,
             "vector_backend": self.vector_backend,
+            "required_artifacts": list(REQUIRED_INDEX_ARTIFACTS),
         }
 
 
