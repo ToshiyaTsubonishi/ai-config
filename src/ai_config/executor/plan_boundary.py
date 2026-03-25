@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -32,12 +33,44 @@ class DispatchCLIPlanExecutor:
     def __init__(self, repo_root: Path, *, timeout_seconds: int = 3600) -> None:
         self.repo_root = repo_root.resolve()
         self.timeout_seconds = timeout_seconds
+        self._ai_config_repo_root = Path(__file__).resolve().parents[3]
 
     def _command_prefix(self) -> list[str]:
         override = os.getenv("AI_CONFIG_DISPATCH_CMD", "").strip()
         if override:
             return shlex.split(override)
+        external_repo = self._external_repo_root()
+        if external_repo is not None:
+            return [sys.executable, "-m", "ai_config_dispatch.cli"]
+        installed = shutil.which("ai-config-dispatch")
+        if installed:
+            return [installed]
         return [sys.executable, "-m", "ai_config.dispatch.cli"]
+
+    def _external_repo_root(self) -> Path | None:
+        candidate = self._ai_config_repo_root.parent / "ai-config-dispatch"
+        if not (candidate / "pyproject.toml").exists():
+            return None
+        if not (candidate / "src" / "ai_config_dispatch" / "cli.py").exists():
+            return None
+        return candidate
+
+    def _subprocess_env(self) -> dict[str, str] | None:
+        external_repo = self._external_repo_root()
+        if external_repo is None:
+            return None
+
+        env = dict(os.environ)
+        python_paths = [
+            str(external_repo / "src"),
+            str(self._ai_config_repo_root / "src"),
+        ]
+        existing = env.get("PYTHONPATH", "")
+        if existing:
+            python_paths.append(existing)
+        env["PYTHONPATH"] = os.pathsep.join(python_paths)
+        env.setdefault("AI_CONFIG_DISPATCH_WORKFLOW_DIR", str(external_repo / "workflows"))
+        return env
 
     @staticmethod
     def _error_result(message: str, *, final_report: str = "", returncode: int | None = None) -> dict[str, Any]:
@@ -70,6 +103,7 @@ class DispatchCLIPlanExecutor:
                 capture_output=True,
                 text=True,
                 cwd=parsed.repo_root or str(self.repo_root),
+                env=self._subprocess_env(),
                 timeout=self.timeout_seconds,
             )
 

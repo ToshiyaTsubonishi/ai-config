@@ -80,7 +80,7 @@ src/ai_config/
 ├── mcp_server/      # selector MCP + selector-serving
 ├── orchestrator/    # planner library and CLI
 ├── executor/        # tool executor + dispatch boundary adapter
-├── dispatch/        # compatibility runtime; separate-repo candidate
+├── dispatch/        # compatibility shim for external runtime package
 ├── vendor/          # provenance / import / manifest ownership
 ├── build_index.py
 ├── doctor.py
@@ -143,7 +143,7 @@ flowchart TD
 ai-config-agent execute-approved-plan
   -> ApprovedPlanExecutionRequest
   -> DispatchCLIPlanExecutor
-  -> python -m ai_config.dispatch.cli --execute-approved-plan <request.json> --json
+  -> python -m ai_config_dispatch.cli --execute-approved-plan <request.json> --json
 ```
 
 この boundary の利点:
@@ -153,6 +153,13 @@ ai-config-agent execute-approved-plan
 - subprocess / package / HTTP どの transport にも移行しやすい
 - approved plan request を事前 validation できる
 - approved plan result を boundary で reject / accept できる
+
+bootstrap resolution order:
+
+1. `AI_CONFIG_DISPATCH_CMD`
+2. sibling repo `../ai-config-dispatch` checkout
+3. installed `ai-config-dispatch` CLI
+4. in-repo compatibility shim
 
 result contract semantics:
 
@@ -166,6 +173,8 @@ ownership decision:
 - `workflows/*.yaml` は dispatch repo 所有
 - runtime docs / troubleshooting / packaging metadata は dispatch repo 所有
 - ai-config には contracts / boundary adapter / planner integration docs を残す
+- current bootstrap repo は sibling `ai-config-dispatch`
+- `src/ai_config/dispatch/*` は compatibility shim のみ残す
 
 ## Selector Serving
 
@@ -214,7 +223,7 @@ Cloud Run では `skills/`, `config/`, `.index/` を読むだけで、runtime �
 
 移行期間の扱い:
 
-1. repo 内 `dispatch/` は compatibility runtime として残す
+1. repo 内 `dispatch/` は compatibility shim として残す
 2. `ai-config` は subprocess boundary でのみ呼ぶ
 3. contract と CLI を固定した後で別 repo へ移す
 4. 将来的に HTTP runtime や external package へ置き換えても `ai-config-agent` 側は変えない

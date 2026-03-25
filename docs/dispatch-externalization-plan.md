@@ -14,15 +14,16 @@
 現状の前提:
 
 - request 側 contract は `ApprovedPlanExecutionRequest` まで fixed
-- `ai-config-agent execute-approved-plan` は subprocess boundary 経由で `ai_config.dispatch.cli` を呼ぶ
-- dispatch runtime 本体、workflow YAML、runtime docs はまだ同じ repo に残っている
+- `ai-config-agent execute-approved-plan` は subprocess boundary 経由で external `ai-config-dispatch` を呼ぶ
+- ai-config 内の `dispatch/` は compatibility shim へ縮退した
 - response 側 contract は `ApprovedPlanExecutionResult@1.0.0` で固定した
+- bootstrap external repo `ai-config-dispatch` を sibling checkout として作成し、packaging / workflow assets / runtime docs / runtime package の ownership 移送を開始した
 
 repo 依存の現状:
 
-- runtime code: `src/ai_config/dispatch/**`
-- workflow assets: `workflows/*.yaml`
-- runtime tests: `tests/test_dispatch_*`
+- runtime code: `../ai-config-dispatch/src/ai_config_dispatch/**`
+- workflow assets: `../ai-config-dispatch/workflows/*.yaml`
+- runtime tests: `../ai-config-dispatch/tests/test_dispatch_*`
 - integration docs: `README.md`, `docs/architecture.md`, `docs/operations.md`
 
 ## Decision Summary
@@ -215,6 +216,15 @@ step-level `status`:
 - runtime release pipeline
 - runtime-only tests
 
+### Bootstrap implementation status
+
+- done: external repo `ai-config-dispatch` を作成
+- done: workflow assets / runtime docs / packaging metadata を external repo に配置
+- done: runtime package `ai_config_dispatch` を external repo に配置
+- done: ai-config boundary adapter が sibling external repo を優先解決
+- transitional: shared contracts / executor / runtime env helper は `ai-config` package に依存
+- next: ai-config から in-repo compatibility shim をさらに薄くし、external package を主系にする
+
 ### Transitional / shared
 
 - integration tests that verify boundary compatibility can remain in ai-config
@@ -278,7 +288,7 @@ Acceptance:
 - ai-config can operate without local `src/ai_config/dispatch/**`
 - only the stable contracts and boundary adapter remain in ai-config
 
-### Phase 5: Remove compatibility runtime from ai-config
+### Phase 5: Remove compatibility shim from ai-config
 
 Deliverables:
 

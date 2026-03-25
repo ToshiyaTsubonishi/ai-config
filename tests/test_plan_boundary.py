@@ -154,3 +154,54 @@ def test_dispatch_cli_plan_executor_accepts_structured_error_result(monkeypatch,
     assert result["status"] == "error"
     assert result["execution_id"] == "exec-2"
     assert result["error"] == "boom"
+
+
+def test_dispatch_cli_plan_executor_prefers_external_repo_checkout(monkeypatch, tmp_path: Path) -> None:
+    request = _request(tmp_path)
+    captured: dict[str, object] = {}
+
+    external_repo = tmp_path / "ai-config-dispatch"
+    (external_repo / "src" / "ai_config_dispatch").mkdir(parents=True)
+    (external_repo / "pyproject.toml").write_text("[project]\nname='ai-config-dispatch'\n", encoding="utf-8")
+    (external_repo / "src" / "ai_config_dispatch" / "cli.py").write_text("def main():\n    pass\n", encoding="utf-8")
+
+    def _fake_run(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+        captured["command"] = command
+        captured["env"] = kwargs.get("env")
+        return subprocess.CompletedProcess(
+            command,
+            0,
+            stdout=json.dumps(
+                {
+                    "kind": "ai-config.approved-plan-execution-result",
+                    "schema_version": "1.0.0",
+                    "request_kind": "ai-config.approved-plan-execution-request",
+                    "request_schema_version": "1.0.0",
+                    "plan_id": request.plan.plan_id,
+                    "plan_revision": request.plan.revision,
+                    "execution_id": "exec-ext",
+                    "runtime": {"name": "ai-config-dispatch", "transport": "subprocess_json"},
+                    "status": "success",
+                    "final_report": "ok",
+                    "step_results": [{"step_id": "step-1", "status": "success"}],
+                    "error": None,
+                    "replan_request": None,
+                },
+                ensure_ascii=False,
+            ),
+            stderr="",
+        )
+
+    monkeypatch.setattr(subprocess, "run", _fake_run)
+
+    executor = DispatchCLIPlanExecutor(repo_root=tmp_path / "repo")
+    monkeypatch.setattr(executor, "_external_repo_root", lambda: external_repo)
+
+    result = executor.execute_request(request)
+
+    command = captured["command"]
+    assert command[:3] == [executor._command_prefix()[0], "-m", "ai_config_dispatch.cli"]
+    env = captured["env"]
+    assert isinstance(env, dict)
+    assert str(external_repo / "src") in str(env.get("PYTHONPATH", ""))
+    assert "exec-ext" == result["execution_id"]

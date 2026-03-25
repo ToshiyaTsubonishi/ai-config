@@ -1,9 +1,7 @@
-"""Compatibility dispatch runtime.
+"""Compatibility import shim for the external dispatch runtime package."""
 
-This package remains in-repo during the migration period, but core
-ai-config code reaches it only through the approved-plan boundary.
-"""
+from ai_config.dispatch._compat import load_external_module
 
-from ai_config.dispatch.graph import create_dispatch_agent
+create_dispatch_agent = load_external_module("graph").create_dispatch_agent
 
 __all__ = ["create_dispatch_agent"]

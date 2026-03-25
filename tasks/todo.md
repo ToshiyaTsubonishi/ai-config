@@ -1,5 +1,132 @@
 # TODO
 
+## 2026-03-25 Dispatch GitHub Publish And Shrink
+
+### Plan
+- [x] `ai-config-dispatch` repo を GitHub に作成し、current runtime package commit を push する
+- [x] ai-config から `ai-config-dispatch` console script を外し、dispatch package は compatibility shim に縮退する
+- [x] ai-config 内の dispatch runtime tests を external repo 所有へ寄せ、boundary / contract test だけ残す
+- [x] docs と migration plan を external package 主系に更新する
+- [x] 両 repo の relevant tests と CLI smoke を再実行し、publish 状態と shrink 状態を確認する
+
+### Progress
+- [x] 現状確認
+- [x] GitHub repo 作成
+- [x] ai-config shrink
+- [x] docs 更新
+- [x] 検証
+- [x] review
+
+### Review
+- 更新ファイル:
+  - `pyproject.toml`
+  - `src/ai_config/dispatch/__init__.py`
+  - `src/ai_config/dispatch/_compat.py`
+  - `src/ai_config/dispatch/cli.py`
+  - `src/ai_config/dispatch/dispatcher.py`
+  - `src/ai_config/dispatch/evaluator.py`
+  - `src/ai_config/dispatch/graph.py`
+  - `src/ai_config/dispatch/planner.py`
+  - `src/ai_config/dispatch/state.py`
+  - `src/ai_config/dispatch/workflow.py`
+  - `tests/test_dispatch_compat_shim.py`
+  - `tests/test_plan_boundary.py`
+  - `README.md`
+  - `docs/architecture.md`
+  - `docs/development.md`
+  - `docs/operations.md`
+  - `docs/dispatch-externalization-plan.md`
+  - `tasks/todo.md`
+  - deleted: `tests/test_dispatch_approved_plan.py`
+  - deleted: `tests/test_dispatch_cli_result_contract.py`
+  - deleted: `tests/test_dispatch_fixes.py`
+  - deleted: `tests/test_dispatch_graph.py`
+  - deleted: `tests/test_dispatch_planner.py`
+  - deleted: `tests/test_dispatch_workflow.py`
+- 実施内容:
+  - `ai-config-dispatch` GitHub repo を作成し、external runtime package commit を push した
+  - ai-config `pyproject.toml` から `ai-config-dispatch` console script を削除した
+  - ai-config `dispatch/` は full runtime ではなく external package を読む compatibility shim に縮退した
+  - dispatch runtime internal tests は ai-config から削除し、external repo 側を正本にした
+  - docs を external package 主系に更新した
+- GitHub:
+  - repo: `https://github.com/ToshiyaTsubonishi/ai-config-dispatch`
+  - pushed SHA: `2f7d3c7`
+- 検証:
+  - `PYTHONPATH=src .venv/bin/python -m pytest tests/test_approved_plan_contract.py tests/test_plan_boundary.py tests/test_dispatch_compat_shim.py tests/test_cli_smoke.py tests/test_selector_serving.py tests/test_orchestrator_plan_artifacts.py -q`
+  - `PYTHONPATH=/Users/tsytbns/Documents/GitHub/ai-config-dispatch/src:/Users/tsytbns/Documents/GitHub/ai-config/src /Users/tsytbns/Documents/GitHub/ai-config/.venv/bin/python -m pytest tests/test_cli.py tests/test_dispatch_workflow.py tests/test_dispatch_planner.py tests/test_dispatch_cli_result_contract.py tests/test_dispatch_approved_plan.py -q`
+  - `python3 -m compileall src/ai_config/dispatch src/ai_config/executor/plan_boundary.py`
+  - `gh repo view ToshiyaTsubonishi/ai-config-dispatch --json url,name,visibility,defaultBranchRef`
+  - `git diff --check`
+- 検証結果:
+  - ai-config focused suite は `22 passed`
+  - ai-config-dispatch focused suite は `33 passed`
+  - GitHub repo は public / `main` / remote push 済み
+  - diff hygiene は clean
+
+## 2026-03-25 External Dispatch Repo Bootstrap
+
+### Plan
+- [x] dispatch の external repo bootstrap 方針を固定し、移送対象と互換 fallback を明文化する
+- [x] sibling repo `../ai-config-dispatch` を作成し、packaging / README / runtime docs / workflows を配置する
+- [x] external repo の CLI / runtime package を作成し、workflow assets と package ownership を外へ移す
+- [x] ai-config 側の boundary を external repo 優先で解決できるようにし、internal runtime は fallback にする
+- [x] 両 repo の tests / CLI smoke / docs を更新して bootstrap 状態を検証する
+
+### Progress
+- [x] 現状調査
+- [x] bootstrap plan
+- [x] external repo 作成
+- [x] boundary 更新
+- [x] docs 更新
+- [x] 検証
+- [x] review
+
+### Review
+- 更新ファイル:
+  - `src/ai_config/executor/plan_boundary.py`
+  - `src/ai_config/dispatch/workflow.py`
+  - `tests/test_plan_boundary.py`
+  - `tests/test_dispatch_workflow.py`
+  - `README.md`
+  - `docs/architecture.md`
+  - `docs/operations.md`
+  - `docs/development.md`
+  - `docs/dispatch-externalization-plan.md`
+  - `tasks/todo.md`
+  - `../ai-config-dispatch/pyproject.toml`
+  - `../ai-config-dispatch/.gitignore`
+  - `../ai-config-dispatch/README.md`
+  - `../ai-config-dispatch/docs/runtime.md`
+  - `../ai-config-dispatch/src/ai_config_dispatch/__init__.py`
+  - `../ai-config-dispatch/src/ai_config_dispatch/cli.py`
+  - `../ai-config-dispatch/tests/test_cli.py`
+  - `../ai-config-dispatch/workflows/*.yaml`
+- 実施内容:
+  - sibling repo `../ai-config-dispatch` を新設し、git repo を初期化した
+  - external repo に packaging / CLI entrypoint / runtime docs / workflow assets を配置した
+  - external repo に `ai_config_dispatch` runtime package を配置し、workflow assets / packaging / runtime docs と同じ repo に揃えた
+  - ai-config の boundary adapter は `AI_CONFIG_DISPATCH_CMD` の次に sibling external repo を優先し、その後 installed CLI、最後に in-repo runtime へ fallback するようにした
+  - workflow loader は `AI_CONFIG_DISPATCH_WORKFLOW_DIR` override を受け付けるようにした
+- 検証:
+  - `PYTHONPATH=src .venv/bin/python -m pytest tests/test_approved_plan_contract.py tests/test_dispatch_planner.py tests/test_plan_boundary.py tests/test_dispatch_workflow.py tests/test_cli_smoke.py tests/test_dispatch_cli_result_contract.py tests/test_dispatch_approved_plan.py -q`
+  - `PYTHONPATH=/Users/tsytbns/Documents/GitHub/ai-config-dispatch/src:/Users/tsytbns/Documents/GitHub/ai-config/src /Users/tsytbns/Documents/GitHub/ai-config/.venv/bin/python -m pytest tests/test_cli.py -q`
+  - `PYTHONPATH=/Users/tsytbns/Documents/GitHub/ai-config-dispatch/src:/Users/tsytbns/Documents/GitHub/ai-config/src /Users/tsytbns/Documents/GitHub/ai-config/.venv/bin/python -m ai_config_dispatch.cli --list-workflows`
+  - `python3 -m compileall src/ai_config/executor/plan_boundary.py src/ai_config/dispatch/workflow.py`
+  - `python3 -m compileall src/ai_config_dispatch`
+  - `git diff --check`
+- 検証結果:
+  - ai-config focused suite は `46 passed`
+  - external repo bootstrap tests は `2 passed`
+  - external CLI は external repo 配下の workflows を列挙した
+  - diff hygiene は clean
+- external repo commit:
+  - `ai-config-dispatch`: `2f7d3c7` (`feat: add external dispatch runtime package`)
+- 次の分離対象:
+  - ai-config `pyproject.toml` から `ai-config-dispatch` script を compatibility 扱いへ切り替える
+  - ai-config 内の in-repo compatibility runtime を縮退し、tests を外側へ寄せる
+  - external repo の own dependency set を `ai-config` 依存から段階的に減らす
+
 ## 2026-03-24 ApprovedPlanExecutionResult Contract
 
 ### Plan

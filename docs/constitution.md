@@ -89,6 +89,6 @@ ai-config の価値は次の領域にある。
 - **Core**: selector / registry / retrieval / planner / serving
 - **Contracts**: approved plan / execution request
 - **Vendor**: import / provenance / manifest ownership
-- **Runtime boundary**: dispatch adapter and compatibility runtime
+- **Runtime boundary**: dispatch adapter and compatibility shim
 
 物理分割は後からでよいが、依存方向は最初から分ける。

@@ -21,7 +21,7 @@ src/ai_config/
 ├── mcp_server/      # selector MCP and selector-serving
 ├── orchestrator/    # planner library and planner-facing CLI
 ├── executor/        # local tool executor and dispatch boundary adapter
-├── dispatch/        # compatibility runtime; separate-repo candidate
+├── dispatch/        # compatibility shim for external runtime package
 ├── vendor/          # import / provenance / manifest ownership
 ├── doctor.py
 ├── build_index.py
@@ -61,9 +61,17 @@ dispatch runtime への接続は `DispatchCLIPlanExecutor` が担います。
 
 - request: JSON file
 - response: JSON stdout
-- command: `python -m ai_config.dispatch.cli --execute-approved-plan ... --json`
+- command: `python -m ai_config_dispatch.cli --execute-approved-plan ... --json`
 
 将来 HTTP や external package に変えても、planner 側の public surface は変えない前提です。
+
+bootstrap externalization:
+
+- sibling repo `../ai-config-dispatch` を bootstrap external runtime として使う
+- boundary adapter は sibling checkout があれば `python -m ai_config_dispatch.cli` を優先する
+- external repo は workflow assets / runtime docs / packaging と runtime package を所有する
+- shared contracts / executor / runtime env helper だけは当面 `ai-config` package に依存する
+- ai-config 内の `dispatch/` は compatibility shim に縮退し、runtime internal tests は external repo 側へ移した
 
 result compatibility policy:
 
@@ -103,7 +111,7 @@ python -m ai_config.orchestrator.cli execute-approved-plan --plan ./approved-pla
 python -m ai_config.orchestrator.cli schema approved-plan-execution-result
 
 # runtime surface
-python -m ai_config.dispatch.cli --execute-approved-plan ./approved-plan-request.json --json
+python -m ai_config_dispatch.cli --execute-approved-plan ./approved-plan-request.json --json
 
 # serving surface
 python -m ai_config.mcp_server.serving --repo-root . --index-dir ./.index
@@ -124,8 +132,7 @@ python -m ai_config.mcp_server.serving --repo-root . --index-dir ./.index
 
 ```bash
 .venv/bin/python -m pytest \
-  tests/test_dispatch_approved_plan.py \
-  tests/test_dispatch_planner.py \
+  tests/test_dispatch_compat_shim.py \
   tests/test_orchestrator_plan_artifacts.py \
   tests/test_selector_serving.py -q
 ```
@@ -142,10 +149,8 @@ python -m ai_config.mcp_server.serving --repo-root . --index-dir ./.index
 |---|---|
 | `test_approved_plan_contract.py` | stable contract defaults / schema / validation |
 | `test_plan_boundary.py` | subprocess execution boundary |
-| `test_dispatch_cli_result_contract.py` | runtime CLI stable result payload |
+| `test_dispatch_compat_shim.py` | in-repo compatibility shim resolves external runtime package |
 | `test_cli_smoke.py` | planner CLI search / plan / execute surfaces |
-| `test_dispatch_approved_plan.py` | approved plan execution runtime |
-| `test_dispatch_planner.py` | prompt-to-plan runtime behavior |
 | `test_orchestrator_plan_artifacts.py` | planner artifact generation and validation |
 | `test_selector_serving.py` | selector-serving HTTP / readiness / fail-fast |
 
@@ -175,7 +180,8 @@ python -m ai_config.mcp_server.serving --repo-root . --index-dir ./.index
 ## Notes on Legacy Paths
 
 - `orchestrator/plan_schema.py` と `orchestrator/validator.py` は compatibility wrapper
-- `dispatch/` は repo 内 compatibility runtime
+- `dispatch/` は repo 内 compatibility shim
+- `dispatch/` は repo 内 compatibility shim
 - legacy flag CLI は移行期間の互換経路
 
 新規実装では neutral contract module と subcommand CLI を優先してください。

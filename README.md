@@ -84,7 +84,7 @@ ai-config-agent schema approved-plan-execution-result
 
 ### Dispatch Runtime Boundary
 
-`ai-config` は dispatch を直接 import して実行しません。`DispatchCLIPlanExecutor` が subprocess boundary で `ai-config.dispatch.cli` を呼びます。
+`ai-config` は dispatch を直接 import して実行しません。`DispatchCLIPlanExecutor` が subprocess boundary で external `ai-config-dispatch` を呼びます。
 
 - request contract: `ApprovedPlanExecutionRequest`
 - result contract: `ApprovedPlanExecutionResult`
@@ -93,6 +93,13 @@ ai-config-agent schema approved-plan-execution-result
 - override: `AI_CONFIG_DISPATCH_CMD`
 
 この形にしてあるため、dispatch は将来的に別 repo / 別 package へ移設できます。
+
+bootstrap migration status:
+
+- sibling repo `../ai-config-dispatch` を external runtime package bootstrap として作成済み
+- local 開発では sibling checkout があればそれを優先し、次に installed `ai-config-dispatch`、最後に in-repo compatibility shim を使う
+- workflow assets / runtime docs / packaging / runtime package は external repo 側に移し始めている
+- `src/ai_config/dispatch/*` は import compatibility shim に縮退した
 
 ## Setup
 
@@ -184,7 +191,7 @@ ai-config/
 │   ├── retriever/       # hybrid retrieval / RAG
 │   ├── orchestrator/    # planner library and CLI
 │   ├── executor/        # tool executor and execution boundary adapters
-│   ├── dispatch/        # in-repo compatibility runtime; separate-repo candidate
+│   ├── dispatch/        # in-repo compatibility shim
 │   ├── vendor/          # external skill vendor layer
 │   ├── build_index.py
 │   ├── doctor.py

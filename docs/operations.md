@@ -56,6 +56,8 @@ AI_CONFIG_DISPATCH_CMD=/path/to/external/ai-config-dispatch
 
 `AI_CONFIG_DISPATCH_CMD` は、dispatch runtime を別 repo / 別 package に出した後も `ai-config-agent` 側を変えずに接続先だけ差し替えるための override です。
 
+local bootstrap では sibling repo `../ai-config-dispatch` が存在すれば、その checkout を優先して実行します。
+
 ## MCP Registration
 
 ```powershell
@@ -159,7 +161,14 @@ ai-config-dispatch --execute-approved-plan ./approved-plan-request.json --json
 ```
 
 この入口は ai-config core から見た stable runtime boundary です。
-repo 内には compatibility 実装がありますが、将来的には external runtime に置き換える前提です。
+repo 内には compatibility shim がありますが、主系は external runtime です。
+
+実行解決順:
+
+1. `AI_CONFIG_DISPATCH_CMD`
+2. sibling repo `../ai-config-dispatch`
+3. installed `ai-config-dispatch`
+4. in-repo compatibility shim
 
 `--json` の stable payload:
 
@@ -234,6 +243,7 @@ ownership decision:
 - workflow assets は dispatch repo 所有
 - runtime docs / packaging metadata は dispatch repo 所有
 - ai-config docs は contract と integration surface のみ持つ
+- ai-config package の `dispatch/` は compatibility shim のみ残す
 
 ## Migration Notes
 
