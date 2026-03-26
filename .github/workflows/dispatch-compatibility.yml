@@ -1,0 +1,91 @@
+name: Dispatch Compatibility
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "19 3 * * *"
+  workflow_dispatch:
+    inputs:
+      dispatch_stable_ref:
+        description: "Optional ai-config-dispatch stable ref (branch, tag, or SHA)"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  compat-main:
+    name: ai-config vs ai-config-dispatch@main
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout ai-config
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Clone ai-config-dispatch main
+        run: git clone --depth 1 --branch main https://github.com/ToshiyaTsubonishi/ai-config-dispatch.git ../ai-config-dispatch
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev] -e ../ai-config-dispatch[dev]
+
+      - name: Run compatibility smoke
+        env:
+          AI_CONFIG_PYTHON_BIN: python
+          AI_CONFIG_DISPATCH_REPO_ROOT: ../ai-config-dispatch
+        run: bash scripts/test-dispatch-compat.sh
+
+  compat-stable:
+    name: ai-config vs ai-config-dispatch@stable
+    if: ${{ vars.AI_CONFIG_DISPATCH_STABLE_REF != '' || (github.event_name == 'workflow_dispatch' && github.event.inputs.dispatch_stable_ref != '') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout ai-config
+        uses: actions/checkout@v4
+
+      - name: Resolve stable ref
+        id: stable-ref
+        env:
+          INPUT_REF: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dispatch_stable_ref || '' }}
+          VARIABLE_REF: ${{ vars.AI_CONFIG_DISPATCH_STABLE_REF }}
+        run: |
+          ref="${INPUT_REF:-$VARIABLE_REF}"
+          if [ -z "$ref" ]; then
+            echo "Stable ref is empty." >&2
+            exit 1
+          fi
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Clone ai-config-dispatch stable ref
+        run: |
+          git clone https://github.com/ToshiyaTsubonishi/ai-config-dispatch.git ../ai-config-dispatch
+          git -C ../ai-config-dispatch checkout "${{ steps.stable-ref.outputs.ref }}"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev] -e ../ai-config-dispatch[dev]
+
+      - name: Run compatibility smoke
+        env:
+          AI_CONFIG_PYTHON_BIN: python
+          AI_CONFIG_DISPATCH_REPO_ROOT: ../ai-config-dispatch
+        run: bash scripts/test-dispatch-compat.sh

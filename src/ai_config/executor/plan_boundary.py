@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import os
 import shlex
@@ -9,6 +10,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -18,6 +20,27 @@ from ai_config.contracts.approved_plan import (
     ApprovedPlanExecutionRequest,
     validate_execution_result_against_request,
 )
+
+_TRUE_VALUES = {"1", "true", "yes", "on"}
+_PRODUCTION_HINT_ENV_KEYS = ("K_SERVICE", "K_REVISION", "CLOUD_RUN_JOB")
+
+
+@dataclass(frozen=True)
+class DispatchRuntimeResolution:
+    mode: str
+    source: str
+    command_prefix: tuple[str, ...] | None
+    env: dict[str, str] | None = None
+    message: str = ""
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "mode": self.mode,
+            "source": self.source,
+            "command_prefix": list(self.command_prefix) if self.command_prefix is not None else None,
+            "env": dict(self.env) if self.env is not None else None,
+            "message": self.message,
+        }
 
 
 class ApprovedPlanExecutor(Protocol):
@@ -35,17 +58,28 @@ class DispatchCLIPlanExecutor:
         self.timeout_seconds = timeout_seconds
         self._ai_config_repo_root = Path(__file__).resolve().parents[3]
 
-    def _command_prefix(self) -> list[str]:
-        override = os.getenv("AI_CONFIG_DISPATCH_CMD", "").strip()
-        if override:
-            return shlex.split(override)
-        external_repo = self._external_repo_root()
-        if external_repo is not None:
-            return [sys.executable, "-m", "ai_config_dispatch.cli"]
-        installed = shutil.which("ai-config-dispatch")
-        if installed:
-            return [installed]
-        return [sys.executable, "-m", "ai_config.dispatch.cli"]
+    @staticmethod
+    def _flag_enabled(name: str) -> bool:
+        return os.getenv(name, "").strip().lower() in _TRUE_VALUES
+
+    def _runtime_mode(self) -> str:
+        configured = os.getenv("AI_CONFIG_DISPATCH_RUNTIME_MODE", "").strip().lower()
+        if configured:
+            if configured == "auto":
+                configured = ""
+            elif configured not in {"local", "production"}:
+                raise ValueError(
+                    "AI_CONFIG_DISPATCH_RUNTIME_MODE must be one of: auto, local, production."
+                )
+
+        if configured:
+            return configured
+        if any(os.getenv(name, "").strip() for name in _PRODUCTION_HINT_ENV_KEYS):
+            return "production"
+        return "local"
+
+    def _allow_in_repo_fallback(self) -> bool:
+        return self._flag_enabled("AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK")
 
     def _external_repo_root(self) -> Path | None:
         candidate = self._ai_config_repo_root.parent / "ai-config-dispatch"
@@ -55,11 +89,7 @@ class DispatchCLIPlanExecutor:
             return None
         return candidate
 
-    def _subprocess_env(self) -> dict[str, str] | None:
-        external_repo = self._external_repo_root()
-        if external_repo is None:
-            return None
-
+    def _sibling_env(self, external_repo: Path) -> dict[str, str]:
         env = dict(os.environ)
         python_paths = [
             str(external_repo / "src"),
@@ -71,6 +101,87 @@ class DispatchCLIPlanExecutor:
         env["PYTHONPATH"] = os.pathsep.join(python_paths)
         env.setdefault("AI_CONFIG_DISPATCH_WORKFLOW_DIR", str(external_repo / "workflows"))
         return env
+
+    @staticmethod
+    def _installed_module_command() -> list[str] | None:
+        try:
+            spec = importlib.util.find_spec("ai_config_dispatch.cli")
+        except (ImportError, ValueError):
+            return None
+        if spec is None:
+            return None
+        return [sys.executable, "-m", "ai_config_dispatch.cli"]
+
+    def _resolve_runtime(self) -> DispatchRuntimeResolution:
+        override = os.getenv("AI_CONFIG_DISPATCH_CMD", "").strip()
+        mode = self._runtime_mode()
+        if override:
+            return DispatchRuntimeResolution(
+                mode=mode,
+                source="override",
+                command_prefix=tuple(shlex.split(override)),
+            )
+
+        if mode == "local":
+            external_repo = self._external_repo_root()
+            if external_repo is not None:
+                return DispatchRuntimeResolution(
+                    mode=mode,
+                    source="sibling_checkout",
+                    command_prefix=(sys.executable, "-m", "ai_config_dispatch.cli"),
+                    env=self._sibling_env(external_repo),
+                )
+
+        installed = shutil.which("ai-config-dispatch")
+        if installed:
+            return DispatchRuntimeResolution(
+                mode=mode,
+                source="installed_binary",
+                command_prefix=(installed,),
+            )
+
+        installed_module = self._installed_module_command()
+        if installed_module is not None:
+            return DispatchRuntimeResolution(
+                mode=mode,
+                source="installed_module",
+                command_prefix=tuple(installed_module),
+            )
+
+        if mode == "local" and self._allow_in_repo_fallback():
+            return DispatchRuntimeResolution(
+                mode=mode,
+                source="in_repo_fallback",
+                command_prefix=(sys.executable, "-m", "ai_config.dispatch.cli"),
+            )
+
+        if mode == "production":
+            message = (
+                "Dispatch runtime is unavailable in production mode. "
+                "Set AI_CONFIG_DISPATCH_CMD or install ai-config-dispatch in the image. "
+                "sibling checkout and in-repo fallback are disabled in production."
+            )
+        else:
+            message = (
+                "Dispatch runtime is unavailable in local mode. "
+                "Set AI_CONFIG_DISPATCH_CMD, clone ../ai-config-dispatch, install ai-config-dispatch, "
+                "or set AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=1 to use the deprecated in-repo shim."
+            )
+        return DispatchRuntimeResolution(
+            mode=mode,
+            source="unavailable",
+            command_prefix=None,
+            message=message,
+        )
+
+    def describe_runtime_resolution(self) -> dict[str, Any]:
+        return self._resolve_runtime().as_dict()
+
+    def _command_prefix(self) -> list[str]:
+        resolution = self._resolve_runtime()
+        if resolution.command_prefix is None:
+            raise RuntimeError(resolution.message)
+        return list(resolution.command_prefix)
 
     @staticmethod
     def _error_result(message: str, *, final_report: str = "", returncode: int | None = None) -> dict[str, Any]:
@@ -85,6 +196,12 @@ class DispatchCLIPlanExecutor:
 
     def execute_request(self, request: ApprovedPlanExecutionRequest | dict[str, Any]) -> dict[str, Any]:
         parsed = request if isinstance(request, ApprovedPlanExecutionRequest) else ApprovedPlanExecutionRequest.model_validate(request)
+        try:
+            resolution = self._resolve_runtime()
+        except ValueError as exc:
+            return self._error_result(str(exc))
+        if resolution.command_prefix is None:
+            return self._error_result(resolution.message)
         with tempfile.TemporaryDirectory(prefix="ai-config-approved-plan-") as temp_dir:
             request_path = Path(temp_dir) / "approved-plan-request.json"
             request_path.write_text(
@@ -93,7 +210,7 @@ class DispatchCLIPlanExecutor:
             )
 
             command = [
-                *self._command_prefix(),
+                *resolution.command_prefix,
                 "--execute-approved-plan",
                 str(request_path),
                 "--json",
@@ -103,7 +220,7 @@ class DispatchCLIPlanExecutor:
                 capture_output=True,
                 text=True,
                 cwd=parsed.repo_root or str(self.repo_root),
-                env=self._subprocess_env(),
+                env=resolution.env,
                 timeout=self.timeout_seconds,
             )
 

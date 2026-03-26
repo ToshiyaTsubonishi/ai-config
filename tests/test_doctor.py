@@ -4,7 +4,8 @@ import json
 import subprocess
 from pathlib import Path
 
-from ai_config.doctor import _vendor_observability_checks
+from ai_config import doctor
+from ai_config.doctor import _dispatch_resolution_check, _vendor_observability_checks
 from ai_config.vendor.models import PROVENANCE_FILENAME, VendorImportSpec, VendorProvenance
 from ai_config.vendor.skill_vendor import import_skill_repo
 
@@ -187,3 +188,47 @@ def test_vendor_observability_checks_fail_for_manifest_without_ref(tmp_path: Pat
     assert results["vendor_manifest"].status == "fail"
     assert "missing ref" in results["vendor_manifest"].details["errors"][0]
     assert results["vendor_materialization"].status == "fail"
+
+
+def test_dispatch_resolution_check_passes_for_production_binary(monkeypatch, tmp_path: Path) -> None:
+    class _FakeExecutor:
+        def __init__(self, repo_root: Path) -> None:
+            self.repo_root = repo_root
+
+        def describe_runtime_resolution(self) -> dict[str, object]:
+            return {
+                "mode": "production",
+                "source": "installed_binary",
+                "command_prefix": ["/usr/local/bin/ai-config-dispatch"],
+                "env": None,
+                "message": "",
+            }
+
+    monkeypatch.setattr(doctor, "DispatchCLIPlanExecutor", _FakeExecutor)
+
+    result = _dispatch_resolution_check(tmp_path)
+
+    assert result.status == "pass"
+    assert result.details["source"] == "installed_binary"
+
+
+def test_dispatch_resolution_check_fails_for_missing_production_runtime(monkeypatch, tmp_path: Path) -> None:
+    class _FakeExecutor:
+        def __init__(self, repo_root: Path) -> None:
+            self.repo_root = repo_root
+
+        def describe_runtime_resolution(self) -> dict[str, object]:
+            return {
+                "mode": "production",
+                "source": "unavailable",
+                "command_prefix": None,
+                "env": None,
+                "message": "missing runtime",
+            }
+
+    monkeypatch.setattr(doctor, "DispatchCLIPlanExecutor", _FakeExecutor)
+
+    result = _dispatch_resolution_check(tmp_path)
+
+    assert result.status == "fail"
+    assert result.details["mode"] == "production"

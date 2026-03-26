@@ -154,12 +154,24 @@ ai-config-agent execute-approved-plan
 - approved plan request を事前 validation できる
 - approved plan result を boundary で reject / accept できる
 
-bootstrap resolution order:
+resolution order:
+
+local mode:
 
 1. `AI_CONFIG_DISPATCH_CMD`
 2. sibling repo `../ai-config-dispatch` checkout
 3. installed `ai-config-dispatch` CLI
-4. in-repo compatibility shim
+4. installed `python -m ai_config_dispatch.cli`
+5. in-repo compatibility shim only when `AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=1`
+
+production mode:
+
+1. `AI_CONFIG_DISPATCH_CMD`
+2. installed `ai-config-dispatch` CLI
+3. in-image `python -m ai_config_dispatch.cli`
+4. fail fast
+
+`AI_CONFIG_DISPATCH_RUNTIME_MODE=auto|local|production` で明示できます。`auto` は Cloud Run 系 env (`K_SERVICE`, `K_REVISION`, `CLOUD_RUN_JOB`) を見て production を選びます。
 
 result contract semantics:
 
@@ -174,7 +186,7 @@ ownership decision:
 - runtime docs / troubleshooting / packaging metadata は dispatch repo 所有
 - ai-config には contracts / boundary adapter / planner integration docs を残す
 - current bootstrap repo は sibling `ai-config-dispatch`
-- `src/ai_config/dispatch/*` は compatibility shim のみ残す
+- `src/ai_config/dispatch/*` は deprecated compatibility shim のみ残す
 
 ## Selector Serving
 

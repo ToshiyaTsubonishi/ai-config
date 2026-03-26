@@ -17,6 +17,7 @@ import anyio
 from mcp import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
 
+from ai_config.executor.plan_boundary import DispatchCLIPlanExecutor
 from ai_config.runtime_env import load_runtime_env
 from ai_config.vendor.skill_vendor import inspect_vendor_state
 
@@ -348,7 +349,40 @@ def _dispatch_prereq_checks(repo_root: Path) -> list[CheckResult]:
             results.append(_skip("google_api_key", "GOOGLE_API_KEY is not declared in .env."))
     else:
         results.append(_skip("google_api_key", ".env is missing."))
+    results.append(_dispatch_resolution_check(repo_root))
     return results
+
+
+def _dispatch_resolution_check(repo_root: Path) -> CheckResult:
+    try:
+        resolution = DispatchCLIPlanExecutor(repo_root).describe_runtime_resolution()
+    except Exception as error:
+        return _fail("dispatch_resolution", "Dispatch runtime resolution check failed.", error=str(error))
+
+    details = dict(resolution)
+    resolution_message = str(details.pop("message", ""))
+    source = str(resolution.get("source", ""))
+    mode = str(resolution.get("mode", ""))
+    if source == "unavailable":
+        return _fail(
+            "dispatch_resolution",
+            "Dispatch runtime is not resolvable for the current mode.",
+            resolution_message=resolution_message,
+            **details,
+        )
+    if mode == "production" and source in {"sibling_checkout", "in_repo_fallback"}:
+        return _fail(
+            "dispatch_resolution",
+            "Production mode selected an unsafe dispatch runtime source.",
+            resolution_message=resolution_message,
+            **details,
+        )
+    return _pass(
+        "dispatch_resolution",
+        "Dispatch runtime resolution is valid.",
+        resolution_message=resolution_message,
+        **details,
+    )
 
 
 def _vendor_observability_checks(repo_root: Path) -> list[CheckResult]:

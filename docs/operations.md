@@ -52,11 +52,20 @@ AI_CONFIG_GEMINI_CMD=gemini
 AI_CONFIG_CODEX_CMD=codex
 AI_CONFIG_ANTIGRAVITY_CMD=antigravity
 AI_CONFIG_DISPATCH_CMD=/path/to/external/ai-config-dispatch
+AI_CONFIG_DISPATCH_RUNTIME_MODE=auto
+# deprecated local-only fallback
+AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=0
 ```
 
 `AI_CONFIG_DISPATCH_CMD` は、dispatch runtime を別 repo / 別 package に出した後も `ai-config-agent` 側を変えずに接続先だけ差し替えるための override です。
 
-local bootstrap では sibling repo `../ai-config-dispatch` が存在すれば、その checkout を優先して実行します。
+`AI_CONFIG_DISPATCH_RUNTIME_MODE`:
+
+- `auto`: デフォルト。Cloud Run 系 env があれば production、それ以外は local
+- `local`: sibling checkout を含む開発用解決順を使う
+- `production`: sibling checkout と in-repo fallback を禁止し、installed runtime だけを使う
+
+`AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=1` は deprecated local shim を明示 opt-in するときだけ使います。production では使いません。
 
 ## MCP Registration
 
@@ -163,12 +172,20 @@ ai-config-dispatch --execute-approved-plan ./approved-plan-request.json --json
 この入口は ai-config core から見た stable runtime boundary です。
 repo 内には compatibility shim がありますが、主系は external runtime です。
 
-実行解決順:
+local mode:
 
 1. `AI_CONFIG_DISPATCH_CMD`
 2. sibling repo `../ai-config-dispatch`
 3. installed `ai-config-dispatch`
-4. in-repo compatibility shim
+4. installed `python -m ai_config_dispatch.cli`
+5. in-repo compatibility shim only when `AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=1`
+
+GCP / Cloud Run production mode:
+
+1. `AI_CONFIG_DISPATCH_CMD`
+2. installed `ai-config-dispatch`
+3. in-image `python -m ai_config_dispatch.cli`
+4. fail fast
 
 `--json` の stable payload:
 
@@ -210,6 +227,25 @@ ai-config-doctor --repo-root .
 - index presence
 - selector MCP reachability
 - downstream MCP catalog / tool list / tool call
+- dispatch runtime resolution (`local` / `production`, selected source)
+
+GCP / Cloud Run production では次を推奨します。
+
+```bash
+AI_CONFIG_DISPATCH_RUNTIME_MODE=production ai-config-doctor --repo-root .
+```
+
+### Cross-repo compatibility smoke
+
+```bash
+bash scripts/test-dispatch-compat.sh
+```
+
+GitHub Actions:
+
+- workflow: `.github/workflows/dispatch-compatibility.yml`
+- default track: `ai-config-dispatch@main`
+- optional stable track: repo variable `AI_CONFIG_DISPATCH_STABLE_REF` または `workflow_dispatch` input
 
 ## Troubleshooting
 
@@ -237,6 +273,13 @@ runtime では `sync-manifest` や `ai-config-index` を自動実行しません
 2. approved plan の `tool_id` が index 上の record と一致するか確認する
 3. `AI_CONFIG_DISPATCH_CMD` が外部 runtime を指していないか確認する
 4. `ai-config-dispatch --execute-approved-plan ... --json` を直接叩いて境界の外側を切り分ける
+
+GCP / Cloud Run production 追加確認:
+
+1. `AI_CONFIG_DISPATCH_RUNTIME_MODE=production` を設定する
+2. image に `ai-config-dispatch` package か `python -m ai_config_dispatch.cli` 実行環境があることを確認する
+3. `AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK` を設定しない
+4. `ai-config-doctor --repo-root .` の `dispatch_resolution` が `installed_binary` か `installed_module` になっていることを確認する
 
 ownership decision:
 

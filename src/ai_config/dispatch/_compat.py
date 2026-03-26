@@ -4,11 +4,25 @@ from __future__ import annotations
 
 import importlib
 import sys
+import warnings
 from pathlib import Path
 from types import ModuleType
 
 _AI_CONFIG_REPO_ROOT = Path(__file__).resolve().parents[3]
 _EXTERNAL_REPO_SRC = _AI_CONFIG_REPO_ROOT.parent / "ai-config-dispatch" / "src"
+_WARNED_MODULES: set[str] = set()
+
+
+def _warn_deprecated_shim(module_name: str) -> None:
+    if module_name in _WARNED_MODULES:
+        return
+    warnings.warn(
+        "ai_config.dispatch is a deprecated compatibility shim. "
+        f"Import ai_config_dispatch.{module_name} from the external 'ai-config-dispatch' package instead.",
+        DeprecationWarning,
+        stacklevel=3,
+    )
+    _WARNED_MODULES.add(module_name)
 
 
 def _ensure_external_repo_on_path() -> None:
@@ -22,6 +36,7 @@ def _ensure_external_repo_on_path() -> None:
 def load_external_module(module_name: str) -> ModuleType:
     """Load a dispatch runtime module from the external package."""
 
+    _warn_deprecated_shim(module_name)
     _ensure_external_repo_on_path()
     target = f"ai_config_dispatch.{module_name}"
     try:

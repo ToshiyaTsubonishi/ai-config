@@ -1,5 +1,230 @@
 # TODO
 
+## 2026-03-26 Phase 4 Rename Evaluation
+
+### Plan
+- [x] rename 影響面を repo / package / CLI / env / docs / CI ごとに棚卸しする
+- [x] naming option ごとの impact matrix と推奨方針を decision memo にまとめる
+- [x] rename 実施 / 非実施の判断と再評価条件を明文化する
+- [x] docs index と phase documents から decision memo に辿れるようにする
+- [x] diff hygiene を確認して Phase 4 を閉じる
+
+### Progress
+- [x] 現状調査
+- [x] decision memo
+- [x] docs 更新
+- [x] 検証
+- [x] review
+
+### Review
+- 更新ファイル:
+  - `docs/rename-evaluation.md`
+  - `docs/README.md`
+  - `README.md`
+  - `docs/dispatch-runtime-completion-workflow.md`
+  - `docs/dispatch-externalization-plan.md`
+  - `tasks/todo.md`
+- 実施内容:
+  - `ai-config` rename の影響を repo / package / CLI / env / contract / CI ごとに棚卸しした
+  - `No rename`, `repo/display rename only`, `CLI rename`, `full rename` の option matrix を作成した
+  - current recommendation を `rename deferred` とし、将来やるなら `repo/display rename only` を先にやる方針を固定した
+  - `ai-config.*` contract kind は protocol identity として rebrand しない方針を明記した
+- 検証:
+  - `rg -o "ai-config" README.md docs src tests scripts pyproject.toml .github ../ai-config-dispatch -g '!**/.venv/**' | wc -l`
+  - `rg -o "ai_config" src tests scripts pyproject.toml ../ai-config-dispatch -g '!**/.venv/**' | wc -l`
+  - `rg -n "ai-config-(agent|index|doctor|mcp-server|selector-serving|sources|vendor-skills|dispatch)" README.md docs scripts pyproject.toml ../ai-config-dispatch -g '!**/.venv/**' | wc -l`
+  - `rg -n "AI_CONFIG_[A-Z_]+" README.md docs src tests scripts ../ai-config-dispatch -g '!**/.venv/**' | wc -l`
+  - `git diff --check`
+  - `git -C ../ai-config-dispatch diff --check`
+- 検証結果:
+  - `ai-config` 文字列は 481、`ai_config` は 294、CLI 名は 166、env 名は 97、`ai-config-dispatch` / `ai_config_dispatch` は 201 箇所で露出していた
+  - current phase での full rename は compatibility cost が大きすぎると判断した
+  - Phase 4 完了。rename は deferred とし、必要なら repo/display rename only proposal を別トラックで扱う
+
+## 2026-03-26 Phase 3 Cross-repo Compatibility Automation
+
+### Plan
+- [x] ai-config 側に external dispatch main 互換を検証する script と GitHub Actions workflow を追加する
+- [x] ai-config-dispatch 側に current ai-config main 互換を検証する script と GitHub Actions workflow を追加する
+- [x] stable ref を追加で検証できる optional track を workflow_dispatch / repository variable で用意する
+- [x] local validation command と CI behavior を docs に反映する
+- [x] 両 repo の compatibility smoke と YAML hygiene を確認する
+
+### Progress
+- [x] 現状調査
+- [x] scripts 実装
+- [x] GitHub Actions 追加
+- [x] docs 更新
+- [x] 検証
+- [x] review
+
+### Review
+- 更新ファイル:
+  - `scripts/test-dispatch-compat.sh`
+  - `.github/workflows/dispatch-compatibility.yml`
+  - `README.md`
+  - `docs/operations.md`
+  - `docs/dispatch-runtime-completion-workflow.md`
+  - `docs/dispatch-externalization-plan.md`
+  - `tasks/todo.md`
+  - `../ai-config-dispatch/scripts/test-ai-config-compat.sh`
+  - `../ai-config-dispatch/.github/workflows/ai-config-compatibility.yml`
+  - `../ai-config-dispatch/README.md`
+  - `../ai-config-dispatch/docs/runtime.md`
+- 実施内容:
+  - ai-config 側に external dispatch checkout を前提にした local smoke script と GitHub Actions workflow を追加した
+  - ai-config-dispatch 側に current ai-config checkout を前提にした local smoke script と GitHub Actions workflow を追加した
+  - main track に加えて optional stable track を `workflow_dispatch` input と repository variable (`AI_CONFIG_DISPATCH_STABLE_REF` / `AI_CONFIG_STABLE_REF`) で実行できるようにした
+  - docs に local command、CI workflow file、stable track の有効化方法を追記した
+- 検証:
+  - `bash scripts/test-dispatch-compat.sh`
+  - `bash ../ai-config-dispatch/scripts/test-ai-config-compat.sh`
+  - `PYTHONPATH=src .venv/bin/python - <<'PY' ... yaml.safe_load(...) ... PY`
+  - `git diff --check`
+  - `git -C ../ai-config-dispatch diff --check`
+- 検証結果:
+  - ai-config cross-repo smoke script は `20 passed`
+  - ai-config-dispatch cross-repo smoke script は `20 passed`
+  - GitHub Actions YAML は local parse を通過した
+  - Phase 3 完了。次は rename evaluation
+
+## 2026-03-26 Phase 2 Production-safe Command Resolution
+
+### Plan
+- [x] `DispatchCLIPlanExecutor` に local / production の runtime mode と explicit fallback policy を追加する
+- [x] production では sibling checkout と implicit in-repo fallback を無効化し、installed runtime か fail-fast にする
+- [x] `AI_CONFIG_DISPATCH_RUNTIME_MODE` と `AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK` の semantics を tests と docs に固定する
+- [x] 必要なら `ai-config-doctor` で dispatch resolution を確認できるようにする
+- [x] plan boundary / doctor / docs の relevant validation を通す
+
+### Progress
+- [x] 現状調査
+- [x] boundary 実装
+- [x] tests 更新
+- [x] docs 更新
+- [x] 検証
+- [x] review
+
+### Review
+- 更新ファイル:
+  - `src/ai_config/executor/plan_boundary.py`
+  - `src/ai_config/doctor.py`
+  - `tests/test_plan_boundary.py`
+  - `tests/test_doctor.py`
+  - `README.md`
+  - `docs/development.md`
+  - `docs/architecture.md`
+  - `docs/operations.md`
+  - `docs/dispatch-externalization-plan.md`
+  - `tasks/todo.md`
+  - `../ai-config-dispatch/docs/runtime.md`
+- 実施内容:
+  - `DispatchCLIPlanExecutor` に `AI_CONFIG_DISPATCH_RUNTIME_MODE=auto|local|production` と `AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=1` を追加した
+  - local mode は `override -> sibling -> installed binary -> installed module -> explicit in-repo fallback`、production mode は `override -> installed binary -> installed module -> fail fast` に固定した
+  - Cloud Run 系 env (`K_SERVICE`, `K_REVISION`, `CLOUD_RUN_JOB`) がある場合は `auto` から production を選ぶようにした
+  - `ai-config-doctor` に `dispatch_resolution` check を追加し、現在モードと選択 source を診断できるようにした
+  - docs を production/local split に更新し、GCP / Cloud Run 本番での設定と禁止 fallback を明文化した
+- 検証:
+  - `PYTHONPATH=src .venv/bin/python -m pytest tests/test_plan_boundary.py tests/test_doctor.py -q`
+  - `PYTHONPATH=src .venv/bin/python -m pytest tests/test_approved_plan_contract.py tests/test_plan_boundary.py tests/test_dispatch_compat_shim.py tests/test_cli_smoke.py tests/test_selector_serving.py tests/test_orchestrator_plan_artifacts.py tests/test_doctor.py -q`
+  - `python3 -m compileall src/ai_config/executor/plan_boundary.py src/ai_config/doctor.py`
+  - `git diff --check`
+  - `git -C ../ai-config-dispatch diff --check`
+- 検証結果:
+  - ai-config focused suite は `33 passed`、doctor / boundary focused suite は `14 passed`
+  - deprecated shim warning は期待どおり `test_dispatch_compat_shim.py` で 1 件
+  - diff hygiene は両 repo で clean
+  - Phase 2 完了。次は cross-repo compatibility automation
+
+## 2026-03-26 Phase 1 Runtime Cutover
+
+### Plan
+- [x] `ai-config` 側の `dispatch/` を deprecation shim として明示し、runtime 正本ではないことをコードと docs で固定する
+- [x] `ai-config-dispatch` 側 tests から `ai_config.orchestrator` / `ai_config.registry` 依存を外し、contract / dict fixture に寄せる
+- [x] external runtime repo に dependency boundary regression test を追加する
+- [x] runtime ownership 表現を両 repo docs に反映する
+- [x] 両 repo の relevant tests / static checks で Phase 1 exit gate を確認する
+
+### Progress
+- [x] 現状調査
+- [x] shim hardening
+- [x] external tests cleanup
+- [x] docs 更新
+- [x] 検証
+- [x] review
+
+### Review
+- 更新ファイル:
+  - `src/ai_config/dispatch/__init__.py`
+  - `src/ai_config/dispatch/_compat.py`
+  - `tests/test_dispatch_compat_shim.py`
+  - `README.md`
+  - `docs/development.md`
+  - `docs/architecture.md`
+  - `docs/dispatch-externalization-plan.md`
+  - `tasks/todo.md`
+  - `../ai-config-dispatch/tests/test_dispatch_approved_plan.py`
+  - `../ai-config-dispatch/tests/test_dependency_boundaries.py`
+  - `../ai-config-dispatch/README.md`
+  - `../ai-config-dispatch/docs/runtime.md`
+- 実施内容:
+  - ai-config の `dispatch/` shim に deprecation warning を追加し、package import は lazy wrapper にして warning を実利用時だけに限定した
+  - external repo の approved plan test を `ApprovedPlan` / `PlanStep` / `ToolReference` と dict fixture ベースへ切り替え、`ai_config.orchestrator` / `ai_config.registry` 依存を除去した
+  - external repo に dependency boundary regression test を追加し、shared API 以外の `ai_config.*` import を禁止した
+  - runtime ownership を両 repo docs に反映し、externalization plan の bootstrap status を Phase 2 開始前の状態へ更新した
+- 検証:
+  - `PYTHONPATH=src .venv/bin/python -m pytest tests/test_dispatch_compat_shim.py tests/test_plan_boundary.py tests/test_cli_smoke.py tests/test_approved_plan_contract.py -q`
+  - `PYTHONPATH=src .venv/bin/python -m pytest tests/test_approved_plan_contract.py tests/test_plan_boundary.py tests/test_dispatch_compat_shim.py tests/test_cli_smoke.py tests/test_selector_serving.py tests/test_orchestrator_plan_artifacts.py -q`
+  - `PYTHONPATH=../ai-config/src:src ../ai-config/.venv/bin/python -m pytest tests/test_dependency_boundaries.py tests/test_dispatch_approved_plan.py tests/test_dispatch_cli_result_contract.py tests/test_dispatch_workflow.py -q`
+  - `PYTHONPATH=../ai-config/src:src ../ai-config/.venv/bin/python -m pytest -q`
+  - `git diff --check`
+  - `git -C ../ai-config-dispatch diff --check`
+- 検証結果:
+  - ai-config focused suite は `23 passed` で、compat shim deprecation warning は期待どおり 1 件
+  - ai-config-dispatch full suite は `59 passed`
+  - external repo の forbidden `ai_config.dispatch|orchestrator|registry` import は残っていない
+  - Phase 1 exit gate を満たし、次は GCP production-safe command resolution に進める
+
+## 2026-03-26 Dispatch Runtime Completion Workflow
+
+### Plan
+- [x] 現状の dispatch 分離計画と残依存を棚卸しする
+- [x] 次フェーズ 4 段階の実行順序、gate、validation を workflow doc として固定する
+- [x] `ai-config-dispatch` に predefined workflow asset を追加する
+- [x] docs index と plan doc を相互参照に更新する
+- [x] workflow asset と docs link の最低限の検証を行う
+
+### Progress
+- [x] 現状調査
+- [x] workflow doc 作成
+- [x] dispatch workflow 追加
+- [x] docs 更新
+- [x] 検証
+- [x] review
+
+### Review
+- 更新ファイル:
+  - `docs/dispatch-runtime-completion-workflow.md`
+  - `docs/dispatch-externalization-plan.md`
+  - `docs/README.md`
+  - `README.md`
+  - `tasks/todo.md`
+  - `../ai-config-dispatch/workflows/dispatch-runtime-completion.yaml`
+  - `../ai-config-dispatch/README.md`
+  - `../ai-config-dispatch/docs/runtime.md`
+- 実施内容:
+  - dispatch 分離の次フェーズを 4 段階の固定 workflow として文書化した
+  - Phase 1-4 ごとに deliverables / validation / exit gate を定義した
+  - external repo 側に `dispatch-runtime-completion` workflow asset を追加した
+  - docs index と existing externalization plan から新 workflow doc に辿れるようにした
+- 検証:
+  - `PYTHONPATH=../ai-config-dispatch/src:src .venv/bin/python -m ai_config_dispatch.cli --list-workflows`
+  - `git diff --check`
+- 検証結果:
+  - workflow asset は CLI から列挙できる状態にした
+  - diff hygiene は clean
+  - 実装フェーズにはまだ着手していない
+
 ## 2026-03-25 Dispatch GitHub Publish And Shrink
 
 ### Plan

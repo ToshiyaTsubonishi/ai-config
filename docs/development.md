@@ -68,10 +68,12 @@ dispatch runtime への接続は `DispatchCLIPlanExecutor` が担います。
 bootstrap externalization:
 
 - sibling repo `../ai-config-dispatch` を bootstrap external runtime として使う
-- boundary adapter は sibling checkout があれば `python -m ai_config_dispatch.cli` を優先する
+- boundary adapter は `AI_CONFIG_DISPATCH_RUNTIME_MODE=local` では sibling checkout を優先する
+- `AI_CONFIG_DISPATCH_RUNTIME_MODE=production` では sibling checkout を探索しない
 - external repo は workflow assets / runtime docs / packaging と runtime package を所有する
 - shared contracts / executor / runtime env helper だけは当面 `ai-config` package に依存する
-- ai-config 内の `dispatch/` は compatibility shim に縮退し、runtime internal tests は external repo 側へ移した
+- ai-config 内の `dispatch/` は deprecated compatibility shim に縮退し、runtime internal tests は external repo 側へ移した
+- deprecated in-repo shim は `AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=1` のときだけ boundary から使う
 
 result compatibility policy:
 
@@ -182,6 +184,7 @@ python -m ai_config.mcp_server.serving --repo-root . --index-dir ./.index
 - `orchestrator/plan_schema.py` と `orchestrator/validator.py` は compatibility wrapper
 - `dispatch/` は repo 内 compatibility shim
 - `dispatch/` は repo 内 compatibility shim
+- GCP / Cloud Run 本番では `AI_CONFIG_DISPATCH_RUNTIME_MODE=production` を使い、external runtime を image へ入れる
 - legacy flag CLI は移行期間の互換経路
 
 新規実装では neutral contract module と subcommand CLI を優先してください。

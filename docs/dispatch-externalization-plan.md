@@ -9,6 +9,8 @@
 2. workflow assets / runtime docs / packaging の repo 帰属
 3. 段階的な別 repo 化計画
 
+実際の進行順序と phase gate は [Dispatch Runtime Completion Workflow](dispatch-runtime-completion-workflow.md) を正本とします。
+
 ## Current State
 
 現状の前提:
@@ -221,9 +223,16 @@ step-level `status`:
 - done: external repo `ai-config-dispatch` を作成
 - done: workflow assets / runtime docs / packaging metadata を external repo に配置
 - done: runtime package `ai_config_dispatch` を external repo に配置
+- done: runtime-only tests の正本を external repo に寄せた
 - done: ai-config boundary adapter が sibling external repo を優先解決
+- done: ai-config `dispatch/` は deprecated compatibility shim としてのみ残した
+- done: external repo tests から `ai_config.orchestrator` / `ai_config.registry` 依存を除去した
+- done: boundary adapter に `AI_CONFIG_DISPATCH_RUNTIME_MODE` と explicit fallback policy を追加した
+- done: `ai-config-doctor` で dispatch resolution source を確認できるようにした
+- done: 両 repo に cross-repo compatibility workflow と local smoke script を追加した
+- done: rename evaluation を別 memo に切り出し、full rename を deferred と判断した
 - transitional: shared contracts / executor / runtime env helper は `ai-config` package に依存
-- next: ai-config から in-repo compatibility shim をさらに薄くし、external package を主系にする
+- next: rename を再開する場合は repo/display rename only proposal を別トラックで起こす
 
 ### Transitional / shared
 

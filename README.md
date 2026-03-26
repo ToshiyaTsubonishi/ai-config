@@ -97,9 +97,11 @@ ai-config-agent schema approved-plan-execution-result
 bootstrap migration status:
 
 - sibling repo `../ai-config-dispatch` を external runtime package bootstrap として作成済み
-- local 開発では sibling checkout があればそれを優先し、次に installed `ai-config-dispatch`、最後に in-repo compatibility shim を使う
-- workflow assets / runtime docs / packaging / runtime package は external repo 側に移し始めている
-- `src/ai_config/dispatch/*` は import compatibility shim に縮退した
+- local 開発では sibling checkout を優先し、deprecated in-repo shim は `AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=1` のときだけ使う
+- GCP / Cloud Run production では sibling checkout と in-repo fallback を無効化し、installed runtime か explicit override だけを許可する
+- workflow assets / runtime docs / packaging / runtime package / runtime tests は external repo が正本を持つ
+- `src/ai_config/dispatch/*` は deprecated import compatibility shim としてのみ残す
+- cross-repo compatibility automation は `.github/workflows/dispatch-compatibility.yml` で回し、local では `bash scripts/test-dispatch-compat.sh` を使う
 
 ## Setup
 
@@ -221,3 +223,5 @@ ai-config/
 - [docs/operations.md](docs/operations.md)
 - [docs/development.md](docs/development.md)
 - [docs/constitution.md](docs/constitution.md)
+- [docs/dispatch-runtime-completion-workflow.md](docs/dispatch-runtime-completion-workflow.md)
+- [docs/rename-evaluation.md](docs/rename-evaluation.md)
