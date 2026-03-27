@@ -44,7 +44,7 @@
 
 ### Plan
 - [ ] `skills.sh/official` の source list を repo で保持する manifest を追加する
-- [ ] `ai-config-vendor-skills` から official repo 群を `skills/imported/skills-sh/sources` へ一括同期できるようにする
+- [ ] `ai-config-vendor-skills` から official repo 群を `skills/official` へ一括同期できるようにする
 - [ ] fixed vendor source (`skills/external`) と `skills.sh` import の完全重複では `skills.sh` 側が優先されることを tests で固定する
 - [ ] custom/shared/local skill を壊さないことと、非重複 skill は併存することを確認する
 - [ ] docs / 運用コマンド / review を更新する
