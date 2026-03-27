@@ -1,4 +1,4 @@
-"""Vendor-layer helpers for repo-managed external skill imports."""
+"""Vendor-layer helpers for repo-managed external and official skill imports."""
 
 from ai_config.vendor.models import (
     LegacyBootstrapResult,

@@ -128,6 +128,8 @@ setup が行うこと:
 
 network を避けたい場合だけ `--skip-vendor-sync` / `-SkipVendorSync` を使います。
 
+`skills.sh official` の bulk import は opt-in です。repo 数が多いので初回 setup には含めません。
+
 ## Register MCP
 
 ```powershell
@@ -154,6 +156,10 @@ PORT=8080 ai-config-selector-serving --repo-root . --index-dir ./.index
 
 # vendor observability
 ai-config-vendor-skills --repo-root . status
+
+# refresh + sync skills.sh official snapshot
+ai-config-vendor-skills --repo-root . refresh-skills-sh-official-manifest
+ai-config-vendor-skills --repo-root . sync-skills-sh-official
 
 # full doctor
 ai-config-doctor --repo-root .
@@ -202,6 +208,7 @@ ai-config/
 │   ├── master/ai-sync.yaml
 │   ├── index_profiles.yaml
 │   ├── sources.yaml
+│   ├── skills_sh_official.yaml
 │   └── vendor_skills.yaml
 ├── docs/
 ├── skills/
@@ -212,9 +219,11 @@ ai-config/
 ## External Skill / MCP Ownership
 
 - `skills/external` は stable scan target のまま維持
+- `skills/official` は `skills.sh official` snapshot 用の opt-in higher-precedence layer
 - `config/vendor_skills.yaml` が curated vendor source の正本
+- `config/skills_sh_official.yaml` は public に解決できた `skills.sh official` repo の pinned snapshot
 - `ai-config-sources` は MCP source 管理と legacy cleanup のみ担当
-- external payload の import / update / provenance は `ai-config-vendor-skills` が担当
+- `ai-config-vendor-skills` が external payload と official snapshot の import / provenance を担当
 
 ## More Docs
 

@@ -1,5 +1,78 @@
 # TODO
 
+## 2026-03-27 Local/GitHub Official Skills Unification
+
+### Plan
+- [ ] `origin/main` の official skills 変更とローカル未コミット変更を比較し、正本にする設計を決める
+- [ ] GitHub 側の 1 commit を取り込みつつ、不要な snapshot / CLI / docs 差分を整理して一本化する
+- [ ] relevant tests と git hygiene を再実行して `main` を GitHub に push する
+
+### Progress
+- [x] 現状調査
+- [ ] 統合方針の確定
+- [ ] 競合解消
+- [ ] 検証
+- [ ] push
+
+## 2026-03-27 skills.sh Official Import
+
+### Plan
+- [ ] `skills.sh/official` の source list を repo で保持する manifest を追加する
+- [ ] `ai-config-vendor-skills` から official repo 群を `skills/imported/skills-sh/sources` へ一括同期できるようにする
+- [ ] fixed vendor source (`skills/external`) と `skills.sh` import の完全重複では `skills.sh` 側が優先されることを tests で固定する
+- [ ] custom/shared/local skill を壊さないことと、非重複 skill は併存することを確認する
+- [ ] docs / 運用コマンド / review を更新する
+
+### Progress
+- [x] 現状調査
+- [x] vendor / CLI 実装
+- [x] manifest 追加
+- [x] tests
+- [x] 検証
+- [x] review
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `src/ai_config/vendor/models.py`
+  - `src/ai_config/vendor/skill_vendor.py`
+  - `src/ai_config/vendor/cli.py`
+  - `src/ai_config/vendor/skills_sh_official.py`
+  - `src/ai_config/vendor/__init__.py`
+  - `src/ai_config/registry/skill_parser.py`
+  - `src/ai_config/registry/path_metadata.py`
+  - `src/ai_config/retriever/hybrid_search.py`
+  - `config/skills_sh_official.yaml`
+  - `config/skills_sh_official_skipped.json`
+  - `README.md`
+  - `docs/operations.md`
+  - `docs/architecture.md`
+  - `docs/development.md`
+  - `tests/test_vendor_skills.py`
+  - `tests/test_skills_sh_official.py`
+  - `tests/test_skill_parser_custom_layer.py`
+  - `tests/test_registry_path_metadata.py`
+  - `tasks/todo.md`
+- 実施内容:
+  - `skills/official` という higher-precedence layer を追加し、`skills.sh official` 由来の完全重複 skill id が `skills/imported` / `skills/external` より先に採用されるようにした
+  - `ai-config-vendor-skills refresh-skills-sh-official-manifest` で `https://skills.sh/official` から public repo を解決し、pinned manifest と skipped report を生成できるようにした
+  - `ai-config-vendor-skills sync-skills-sh-official` で `config/skills_sh_official.yaml` を `skills/official` へ一括同期できるようにした
+  - vendor path 処理を Windows-safe に直し、repo-relative path を posix 化した
+  - legacy submodule cleanup の Windows read-only delete を通るようにした
+- 検証:
+  - `PYTHONPATH=src .venv\Scripts\python.exe -m pytest tests/test_skill_parser_custom_layer.py tests/test_registry_path_metadata.py tests/test_skills_sh_official.py tests/test_vendor_skills.py -q`
+  - `PYTHONPATH=src .venv\Scripts\python.exe -m ai_config.vendor.cli --repo-root . refresh-skills-sh-official-manifest`
+  - PowerShell smoke: temp local repo + temp manifest で `PYTHONPATH=src .venv\Scripts\python.exe -m ai_config.vendor.cli --repo-root <temp-repo> sync-skills-sh-official`
+  - `git diff --check`
+- 検証結果:
+  - focused pytest は `24 passed`
+  - live refresh は `discovered=300`, `public=284`, `skipped=16`
+  - CLI smoke で `skills/official/smoke-demo/...` への materialize を確認した
+  - `git diff --check` は whitespace error なし
+
 ## 2026-03-26 Phase 4 Rename Evaluation
 
 ### Plan

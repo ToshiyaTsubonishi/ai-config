@@ -9,6 +9,10 @@ from pathlib import Path
 PROVENANCE_FILENAME = ".import.json"
 PROVENANCE_SCHEMA_VERSION = 1
 DEFAULT_VENDOR_MANIFEST = "config/vendor_skills.yaml"
+DEFAULT_EXTERNAL_TARGET_ROOT = "skills/external"
+DEFAULT_SKILLS_SH_OFFICIAL_MANIFEST = "config/skills_sh_official.yaml"
+DEFAULT_SKILLS_SH_OFFICIAL_SKIPPED_REPORT = "config/skills_sh_official_skipped.json"
+DEFAULT_OFFICIAL_TARGET_ROOT = "skills/official"
 VENDOR_STATUS_SCHEMA_VERSION = 1
 
 
@@ -20,6 +24,8 @@ class VendorImportSpec:
     local_name: str | None = None
     branch: str | None = None
     ref: str | None = None
+    target_root: str = DEFAULT_EXTERNAL_TARGET_ROOT
+    import_tool: str | None = None
     force: bool = False
     dry_run: bool = False
 

@@ -29,6 +29,8 @@ def _tokenize(text: str) -> list[str]:
 
 def _infer_source_repo_from_source_path(source_path: str) -> str:
     parts = source_path.split("/")
+    if len(parts) >= 3 and parts[0] == "skills" and parts[1] == "official":
+        return parts[2]
     if len(parts) >= 3 and parts[0] == "skills" and parts[1] == "external":
         return parts[2]
     if len(parts) >= 5 and parts[0] == "skills" and parts[1] == "imported" and parts[2] == "skills-sh" and parts[3] == "sources":

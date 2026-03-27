@@ -1,0 +1,73 @@
+{
+  "generated_at": "2026-03-26T16:02:29Z",
+  "source_url": "https://skills.sh/official",
+  "total_discovered": 300,
+  "total_public": 284,
+  "total_skipped": 16,
+  "skipped": [
+    {
+      "repo_slug": "browserbase/agent-browser",
+      "error": "Cannot resolve browserbase/agent-browser: remote: Repository not found.\nfatal: repository 'https://github.com/browserbase/agent-browser.git/' not found"
+    },
+    {
+      "repo_slug": "browserbase/skills-old",
+      "error": "Cannot resolve browserbase/skills-old: remote: Repository not found.\nfatal: repository 'https://github.com/browserbase/skills-old.git/' not found"
+    },
+    {
+      "repo_slug": "firecrawl/firecrawl-claude-skills",
+      "error": "Cannot resolve firecrawl/firecrawl-claude-skills: remote: Repository not found.\nfatal: repository 'https://github.com/firecrawl/firecrawl-claude-skills.git/' not found"
+    },
+    {
+      "repo_slug": "github/synapsync",
+      "error": "Cannot resolve github/synapsync: remote: Repository not found.\nfatal: repository 'https://github.com/github/synapsync.git/' not found"
+    },
+    {
+      "repo_slug": "hashicorp/hashicorp-agent-skills",
+      "error": "Cannot resolve hashicorp/hashicorp-agent-skills: remote: Repository not found.\nfatal: repository 'https://github.com/hashicorp/hashicorp-agent-skills.git/' not found"
+    },
+    {
+      "repo_slug": "hashicorp/internal-agent-skills",
+      "error": "Cannot resolve hashicorp/internal-agent-skills: remote: Repository not found.\nfatal: repository 'https://github.com/hashicorp/internal-agent-skills.git/' not found"
+    },
+    {
+      "repo_slug": "pulumi/agent-skills-private",
+      "error": "Cannot resolve pulumi/agent-skills-private: remote: Repository not found.\nfatal: repository 'https://github.com/pulumi/agent-skills-private.git/' not found"
+    },
+    {
+      "repo_slug": "stripe/com",
+      "error": "Cannot resolve stripe/com: remote: Repository not found.\nfatal: repository 'https://github.com/stripe/com.git/' not found"
+    },
+    {
+      "repo_slug": "tavily-ai/tavily-plugins",
+      "error": "Cannot resolve tavily-ai/tavily-plugins: remote: Repository not found.\nfatal: repository 'https://github.com/tavily-ai/tavily-plugins.git/' not found"
+    },
+    {
+      "repo_slug": "vercel-labs/dx-agent-toolkit",
+      "error": "Cannot resolve vercel-labs/dx-agent-toolkit: remote: Repository not found.\nfatal: repository 'https://github.com/vercel-labs/dx-agent-toolkit.git/' not found"
+    },
+    {
+      "repo_slug": "vercel-labs/vercel-skills",
+      "error": "Cannot resolve vercel-labs/vercel-skills: remote: Repository not found.\nfatal: repository 'https://github.com/vercel-labs/vercel-skills.git/' not found"
+    },
+    {
+      "repo_slug": "vercel/example",
+      "error": "Cannot resolve vercel/example: remote: Repository not found.\nfatal: repository 'https://github.com/vercel/example.git/' not found"
+    },
+    {
+      "repo_slug": "vercel/internal-agent-skills",
+      "error": "Cannot resolve vercel/internal-agent-skills: remote: Repository not found.\nfatal: repository 'https://github.com/vercel/internal-agent-skills.git/' not found"
+    },
+    {
+      "repo_slug": "vercel/skills",
+      "error": "Cannot resolve vercel/skills: remote: Repository not found.\nfatal: repository 'https://github.com/vercel/skills.git/' not found"
+    },
+    {
+      "repo_slug": "vercel/slidev-server",
+      "error": "Cannot resolve vercel/slidev-server: remote: Repository not found.\nfatal: repository 'https://github.com/vercel/slidev-server.git/' not found"
+    },
+    {
+      "repo_slug": "vercel/vercel-pdf-skill",
+      "error": "Cannot resolve vercel/vercel-pdf-skill: remote: Repository not found.\nfatal: repository 'https://github.com/vercel/vercel-pdf-skill.git/' not found"
+    }
+  ]
+}

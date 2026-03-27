@@ -9,6 +9,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+import yaml
 
 from ai_config.retriever.hybrid_search import HybridRetriever
 from ai_config.vendor.models import PROVENANCE_FILENAME, VendorImportSpec, VendorProvenance
@@ -18,6 +19,7 @@ from ai_config.vendor.skill_vendor import (
     cleanup_legacy_submodules,
     import_skill_repo,
     inspect_vendor_state,
+    sync_skills_sh_official,
     sync_vendor_manifest,
     update_imported_skills,
 )
@@ -80,20 +82,22 @@ def _init_git_repo_root(path: Path) -> Path:
 
 
 def _write_vendor_manifest(repo_root: Path, *, sources: dict[str, dict[str, str]]) -> None:
-    lines = ['version: "1.0.0"', "", "sources:"]
+    payload: dict[str, object] = {"version": "1.0.0", "sources": {}}
+    sources_payload = payload["sources"]
+    assert isinstance(sources_payload, dict)
     for name, cfg in sources.items():
-        lines.extend(
-            [
-                f"  {name}:",
-                f'    source_url: "{cfg["source_url"]}"',
-                f'    local_name: "{cfg.get("local_name", name)}"',
-                f'    branch: "{cfg.get("branch", "main")}"',
-            ]
-        )
+        entry = {
+            "source_url": cfg["source_url"],
+            "local_name": cfg.get("local_name", name),
+            "branch": cfg.get("branch", "main"),
+        }
         if "ref" in cfg:
-            lines.append(f'    ref: "{cfg["ref"]}"')
-    lines.append("")
-    _write(repo_root / "config" / "vendor_skills.yaml", "\n".join(lines))
+            entry["ref"] = cfg["ref"]
+        sources_payload[name] = entry
+    _write(
+        repo_root / "config" / "vendor_skills.yaml",
+        yaml.safe_dump(payload, sort_keys=False, allow_unicode=True),
+    )
 
 
 def test_import_skill_repo_force_reimport_preserves_imported_at_and_requested_ref(tmp_path: Path) -> None:
@@ -303,6 +307,43 @@ def test_sync_vendor_manifest_aligns_bootstrapped_provenance_without_reimport(tm
     aligned = VendorProvenance.from_path(demo_dir / PROVENANCE_FILENAME)
     assert results[0].status == "aligned"
     assert aligned.requested_ref == "abc123"
+
+
+def test_sync_skills_sh_official_materializes_into_official_layer(tmp_path: Path) -> None:
+    upstream = _init_git_repo(
+        tmp_path / "upstream",
+        {
+            "alpha/SKILL.md": "---\nname: official-alpha\ndescription: official alpha\n---\n# Alpha\n",
+        },
+    )
+    ref = _run_git(upstream, "rev-parse", "HEAD").stdout.strip()
+    repo_root = _minimal_repo_root(tmp_path / "repo")
+    _write(
+        repo_root / "config" / "skills_sh_official.yaml",
+        yaml.safe_dump(
+            {
+                "version": "1.0.0",
+                "sources": {
+                    "demo": {
+                        "source_url": str(upstream),
+                        "local_name": "demo",
+                        "branch": "main",
+                        "ref": ref,
+                    }
+                },
+            },
+            sort_keys=False,
+            allow_unicode=True,
+        ),
+    )
+
+    results = sync_skills_sh_official(repo_root=repo_root)
+    provenance = VendorProvenance.from_path(repo_root / "skills" / "official" / "demo" / PROVENANCE_FILENAME)
+
+    assert results[0].status == "imported"
+    assert provenance.import_tool == "ai-config-vendor-skills sync-skills-sh-official"
+    assert provenance.requested_ref == ref
+    assert (repo_root / "skills" / "official" / "demo" / "alpha" / "SKILL.md").exists()
 
 
 def test_bootstrap_legacy_imports_backfills_provenance(tmp_path: Path) -> None:

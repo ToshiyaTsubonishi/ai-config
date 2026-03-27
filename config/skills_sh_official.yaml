@@ -1,0 +1,1710 @@
+version: 1.0.0
+generated_at: '2026-03-26T16:02:29Z'
+source_url: https://skills.sh/official
+total_discovered: 300
+total_public: 284
+sources:
+  anthropics__anthropic-cookbook:
+    repo_slug: anthropics/anthropic-cookbook
+    source_url: https://github.com/anthropics/anthropic-cookbook.git
+    local_name: anthropics__anthropic-cookbook
+    branch: main
+    ref: 6d8146dffb7223b913f144046ee2b8ff8df15790
+  anthropics__claude-agent-sdk-demos:
+    repo_slug: anthropics/claude-agent-sdk-demos
+    source_url: https://github.com/anthropics/claude-agent-sdk-demos.git
+    local_name: anthropics__claude-agent-sdk-demos
+    branch: main
+    ref: 826b268506a5f3707623c9e6140b200befcbebae
+  anthropics__claude-code:
+    repo_slug: anthropics/claude-code
+    source_url: https://github.com/anthropics/claude-code.git
+    local_name: anthropics__claude-code
+    branch: main
+    ref: a0d9b87038e72d8a523b61c152ec53299ac6fe94
+  anthropics__claude-cookbooks:
+    repo_slug: anthropics/claude-cookbooks
+    source_url: https://github.com/anthropics/claude-cookbooks.git
+    local_name: anthropics__claude-cookbooks
+    branch: main
+    ref: 6d8146dffb7223b913f144046ee2b8ff8df15790
+  anthropics__claude-plugins-official:
+    repo_slug: anthropics/claude-plugins-official
+    source_url: https://github.com/anthropics/claude-plugins-official.git
+    local_name: anthropics__claude-plugins-official
+    branch: main
+    ref: b10b583de281385442474e836644534b938b2678
+  anthropics__cookbook:
+    repo_slug: anthropics/cookbook
+    source_url: https://github.com/anthropics/cookbook.git
+    local_name: anthropics__cookbook
+    branch: main
+    ref: 6d8146dffb7223b913f144046ee2b8ff8df15790
+  anthropics__financial-services-plugins:
+    repo_slug: anthropics/financial-services-plugins
+    source_url: https://github.com/anthropics/financial-services-plugins.git
+    local_name: anthropics__financial-services-plugins
+    branch: main
+    ref: b881b3c73e76a463731aacb7e886d7280f773348
+  anthropics__healthcare:
+    repo_slug: anthropics/healthcare
+    source_url: https://github.com/anthropics/healthcare.git
+    local_name: anthropics__healthcare
+    branch: main
+    ref: c382e9466083f3bfe8c3a5c5ac06c351e1f499bd
+  anthropics__knowledge-work-plugins:
+    repo_slug: anthropics/knowledge-work-plugins
+    source_url: https://github.com/anthropics/knowledge-work-plugins.git
+    local_name: anthropics__knowledge-work-plugins
+    branch: main
+    ref: d2ba7f65cec6502f048286b432dfee2ae59bfdff
+  anthropics__life-sciences:
+    repo_slug: anthropics/life-sciences
+    source_url: https://github.com/anthropics/life-sciences.git
+    local_name: anthropics__life-sciences
+    branch: main
+    ref: f6f10ffc1f4fbc96cdccf46e4d1a4c0914a316a9
+  anthropics__skills:
+    repo_slug: anthropics/skills
+    source_url: https://github.com/anthropics/skills.git
+    local_name: anthropics__skills
+    branch: main
+    ref: 98669c11ca63e9c81c11501e1437e5c47b556621
+  apify__agent-skills:
+    repo_slug: apify/agent-skills
+    source_url: https://github.com/apify/agent-skills.git
+    local_name: apify__agent-skills
+    branch: main
+    ref: 6d522216c99f7fa4e936b8f1c068fbbb0484258f
+  apify__awesome-skills:
+    repo_slug: apify/awesome-skills
+    source_url: https://github.com/apify/awesome-skills.git
+    local_name: apify__awesome-skills
+    branch: main
+    ref: c5b1c469caeedc133705a91c6b5d6041cfc4433a
+  apollographql__skills:
+    repo_slug: apollographql/skills
+    source_url: https://github.com/apollographql/skills.git
+    local_name: apollographql__skills
+    branch: main
+    ref: e1979d2f1e7c38cef58753b2bfd6fc9509101bdc
+  auth0__agent-skills:
+    repo_slug: auth0/agent-skills
+    source_url: https://github.com/auth0/agent-skills.git
+    local_name: auth0__agent-skills
+    branch: main
+    ref: fbcbfb16f50e2ea9154285ee2e656e6076249326
+  automattic__agent-skills:
+    repo_slug: automattic/agent-skills
+    source_url: https://github.com/automattic/agent-skills.git
+    local_name: automattic__agent-skills
+    branch: trunk
+    ref: 48d4aa21d0da0e7bda1c7ac155fef2e16b87aa25
+  automattic__studio:
+    repo_slug: automattic/studio
+    source_url: https://github.com/automattic/studio.git
+    local_name: automattic__studio
+    branch: trunk
+    ref: ee07891b14692b9db01bd128ef56b901f0afc729
+  automattic__wordpress-activitypub:
+    repo_slug: automattic/wordpress-activitypub
+    source_url: https://github.com/automattic/wordpress-activitypub.git
+    local_name: automattic__wordpress-activitypub
+    branch: trunk
+    ref: 3e9730af8d45824bb1224f0c992391617e6df2ee
+  automattic__wordpress-agent-skills:
+    repo_slug: automattic/wordpress-agent-skills
+    source_url: https://github.com/automattic/wordpress-agent-skills.git
+    local_name: automattic__wordpress-agent-skills
+    branch: trunk
+    ref: ea902bd8301564fa33e336c34114ab121f24c800
+  automattic__wp-calypso:
+    repo_slug: automattic/wp-calypso
+    source_url: https://github.com/automattic/wp-calypso.git
+    local_name: automattic__wp-calypso
+    branch: trunk
+    ref: e0eea57764faa9426f76ada3112c5dc63806d6d8
+  axiomhq__gilfoyle:
+    repo_slug: axiomhq/gilfoyle
+    source_url: https://github.com/axiomhq/gilfoyle.git
+    local_name: axiomhq__gilfoyle
+    branch: main
+    ref: 403f93d34627fda41ce98163daa53c5da7cb2e38
+  axiomhq__skills:
+    repo_slug: axiomhq/skills
+    source_url: https://github.com/axiomhq/skills.git
+    local_name: axiomhq__skills
+    branch: main
+    ref: b85f0efcd55ca3b2fc15e235f5a914a300c6c1a6
+  base__agent-apps:
+    repo_slug: base/agent-apps
+    source_url: https://github.com/base/agent-apps.git
+    local_name: base__agent-apps
+    branch: master
+    ref: 394d659acc69be6e8261ccf842fc2964a0f045fb
+  base__base-skills:
+    repo_slug: base/base-skills
+    source_url: https://github.com/base/base-skills.git
+    local_name: base__base-skills
+    branch: master
+    ref: f20d4300382b7ced1458e2ed277355db001a20de
+  base__skills:
+    repo_slug: base/skills
+    source_url: https://github.com/base/skills.git
+    local_name: base__skills
+    branch: master
+    ref: f20d4300382b7ced1458e2ed277355db001a20de
+  better-auth__better-icons:
+    repo_slug: better-auth/better-icons
+    source_url: https://github.com/better-auth/better-icons.git
+    local_name: better-auth__better-icons
+    branch: main
+    ref: 8faf8a65ea6fa9e144f39b0117f0d72b4fba9c12
+  better-auth__skills:
+    repo_slug: better-auth/skills
+    source_url: https://github.com/better-auth/skills.git
+    local_name: better-auth__skills
+    branch: main
+    ref: 6a1636950a1d7fc53602639ce7505a4a5d39c797
+  bitwarden__ai-plugins:
+    repo_slug: bitwarden/ai-plugins
+    source_url: https://github.com/bitwarden/ai-plugins.git
+    local_name: bitwarden__ai-plugins
+    branch: main
+    ref: 902f79e20394ae9b424a534fd81dce867b9993f5
+  bitwarden__android:
+    repo_slug: bitwarden/android
+    source_url: https://github.com/bitwarden/android.git
+    local_name: bitwarden__android
+    branch: main
+    ref: 6d0f69b23eaba4c238cbc2a07066de4cad474c51
+  bitwarden__clients:
+    repo_slug: bitwarden/clients
+    source_url: https://github.com/bitwarden/clients.git
+    local_name: bitwarden__clients
+    branch: main
+    ref: ad7864084f16ad19a720fa0347aed8b7191226a8
+  box__box-for-ai:
+    repo_slug: box/box-for-ai
+    source_url: https://github.com/box/box-for-ai.git
+    local_name: box__box-for-ai
+    branch: main
+    ref: 6d5d24ecc98aa5b1e99d8e771a0af6d93530a7c1
+  brave__brave-search-skills:
+    repo_slug: brave/brave-search-skills
+    source_url: https://github.com/brave/brave-search-skills.git
+    local_name: brave__brave-search-skills
+    branch: main
+    ref: 6424e70f4865af678bfbc781c819023b97a48082
+  browser-use__browser-use:
+    repo_slug: browser-use/browser-use
+    source_url: https://github.com/browser-use/browser-use.git
+    local_name: browser-use__browser-use
+    branch: main
+    ref: 76cc49089b2f21fa1e5c3b1b6c01124733cf2d57
+  browserbase__agent-browse:
+    repo_slug: browserbase/agent-browse
+    source_url: https://github.com/browserbase/agent-browse.git
+    local_name: browserbase__agent-browse
+    branch: main
+    ref: 4747945fa99d04f4a69aa074d60ca0ec207fe14b
+  browserbase__skills:
+    repo_slug: browserbase/skills
+    source_url: https://github.com/browserbase/skills.git
+    local_name: browserbase__skills
+    branch: main
+    ref: 4747945fa99d04f4a69aa074d60ca0ec207fe14b
+  callstackincubator__agent-device:
+    repo_slug: callstackincubator/agent-device
+    source_url: https://github.com/callstackincubator/agent-device.git
+    local_name: callstackincubator__agent-device
+    branch: main
+    ref: e8065b87d410763b724e1780076996f1f6b11fea
+  callstackincubator__agent-skills:
+    repo_slug: callstackincubator/agent-skills
+    source_url: https://github.com/callstackincubator/agent-skills.git
+    local_name: callstackincubator__agent-skills
+    branch: main
+    ref: 03c8bc4d2ea99961278b7c7910db248a9d55ca4a
+  callstackincubator__ai:
+    repo_slug: callstackincubator/ai
+    source_url: https://github.com/callstackincubator/ai.git
+    local_name: callstackincubator__ai
+    branch: main
+    ref: 41ffcad33fbd9090ca3a4bbce78c1e687941e730
+  callstackincubator__rozenite:
+    repo_slug: callstackincubator/rozenite
+    source_url: https://github.com/callstackincubator/rozenite.git
+    local_name: callstackincubator__rozenite
+    branch: main
+    ref: 2d133784bef54a6a24d5b81265b0a37189b7c1f4
+  callstackincubator__voltra:
+    repo_slug: callstackincubator/voltra
+    source_url: https://github.com/callstackincubator/voltra.git
+    local_name: callstackincubator__voltra
+    branch: main
+    ref: 6e75ae77e5fefa106843d4651b0c0bae1407a942
+  clerk__skills:
+    repo_slug: clerk/skills
+    source_url: https://github.com/clerk/skills.git
+    local_name: clerk__skills
+    branch: main
+    ref: 24f61a9e651dd655419bd2f63d3fc4aac1af6086
+  clickhouse__agent-skills:
+    repo_slug: clickhouse/agent-skills
+    source_url: https://github.com/clickhouse/agent-skills.git
+    local_name: clickhouse__agent-skills
+    branch: main
+    ref: fab8c0077a42aad93069dbc2b65170191edbf52a
+  clickhouse__clickhouse:
+    repo_slug: clickhouse/clickhouse
+    source_url: https://github.com/clickhouse/clickhouse.git
+    local_name: clickhouse__clickhouse
+    branch: master
+    ref: db879e6bd9f42ab9736ba762670014e3398ff23b
+  cloudflare__chanfana:
+    repo_slug: cloudflare/chanfana
+    source_url: https://github.com/cloudflare/chanfana.git
+    local_name: cloudflare__chanfana
+    branch: main
+    ref: d85b9730a8cdaa4e8bd198165d4ea5ee88ccfa18
+  cloudflare__cloudflare-docs:
+    repo_slug: cloudflare/cloudflare-docs
+    source_url: https://github.com/cloudflare/cloudflare-docs.git
+    local_name: cloudflare__cloudflare-docs
+    branch: production
+    ref: f9e2d68f504fc6446b00b8506c69167a71fca982
+  cloudflare__kumo:
+    repo_slug: cloudflare/kumo
+    source_url: https://github.com/cloudflare/kumo.git
+    local_name: cloudflare__kumo
+    branch: main
+    ref: 2bc0aae16efb451e8c46f5bda2b9361a4091832c
+  cloudflare__moltworker:
+    repo_slug: cloudflare/moltworker
+    source_url: https://github.com/cloudflare/moltworker.git
+    local_name: cloudflare__moltworker
+    branch: main
+    ref: 32fd813b17f5bdfc24906a49479e51ef6be5d25b
+  cloudflare__sandbox-sdk:
+    repo_slug: cloudflare/sandbox-sdk
+    source_url: https://github.com/cloudflare/sandbox-sdk.git
+    local_name: cloudflare__sandbox-sdk
+    branch: main
+    ref: 063bdf107f1a7ea7dddcb026baf9e6b6fd8b02b3
+  cloudflare__skills:
+    repo_slug: cloudflare/skills
+    source_url: https://github.com/cloudflare/skills.git
+    local_name: cloudflare__skills
+    branch: main
+    ref: d3113039790f64e052ff80f351190da65e9b7510
+  cloudflare__vinext:
+    repo_slug: cloudflare/vinext
+    source_url: https://github.com/cloudflare/vinext.git
+    local_name: cloudflare__vinext
+    branch: main
+    ref: adfc2236cba5f7cde63f32f6fb35c0d892428376
+  cloudflare__workerd:
+    repo_slug: cloudflare/workerd
+    source_url: https://github.com/cloudflare/workerd.git
+    local_name: cloudflare__workerd
+    branch: main
+    ref: 9a696e43f4cf38863ca0300e0b75ed6b2895cf6b
+  coderabbitai__claude-plugin:
+    repo_slug: coderabbitai/claude-plugin
+    source_url: https://github.com/coderabbitai/claude-plugin.git
+    local_name: coderabbitai__claude-plugin
+    branch: main
+    ref: 8fbf7eb630000a5ec7cc3e7ce2d2703c8c119d0c
+  coderabbitai__skills:
+    repo_slug: coderabbitai/skills
+    source_url: https://github.com/coderabbitai/skills.git
+    local_name: coderabbitai__skills
+    branch: main
+    ref: e1d42d7a2e0a736824117802b6e03228eadd52f1
+  coinbase__agentic-wallet-skills:
+    repo_slug: coinbase/agentic-wallet-skills
+    source_url: https://github.com/coinbase/agentic-wallet-skills.git
+    local_name: coinbase__agentic-wallet-skills
+    branch: main
+    ref: 9a595bdccf7756f23fa95a96ab6a6b11a80ebbb2
+  dagster-io__dagster-claude-plugins:
+    repo_slug: dagster-io/dagster-claude-plugins
+    source_url: https://github.com/dagster-io/dagster-claude-plugins.git
+    local_name: dagster-io__dagster-claude-plugins
+    branch: master
+    ref: 27af24bcd3030a1f79ab3d2a6802268c5d5829aa
+  dagster-io__erk:
+    repo_slug: dagster-io/erk
+    source_url: https://github.com/dagster-io/erk.git
+    local_name: dagster-io__erk
+    branch: master
+    ref: 2a179eaeaaa56a502e744c8b3d1aa9a7896f72c8
+  dagster-io__fake-driven-testing:
+    repo_slug: dagster-io/fake-driven-testing
+    source_url: https://github.com/dagster-io/fake-driven-testing.git
+    local_name: dagster-io__fake-driven-testing
+    branch: master
+    ref: 2f84a13b0a7eda8407ecad978c297d30288ffeff
+  dagster-io__skills:
+    repo_slug: dagster-io/skills
+    source_url: https://github.com/dagster-io/skills.git
+    local_name: dagster-io__skills
+    branch: master
+    ref: 27af24bcd3030a1f79ab3d2a6802268c5d5829aa
+  datadog-labs__agent-skills:
+    repo_slug: datadog-labs/agent-skills
+    source_url: https://github.com/datadog-labs/agent-skills.git
+    local_name: datadog-labs__agent-skills
+    branch: main
+    ref: 71f4a7bde4ded2673709caed4b04854fe5967015
+  datadog-labs__pup:
+    repo_slug: datadog-labs/pup
+    source_url: https://github.com/datadog-labs/pup.git
+    local_name: datadog-labs__pup
+    branch: main
+    ref: be5ca213f331020171d4ff28b64a6333ff68988b
+  dbt-labs__dbt-agent-skills:
+    repo_slug: dbt-labs/dbt-agent-skills
+    source_url: https://github.com/dbt-labs/dbt-agent-skills.git
+    local_name: dbt-labs__dbt-agent-skills
+    branch: main
+    ref: a21c3538ee3cc4b5a38b2da33522d11077998f30
+  dbt-labs__dbt-mcp:
+    repo_slug: dbt-labs/dbt-mcp
+    source_url: https://github.com/dbt-labs/dbt-mcp.git
+    local_name: dbt-labs__dbt-mcp
+    branch: main
+    ref: f5e6ca5a16c463ddad1c57b5061baca8840cc2c8
+  denoland__skills:
+    repo_slug: denoland/skills
+    source_url: https://github.com/denoland/skills.git
+    local_name: denoland__skills
+    branch: main
+    ref: 1a4267f4fc60d75839d740ae39a7e0bb0170cf0b
+  elevenlabs__packages:
+    repo_slug: elevenlabs/packages
+    source_url: https://github.com/elevenlabs/packages.git
+    local_name: elevenlabs__packages
+    branch: main
+    ref: 48efc75be99cb2242174573035cdadd70199d78b
+  elevenlabs__skills:
+    repo_slug: elevenlabs/skills
+    source_url: https://github.com/elevenlabs/skills.git
+    local_name: elevenlabs__skills
+    branch: main
+    ref: cab396c70eb67ec83d7e764ab68e03c78cdf7230
+  encoredev__skills:
+    repo_slug: encoredev/skills
+    source_url: https://github.com/encoredev/skills.git
+    local_name: encoredev__skills
+    branch: main
+    ref: 91fda02311c65b57c0f56d793c1aa01420083002
+  expo__expo:
+    repo_slug: expo/expo
+    source_url: https://github.com/expo/expo.git
+    local_name: expo__expo
+    branch: main
+    ref: ba15acc282f3c7025b841d8d1aa31d919ecb2184
+  expo__skills:
+    repo_slug: expo/skills
+    source_url: https://github.com/expo/skills.git
+    local_name: expo__skills
+    branch: main
+    ref: 7f17ad5ad02ca48692affff6da859153880f818c
+  facebook__hermes:
+    repo_slug: facebook/hermes
+    source_url: https://github.com/facebook/hermes.git
+    local_name: facebook__hermes
+    branch: static_h
+    ref: ddd420b995d0df98174b000b2d5ca6f8a42ddffb
+  facebook__react:
+    repo_slug: facebook/react
+    source_url: https://github.com/facebook/react.git
+    local_name: facebook__react
+    branch: main
+    ref: 3cb2c42013eda273ac449126ab9fcc115a09d39d
+  figma__mcp-server-guide:
+    repo_slug: figma/mcp-server-guide
+    source_url: https://github.com/figma/mcp-server-guide.git
+    local_name: figma__mcp-server-guide
+    branch: main
+    ref: 512f1c770037f8bb4a86748df54e219716d64414
+  firebase__agent-skills:
+    repo_slug: firebase/agent-skills
+    source_url: https://github.com/firebase/agent-skills.git
+    local_name: firebase__agent-skills
+    branch: main
+    ref: fcf78b896a7cf37f5eba06955df8724899109a64
+  firebase__firebase-tools:
+    repo_slug: firebase/firebase-tools
+    source_url: https://github.com/firebase/firebase-tools.git
+    local_name: firebase__firebase-tools
+    branch: main
+    ref: d2c923f1114603ac4dcba4f4bd03403b011d0cbc
+  firebase__genkit:
+    repo_slug: firebase/genkit
+    source_url: https://github.com/firebase/genkit.git
+    local_name: firebase__genkit
+    branch: main
+    ref: ee483016a16393a6441d0bf19d1906af6feab880
+  firebase__skills:
+    repo_slug: firebase/skills
+    source_url: https://github.com/firebase/skills.git
+    local_name: firebase__skills
+    branch: main
+    ref: fcf78b896a7cf37f5eba06955df8724899109a64
+  firecrawl__agent-skills:
+    repo_slug: firecrawl/agent-skills
+    source_url: https://github.com/firecrawl/agent-skills.git
+    local_name: firecrawl__agent-skills
+    branch: trunk
+    ref: cdc950d588af9bd5975698e4d6db3bff738c4ad0
+  firecrawl__cli:
+    repo_slug: firecrawl/cli
+    source_url: https://github.com/firecrawl/cli.git
+    local_name: firecrawl__cli
+    branch: main
+    ref: 6838c4b8d2d1294b8571d133aafeab6700b5dd50
+  firecrawl__firecrawl-claude-plugin:
+    repo_slug: firecrawl/firecrawl-claude-plugin
+    source_url: https://github.com/firecrawl/firecrawl-claude-plugin.git
+    local_name: firecrawl__firecrawl-claude-plugin
+    branch: main
+    ref: 684b975c8cc6bd0fcfa96f787900bf87fffeef57
+  firecrawl__firecrawl-cli:
+    repo_slug: firecrawl/firecrawl-cli
+    source_url: https://github.com/firecrawl/firecrawl-cli.git
+    local_name: firecrawl__firecrawl-cli
+    branch: main
+    ref: 6838c4b8d2d1294b8571d133aafeab6700b5dd50
+  firecrawl__firecrawl-cursor-plugin:
+    repo_slug: firecrawl/firecrawl-cursor-plugin
+    source_url: https://github.com/firecrawl/firecrawl-cursor-plugin.git
+    local_name: firecrawl__firecrawl-cursor-plugin
+    branch: main
+    ref: ba1fdb7655d6d5bed432f2c35fb0ec71533ef721
+  firecrawl__opencode-firecrawl:
+    repo_slug: firecrawl/opencode-firecrawl
+    source_url: https://github.com/firecrawl/opencode-firecrawl.git
+    local_name: firecrawl__opencode-firecrawl
+    branch: main
+    ref: a5a7939005ad67b0a7a03f495aa224f6e9d2bb20
+  firecrawl__skills:
+    repo_slug: firecrawl/skills
+    source_url: https://github.com/firecrawl/skills.git
+    local_name: firecrawl__skills
+    branch: main
+    ref: 4ab6e0fd99c6667163bc34173e3ed3a3fed75ebc
+  flutter__genui:
+    repo_slug: flutter/genui
+    source_url: https://github.com/flutter/genui.git
+    local_name: flutter__genui
+    branch: main
+    ref: 41c4ebcf3bedea1e3986dfcc41d4a26c31c7d815
+  flutter__skills:
+    repo_slug: flutter/skills
+    source_url: https://github.com/flutter/skills.git
+    local_name: flutter__skills
+    branch: main
+    ref: 4ad7731305db281c946183d6a295647492e4fac5
+  flutter__website:
+    repo_slug: flutter/website
+    source_url: https://github.com/flutter/website.git
+    local_name: flutter__website
+    branch: main
+    ref: d3bf97bf13db6fabf13dbfeaf344e87482f6a247
+  getsentry__agent-skills:
+    repo_slug: getsentry/agent-skills
+    source_url: https://github.com/getsentry/agent-skills.git
+    local_name: getsentry__agent-skills
+    branch: main
+    ref: 9f54eb021916a7cff2c04a9f4e4c1f9439f3202c
+  getsentry__cli:
+    repo_slug: getsentry/cli
+    source_url: https://github.com/getsentry/cli.git
+    local_name: getsentry__cli
+    branch: main
+    ref: ae2d847940cea35d8a3a794d092321db156bdd7d
+  getsentry__sentry:
+    repo_slug: getsentry/sentry
+    source_url: https://github.com/getsentry/sentry.git
+    local_name: getsentry__sentry
+    branch: master
+    ref: 533c4a2dbdf91c41d28190be124540e1a9b1a280
+  getsentry__sentry-agent-skills:
+    repo_slug: getsentry/sentry-agent-skills
+    source_url: https://github.com/getsentry/sentry-agent-skills.git
+    local_name: getsentry__sentry-agent-skills
+    branch: main
+    ref: 9f54eb021916a7cff2c04a9f4e4c1f9439f3202c
+  getsentry__sentry-for-ai:
+    repo_slug: getsentry/sentry-for-ai
+    source_url: https://github.com/getsentry/sentry-for-ai.git
+    local_name: getsentry__sentry-for-ai
+    branch: main
+    ref: 871db4ad41048f0ef205df837648f623ba2536e6
+  getsentry__sentry-for-claude:
+    repo_slug: getsentry/sentry-for-claude
+    source_url: https://github.com/getsentry/sentry-for-claude.git
+    local_name: getsentry__sentry-for-claude
+    branch: main
+    ref: 871db4ad41048f0ef205df837648f623ba2536e6
+  getsentry__sentry-for-cursor:
+    repo_slug: getsentry/sentry-for-cursor
+    source_url: https://github.com/getsentry/sentry-for-cursor.git
+    local_name: getsentry__sentry-for-cursor
+    branch: main
+    ref: e436b5a0977d902407ba72c6ab8a01764dab2c5f
+  getsentry__sentry-javascript:
+    repo_slug: getsentry/sentry-javascript
+    source_url: https://github.com/getsentry/sentry-javascript.git
+    local_name: getsentry__sentry-javascript
+    branch: develop
+    ref: 4a43db24d987f74a6f7c56c4eab34c035c6aa945
+  getsentry__sentry-python:
+    repo_slug: getsentry/sentry-python
+    source_url: https://github.com/getsentry/sentry-python.git
+    local_name: getsentry__sentry-python
+    branch: master
+    ref: 3debca0d60fe34050f1cca3951b688cb158605ab
+  getsentry__sentry-skills:
+    repo_slug: getsentry/sentry-skills
+    source_url: https://github.com/getsentry/sentry-skills.git
+    local_name: getsentry__sentry-skills
+    branch: main
+    ref: 07ec616b5aaede831440185aa3f73a4b8bacd138
+  getsentry__skills:
+    repo_slug: getsentry/skills
+    source_url: https://github.com/getsentry/skills.git
+    local_name: getsentry__skills
+    branch: main
+    ref: 07ec616b5aaede831440185aa3f73a4b8bacd138
+  getsentry__warden:
+    repo_slug: getsentry/warden
+    source_url: https://github.com/getsentry/warden.git
+    local_name: getsentry__warden
+    branch: main
+    ref: 6e859f28a8df423feee33c094a390aacfd217460
+  getsentry__xcodebuildmcp:
+    repo_slug: getsentry/xcodebuildmcp
+    source_url: https://github.com/getsentry/xcodebuildmcp.git
+    local_name: getsentry__xcodebuildmcp
+    branch: main
+    ref: b7f8a89a066a41f763637fa14354f15cb3fc3d27
+  github__awesome-copilot:
+    repo_slug: github/awesome-copilot
+    source_url: https://github.com/github/awesome-copilot.git
+    local_name: github__awesome-copilot
+    branch: main
+    ref: 4c98da8f87dbbe621e57bb723330f8547d725cad
+  github__copilot-plugins:
+    repo_slug: github/copilot-plugins
+    source_url: https://github.com/github/copilot-plugins.git
+    local_name: github__copilot-plugins
+    branch: main
+    ref: 6fe19e8a352deb8c268c6bc066a843031dd1b6dc
+  github__gh-aw:
+    repo_slug: github/gh-aw
+    source_url: https://github.com/github/gh-aw.git
+    local_name: github__gh-aw
+    branch: main
+    ref: 17c19e9f414f7f09b2af566891e3c31f6258180e
+  github__gh-aw-firewall:
+    repo_slug: github/gh-aw-firewall
+    source_url: https://github.com/github/gh-aw-firewall.git
+    local_name: github__gh-aw-firewall
+    branch: main
+    ref: 284e5f9237deb373e30730e8545ff0c8607ce42b
+  google-gemini__gemini-cli:
+    repo_slug: google-gemini/gemini-cli
+    source_url: https://github.com/google-gemini/gemini-cli.git
+    local_name: google-gemini__gemini-cli
+    branch: main
+    ref: 49534209f29d6c9643eb15b8d041f4dadfc5b20a
+  google-gemini__gemini-skill:
+    repo_slug: google-gemini/gemini-skill
+    source_url: https://github.com/google-gemini/gemini-skill.git
+    local_name: google-gemini__gemini-skill
+    branch: main
+    ref: 51f1bedafbd15776826dae6242482b2017f2e568
+  google-gemini__gemini-skills:
+    repo_slug: google-gemini/gemini-skills
+    source_url: https://github.com/google-gemini/gemini-skills.git
+    local_name: google-gemini__gemini-skills
+    branch: main
+    ref: 51f1bedafbd15776826dae6242482b2017f2e568
+  google-labs-code__jules-skills:
+    repo_slug: google-labs-code/jules-skills
+    source_url: https://github.com/google-labs-code/jules-skills.git
+    local_name: google-labs-code__jules-skills
+    branch: main
+    ref: 7a76d3bfcf4258ee437d65b5d12e54b51c395de5
+  google-labs-code__stitch-sdk:
+    repo_slug: google-labs-code/stitch-sdk
+    source_url: https://github.com/google-labs-code/stitch-sdk.git
+    local_name: google-labs-code__stitch-sdk
+    branch: main
+    ref: 58fad71f512f692337f898cf38b4a7dd36a387f7
+  google-labs-code__stitch-skills:
+    repo_slug: google-labs-code/stitch-skills
+    source_url: https://github.com/google-labs-code/stitch-skills.git
+    local_name: google-labs-code__stitch-skills
+    branch: main
+    ref: ad0b5cc5d5c3569e12a3105b0dee7409c3227e1b
+  hashicorp__agent-skills:
+    repo_slug: hashicorp/agent-skills
+    source_url: https://github.com/hashicorp/agent-skills.git
+    local_name: hashicorp__agent-skills
+    branch: main
+    ref: 9f2ede91f6eb72780c5fd787b3b1720623626dfb
+  hashicorp__terraform-agent-kit:
+    repo_slug: hashicorp/terraform-agent-kit
+    source_url: https://github.com/hashicorp/terraform-agent-kit.git
+    local_name: hashicorp__terraform-agent-kit
+    branch: main
+    ref: 9f2ede91f6eb72780c5fd787b3b1720623626dfb
+  huggingface__chat-ui:
+    repo_slug: huggingface/chat-ui
+    source_url: https://github.com/huggingface/chat-ui.git
+    local_name: huggingface__chat-ui
+    branch: main
+    ref: f65a89d0d69d98ba5c252d464529418e089f02df
+  huggingface__kernels:
+    repo_slug: huggingface/kernels
+    source_url: https://github.com/huggingface/kernels.git
+    local_name: huggingface__kernels
+    branch: main
+    ref: 953ef766f404ced9c55027a71aa93e7ccf31ce1d
+  huggingface__skills:
+    repo_slug: huggingface/skills
+    source_url: https://github.com/huggingface/skills.git
+    local_name: huggingface__skills
+    branch: main
+    ref: 7aa8697975c7efe07c2f93d3e5c0795a6597efe0
+  kotlin__kotlin-agent-skills:
+    repo_slug: kotlin/kotlin-agent-skills
+    source_url: https://github.com/kotlin/kotlin-agent-skills.git
+    local_name: kotlin__kotlin-agent-skills
+    branch: main
+    ref: 56f0d35f3a74d88e380542b41e65c901e9a881f3
+  langchain-ai__deepagents:
+    repo_slug: langchain-ai/deepagents
+    source_url: https://github.com/langchain-ai/deepagents.git
+    local_name: langchain-ai__deepagents
+    branch: main
+    ref: 4f72c34221aea0516738be566de0fffc2c7386ac
+  langchain-ai__deepagentsjs:
+    repo_slug: langchain-ai/deepagentsjs
+    source_url: https://github.com/langchain-ai/deepagentsjs.git
+    local_name: langchain-ai__deepagentsjs
+    branch: main
+    ref: d94803d549642a8fe9172dfffd2a383c5c4a7d34
+  langchain-ai__langchain-skills:
+    repo_slug: langchain-ai/langchain-skills
+    source_url: https://github.com/langchain-ai/langchain-skills.git
+    local_name: langchain-ai__langchain-skills
+    branch: main
+    ref: 9dd360ba9932526f401f15d48238fb710d4d6836
+  langchain-ai__langsmith-skills:
+    repo_slug: langchain-ai/langsmith-skills
+    source_url: https://github.com/langchain-ai/langsmith-skills.git
+    local_name: langchain-ai__langsmith-skills
+    branch: main
+    ref: 0d5c6c13a345943d5eeddf276dba8e691043d0dc
+  langchain-ai__lca-skills:
+    repo_slug: langchain-ai/lca-skills
+    source_url: https://github.com/langchain-ai/lca-skills.git
+    local_name: langchain-ai__lca-skills
+    branch: main
+    ref: 93cefb7bb3d3f99bd9a8aeef3c3636c7126cfca9
+  langchain-ai__skills-benchmarks:
+    repo_slug: langchain-ai/skills-benchmarks
+    source_url: https://github.com/langchain-ai/skills-benchmarks.git
+    local_name: langchain-ai__skills-benchmarks
+    branch: main
+    ref: a9c4f21724c79a087fbccb250b5bd105ce32e82b
+  langfuse__langfuse:
+    repo_slug: langfuse/langfuse
+    source_url: https://github.com/langfuse/langfuse.git
+    local_name: langfuse__langfuse
+    branch: main
+    ref: 38ba952ef940258cb0172a7d9bb9f73a2cc1952b
+  langfuse__skills:
+    repo_slug: langfuse/skills
+    source_url: https://github.com/langfuse/skills.git
+    local_name: langfuse__skills
+    branch: main
+    ref: 1f2dd98a623bdc296fe54b619d8694f551f259d0
+  launchdarkly__agent-skills:
+    repo_slug: launchdarkly/agent-skills
+    source_url: https://github.com/launchdarkly/agent-skills.git
+    local_name: launchdarkly__agent-skills
+    branch: main
+    ref: 0a3dfef3ce4d14f436fa25717a2302575053e36c
+  livekit__agent-skills:
+    repo_slug: livekit/agent-skills
+    source_url: https://github.com/livekit/agent-skills.git
+    local_name: livekit__agent-skills
+    branch: main
+    ref: d86b6458a8f80bb41c67ef29a04b45849e9ad38d
+  makenotion__claude-code-notion-plugin:
+    repo_slug: makenotion/claude-code-notion-plugin
+    source_url: https://github.com/makenotion/claude-code-notion-plugin.git
+    local_name: makenotion__claude-code-notion-plugin
+    branch: main
+    ref: 9847f2aa1a15f25df35ed1fb7b4557dbb60cd651
+  makenotion__cursor-notion-plugin:
+    repo_slug: makenotion/cursor-notion-plugin
+    source_url: https://github.com/makenotion/cursor-notion-plugin.git
+    local_name: makenotion__cursor-notion-plugin
+    branch: main
+    ref: cf1324609edba6d617164f1dec138aeb43f26735
+  makenotion__notion-cookbook:
+    repo_slug: makenotion/notion-cookbook
+    source_url: https://github.com/makenotion/notion-cookbook.git
+    local_name: makenotion__notion-cookbook
+    branch: main
+    ref: cb1ca6d231ddc452e4a3f9a5fb146623b26c0c71
+  makenotion__skills:
+    repo_slug: makenotion/skills
+    source_url: https://github.com/makenotion/skills.git
+    local_name: makenotion__skills
+    branch: main
+    ref: d3f06e7a5f2efff2c91d3149eb0a2efdd5629e11
+  mapbox__mapbox-agent-skills:
+    repo_slug: mapbox/mapbox-agent-skills
+    source_url: https://github.com/mapbox/mapbox-agent-skills.git
+    local_name: mapbox__mapbox-agent-skills
+    branch: main
+    ref: 38483cac8e4e90217243effb9a030c87811e2aa3
+  mapbox__mcp-devkit-server:
+    repo_slug: mapbox/mcp-devkit-server
+    source_url: https://github.com/mapbox/mcp-devkit-server.git
+    local_name: mapbox__mcp-devkit-server
+    branch: main
+    ref: f08978d62a6c14eb0eeee356d34a49997d3e5874
+  mastra-ai__infinite-moves:
+    repo_slug: mastra-ai/infinite-moves
+    source_url: https://github.com/mastra-ai/infinite-moves.git
+    local_name: mastra-ai__infinite-moves
+    branch: main
+    ref: 2183f72606ff2336aa5750c709f414aa35a6d847
+  mastra-ai__mastra:
+    repo_slug: mastra-ai/mastra
+    source_url: https://github.com/mastra-ai/mastra.git
+    local_name: mastra-ai__mastra
+    branch: main
+    ref: 3b6548be5ba394f87efa30298d277eb73f908eda
+  mastra-ai__skills:
+    repo_slug: mastra-ai/skills
+    source_url: https://github.com/mastra-ai/skills.git
+    local_name: mastra-ai__skills
+    branch: main
+    ref: 5d04dc00fe3b2a29d70995ce0f034d4f489d167f
+  mcp-use__mcp-use:
+    repo_slug: mcp-use/mcp-use
+    source_url: https://github.com/mcp-use/mcp-use.git
+    local_name: mcp-use__mcp-use
+    branch: main
+    ref: 5d128453e718d9696e7ba06cea05d7e596a665b3
+  mcp-use__skills:
+    repo_slug: mcp-use/skills
+    source_url: https://github.com/mcp-use/skills.git
+    local_name: mcp-use__skills
+    branch: main
+    ref: 3bf0eaa4b007fe3215fc81ef1bc4f9ba4ceb1c1e
+  medusajs__medusa-agent-skills:
+    repo_slug: medusajs/medusa-agent-skills
+    source_url: https://github.com/medusajs/medusa-agent-skills.git
+    local_name: medusajs__medusa-agent-skills
+    branch: main
+    ref: 48385888e6fa424fd290f81bdf7a4e2d0b63649c
+  medusajs__medusa-claude-plugins:
+    repo_slug: medusajs/medusa-claude-plugins
+    source_url: https://github.com/medusajs/medusa-claude-plugins.git
+    local_name: medusajs__medusa-claude-plugins
+    branch: main
+    ref: 48385888e6fa424fd290f81bdf7a4e2d0b63649c
+  microsoft__agent-framework:
+    repo_slug: microsoft/agent-framework
+    source_url: https://github.com/microsoft/agent-framework.git
+    local_name: microsoft__agent-framework
+    branch: main
+    ref: d2977d63dad06f06c01504a7b4b7312cf176779b
+  microsoft__agent-governance-toolkit:
+    repo_slug: microsoft/agent-governance-toolkit
+    source_url: https://github.com/microsoft/agent-governance-toolkit.git
+    local_name: microsoft__agent-governance-toolkit
+    branch: main
+    ref: 9f01ba536f26aa494a5b815db787422068ab1f78
+  microsoft__agent-skills:
+    repo_slug: microsoft/agent-skills
+    source_url: https://github.com/microsoft/agent-skills.git
+    local_name: microsoft__agent-skills
+    branch: main
+    ref: 4fffd0e48ea491c193091ca4eb3e6af076972d75
+  microsoft__ai-agents-for-beginners:
+    repo_slug: microsoft/ai-agents-for-beginners
+    source_url: https://github.com/microsoft/ai-agents-for-beginners.git
+    local_name: microsoft__ai-agents-for-beginners
+    branch: main
+    ref: 4d697b4e85e346982ff56efcac0d1c6e979a76f1
+  microsoft__azure-skills:
+    repo_slug: microsoft/azure-skills
+    source_url: https://github.com/microsoft/azure-skills.git
+    local_name: microsoft__azure-skills
+    branch: main
+    ref: 0e2d855d31ffd3487488975faed57773634198a3
+  microsoft__dataverse-skills:
+    repo_slug: microsoft/dataverse-skills
+    source_url: https://github.com/microsoft/dataverse-skills.git
+    local_name: microsoft__dataverse-skills
+    branch: main
+    ref: a6eef9f79d9385bc7c7b41dd60180d7fe6d65c74
+  microsoft__fabric-cli:
+    repo_slug: microsoft/fabric-cli
+    source_url: https://github.com/microsoft/fabric-cli.git
+    local_name: microsoft__fabric-cli
+    branch: main
+    ref: c2f43153280f11ab26850e3cd22fa5ba15d79fc7
+  microsoft__github-copilot-for-azure:
+    repo_slug: microsoft/github-copilot-for-azure
+    source_url: https://github.com/microsoft/github-copilot-for-azure.git
+    local_name: microsoft__github-copilot-for-azure
+    branch: main
+    ref: 1f4304bab32d46c4d770cddaf76707d7a561320f
+  microsoft__hve-core:
+    repo_slug: microsoft/hve-core
+    source_url: https://github.com/microsoft/hve-core.git
+    local_name: microsoft__hve-core
+    branch: main
+    ref: 5fc601bcfef9714b7ac2ef61dcfc71fe13e3ca54
+  microsoft__playwright:
+    repo_slug: microsoft/playwright
+    source_url: https://github.com/microsoft/playwright.git
+    local_name: microsoft__playwright
+    branch: main
+    ref: aaeb0b40c69a9e947b176a6d5ff15b788de7e2ba
+  microsoft__playwright-cli:
+    repo_slug: microsoft/playwright-cli
+    source_url: https://github.com/microsoft/playwright-cli.git
+    local_name: microsoft__playwright-cli
+    branch: main
+    ref: e63e9b74deac2290f1f3b9800374fa3070efdec4
+  microsoft__playwright-python:
+    repo_slug: microsoft/playwright-python
+    source_url: https://github.com/microsoft/playwright-python.git
+    local_name: microsoft__playwright-python
+    branch: main
+    ref: 3aecfcfded4239d157bb3e86cb682f6c8ecf6827
+  microsoft__power-platform-skills:
+    repo_slug: microsoft/power-platform-skills
+    source_url: https://github.com/microsoft/power-platform-skills.git
+    local_name: microsoft__power-platform-skills
+    branch: main
+    ref: 9c39118f8561ecb7f70e74506a7d96e6f9e2355b
+  microsoft__powertoys:
+    repo_slug: microsoft/powertoys
+    source_url: https://github.com/microsoft/powertoys.git
+    local_name: microsoft__powertoys
+    branch: main
+    ref: c83dd972a0b6722b4f3ea4168ec06e13ef4a967a
+  microsoft__rushstack:
+    repo_slug: microsoft/rushstack
+    source_url: https://github.com/microsoft/rushstack.git
+    local_name: microsoft__rushstack
+    branch: main
+    ref: 8a8ab9d79601049536f9eb271e19fd3629bf4f4c
+  microsoft__semantic-link-labs:
+    repo_slug: microsoft/semantic-link-labs
+    source_url: https://github.com/microsoft/semantic-link-labs.git
+    local_name: microsoft__semantic-link-labs
+    branch: main
+    ref: 3eb8bb9f1f18d02b0553db989168f68b42dbaa38
+  microsoft__skills:
+    repo_slug: microsoft/skills
+    source_url: https://github.com/microsoft/skills.git
+    local_name: microsoft__skills
+    branch: main
+    ref: 4fffd0e48ea491c193091ca4eb3e6af076972d75
+  microsoft__skills-for-copilot-studio:
+    repo_slug: microsoft/skills-for-copilot-studio
+    source_url: https://github.com/microsoft/skills-for-copilot-studio.git
+    local_name: microsoft__skills-for-copilot-studio
+    branch: main
+    ref: b072136119dd7ada1f29c0b279a2581b2cff922a
+  microsoft__skills-for-fabric:
+    repo_slug: microsoft/skills-for-fabric
+    source_url: https://github.com/microsoft/skills-for-fabric.git
+    local_name: microsoft__skills-for-fabric
+    branch: main
+    ref: 339c328dc507a0ff2235e79a70d7c175eb6cc281
+  microsoft__vscode:
+    repo_slug: microsoft/vscode
+    source_url: https://github.com/microsoft/vscode.git
+    local_name: microsoft__vscode
+    branch: main
+    ref: abdf722266f3d65b8d50c2cbd77421c7db5e95ec
+  microsoft__vscode-copilot-chat:
+    repo_slug: microsoft/vscode-copilot-chat
+    source_url: https://github.com/microsoft/vscode-copilot-chat.git
+    local_name: microsoft__vscode-copilot-chat
+    branch: main
+    ref: 25fc9faae83b087070567a376b4de8abd739b059
+  microsoft__vscode-cosmosdb:
+    repo_slug: microsoft/vscode-cosmosdb
+    source_url: https://github.com/microsoft/vscode-cosmosdb.git
+    local_name: microsoft__vscode-cosmosdb
+    branch: main
+    ref: c93192680d7650f2708e8583c394e6a956318b74
+  microsoft__winappcli:
+    repo_slug: microsoft/winappcli
+    source_url: https://github.com/microsoft/winappcli.git
+    local_name: microsoft__winappcli
+    branch: main
+    ref: 996e4ff66f9329ba1d6a1f0cd670b125a8022d92
+  n8n-io__n8n:
+    repo_slug: n8n-io/n8n
+    source_url: https://github.com/n8n-io/n8n.git
+    local_name: n8n-io__n8n
+    branch: master
+    ref: 174aece2284b47f7db7995118febd8e38d20b8b9
+  neondatabase__agent-skills:
+    repo_slug: neondatabase/agent-skills
+    source_url: https://github.com/neondatabase/agent-skills.git
+    local_name: neondatabase__agent-skills
+    branch: main
+    ref: 1304e290a0b24b3f46d60ee20e9f40271db9b41c
+  neondatabase__ai-rules:
+    repo_slug: neondatabase/ai-rules
+    source_url: https://github.com/neondatabase/ai-rules.git
+    local_name: neondatabase__ai-rules
+    branch: main
+    ref: eecefdc810e1c56163d7e0aed90f66c6f339ee0a
+  neondatabase__better-env:
+    repo_slug: neondatabase/better-env
+    source_url: https://github.com/neondatabase/better-env.git
+    local_name: neondatabase__better-env
+    branch: main
+    ref: 3a5c77788c280f598142f9fcb2430304a6e25eb7
+  neondatabase__mcp-server-neon:
+    repo_slug: neondatabase/mcp-server-neon
+    source_url: https://github.com/neondatabase/mcp-server-neon.git
+    local_name: neondatabase__mcp-server-neon
+    branch: main
+    ref: 96814b3668701b98a48a11adf829715f4441227e
+  neondatabase__neon-js:
+    repo_slug: neondatabase/neon-js
+    source_url: https://github.com/neondatabase/neon-js.git
+    local_name: neondatabase__neon-js
+    branch: main
+    ref: b00a8a5e67c8022c75a6042330009a7596f08b77
+  neondatabase__postgres-skills:
+    repo_slug: neondatabase/postgres-skills
+    source_url: https://github.com/neondatabase/postgres-skills.git
+    local_name: neondatabase__postgres-skills
+    branch: main
+    ref: 0d9a967085c3bc137ab39ff9e3191c2eb3129d8c
+  nuxt__ui:
+    repo_slug: nuxt/ui
+    source_url: https://github.com/nuxt/ui.git
+    local_name: nuxt__ui
+    branch: v4
+    ref: 90a94fb162d532ada26012bfe1ab82adc9217988
+  openai__codex:
+    repo_slug: openai/codex
+    source_url: https://github.com/openai/codex.git
+    local_name: openai__codex
+    branch: main
+    ref: c9214192c52aef31758088b5e87e971fc57a0478
+  openai__openai-agents-js:
+    repo_slug: openai/openai-agents-js
+    source_url: https://github.com/openai/openai-agents-js.git
+    local_name: openai__openai-agents-js
+    branch: main
+    ref: 8424092256b52ee9a6b1e323a0feb83fa3f8dd84
+  openai__openai-agents-python:
+    repo_slug: openai/openai-agents-python
+    source_url: https://github.com/openai/openai-agents-python.git
+    local_name: openai__openai-agents-python
+    branch: main
+    ref: 7fea1a549e727944ad7522bf3601583b885f0ebb
+  openai__plugins:
+    repo_slug: openai/plugins
+    source_url: https://github.com/openai/plugins.git
+    local_name: openai__plugins
+    branch: main
+    ref: 42e54808e826d2002f73d85d6538c144dd805059
+  openai__skills:
+    repo_slug: openai/skills
+    source_url: https://github.com/openai/skills.git
+    local_name: openai__skills
+    branch: main
+    ref: 736f600bf6ecbc000c04f1d2710b990899f28903
+  openai__symphony:
+    repo_slug: openai/symphony
+    source_url: https://github.com/openai/symphony.git
+    local_name: openai__symphony
+    branch: main
+    ref: a164593aacb3db4d6808adc5a87173d906726406
+  openshift__hypershift:
+    repo_slug: openshift/hypershift
+    source_url: https://github.com/openshift/hypershift.git
+    local_name: openshift__hypershift
+    branch: main
+    ref: 8e6048852e2faa7635f7c6ba67632ff2ce64ff11
+  openshift__oc:
+    repo_slug: openshift/oc
+    source_url: https://github.com/openshift/oc.git
+    local_name: openshift__oc
+    branch: main
+    ref: 8d7f53ef218fd86c83c3cca2252623ac39fb7d44
+  openshift__release-tests:
+    repo_slug: openshift/release-tests
+    source_url: https://github.com/openshift/release-tests.git
+    local_name: openshift__release-tests
+    branch: main
+    ref: 40da5138ed05251d51020ed662c8a36e918919b8
+  planetscale__database-skills:
+    repo_slug: planetscale/database-skills
+    source_url: https://github.com/planetscale/database-skills.git
+    local_name: planetscale__database-skills
+    branch: main
+    ref: b156f4ca73c03d0350438bfd042331aaef6eec77
+  planetscale__vscode-agent-plugin:
+    repo_slug: planetscale/vscode-agent-plugin
+    source_url: https://github.com/planetscale/vscode-agent-plugin.git
+    local_name: planetscale__vscode-agent-plugin
+    branch: main
+    ref: 9262fe6d0c7f5474ddd56bb9e8531705305922f3
+  posthog__ai-plugin:
+    repo_slug: posthog/ai-plugin
+    source_url: https://github.com/posthog/ai-plugin.git
+    local_name: posthog__ai-plugin
+    branch: main
+    ref: cdfe7bc9f60057dd3f93808a7bd5d95a5e947e6a
+  posthog__context-mill:
+    repo_slug: posthog/context-mill
+    source_url: https://github.com/posthog/context-mill.git
+    local_name: posthog__context-mill
+    branch: main
+    ref: 8940c85fd2526b79346c542d15ac5e8a17e54cff
+  posthog__posthog:
+    repo_slug: posthog/posthog
+    source_url: https://github.com/posthog/posthog.git
+    local_name: posthog__posthog
+    branch: master
+    ref: b06ec5c9b67c6054c21958c560e28e47ef28a855
+  posthog__posthog-for-claude:
+    repo_slug: posthog/posthog-for-claude
+    source_url: https://github.com/posthog/posthog-for-claude.git
+    local_name: posthog__posthog-for-claude
+    branch: main
+    ref: 4122119322584efc7a3e483b9c1cc2e4903ebeec
+  posthog__skills:
+    repo_slug: posthog/skills
+    source_url: https://github.com/posthog/skills.git
+    local_name: posthog__skills
+    branch: main
+    ref: 472390169e0920e6a81d5c1948bbeaae86c337b4
+  prisma__cursor-plugin:
+    repo_slug: prisma/cursor-plugin
+    source_url: https://github.com/prisma/cursor-plugin.git
+    local_name: prisma__cursor-plugin
+    branch: main
+    ref: 4584a0a9175ba74053d7ee946c6234d3369a5a33
+  prisma__skills:
+    repo_slug: prisma/skills
+    source_url: https://github.com/prisma/skills.git
+    local_name: prisma__skills
+    branch: main
+    ref: 0b8e83cddde30b3e028fb4e0f6770948c6160e08
+  pulumi__agent-skills:
+    repo_slug: pulumi/agent-skills
+    source_url: https://github.com/pulumi/agent-skills.git
+    local_name: pulumi__agent-skills
+    branch: main
+    ref: b6b942fc6e34517e2bbc52d6db04ca529baf3ad4
+  pytorch__pytorch:
+    repo_slug: pytorch/pytorch
+    source_url: https://github.com/pytorch/pytorch.git
+    local_name: pytorch__pytorch
+    branch: main
+    ref: 831178a5cb374ad8d8e81794e047d0282a1bf0b1
+  redis__agent-skills:
+    repo_slug: redis/agent-skills
+    source_url: https://github.com/redis/agent-skills.git
+    local_name: redis__agent-skills
+    branch: main
+    ref: 4eaff191fcb830b64b6ac05bb8ef0ee067c73a9f
+  redis__redisinsight:
+    repo_slug: redis/redisinsight
+    source_url: https://github.com/redis/redisinsight.git
+    local_name: redis__redisinsight
+    branch: main
+    ref: c740a0640ecd28fcef71e4ec5c5fb216e3054752
+  remotion-dev__remotion:
+    repo_slug: remotion-dev/remotion
+    source_url: https://github.com/remotion-dev/remotion.git
+    local_name: remotion-dev__remotion
+    branch: main
+    ref: 76d2b0f3561e1bc049e1581ce6ffdd2bcb179a4a
+  remotion-dev__skills:
+    repo_slug: remotion-dev/skills
+    source_url: https://github.com/remotion-dev/skills.git
+    local_name: remotion-dev__skills
+    branch: main
+    ref: d5d395582c6227249cec74f53ab79aca77a4ff16
+  resend__design-skills:
+    repo_slug: resend/design-skills
+    source_url: https://github.com/resend/design-skills.git
+    local_name: resend__design-skills
+    branch: main
+    ref: 206dad9736585f6e3d4017276c217898fba2d07c
+  resend__email-best-practices:
+    repo_slug: resend/email-best-practices
+    source_url: https://github.com/resend/email-best-practices.git
+    local_name: resend__email-best-practices
+    branch: main
+    ref: 3a7e803add65c599ff1f7c683cbc587d75fe082c
+  resend__email-skills:
+    repo_slug: resend/email-skills
+    source_url: https://github.com/resend/email-skills.git
+    local_name: resend__email-skills
+    branch: main
+    ref: 3a7e803add65c599ff1f7c683cbc587d75fe082c
+  resend__react-email:
+    repo_slug: resend/react-email
+    source_url: https://github.com/resend/react-email.git
+    local_name: resend__react-email
+    branch: canary
+    ref: c88796c1e6e8b70f8b08f06a24ed75d66f34f251
+  resend__resend-cli:
+    repo_slug: resend/resend-cli
+    source_url: https://github.com/resend/resend-cli.git
+    local_name: resend__resend-cli
+    branch: main
+    ref: fafb0b78e06fcb9f6263f37556b1ed0e6546127c
+  resend__resend-skills:
+    repo_slug: resend/resend-skills
+    source_url: https://github.com/resend/resend-skills.git
+    local_name: resend__resend-skills
+    branch: main
+    ref: 92546e901f9cfa0fc49f5b5425ef6b3e74b76c4c
+  rivet-dev__rivet:
+    repo_slug: rivet-dev/rivet
+    source_url: https://github.com/rivet-dev/rivet.git
+    local_name: rivet-dev__rivet
+    branch: main
+    ref: 54742f7fba559cf629a3a400ea245dfac7a488d6
+  rivet-dev__sandbox-agent:
+    repo_slug: rivet-dev/sandbox-agent
+    source_url: https://github.com/rivet-dev/sandbox-agent.git
+    local_name: rivet-dev__sandbox-agent
+    branch: main
+    ref: bf484e7c96ccdb8f62499b52a8d9d0a506af705f
+  rivet-dev__skills:
+    repo_slug: rivet-dev/skills
+    source_url: https://github.com/rivet-dev/skills.git
+    local_name: rivet-dev__skills
+    branch: main
+    ref: 5e68646a7eb203fb62e3afc5052d06e31b66296d
+  runwayml__skills:
+    repo_slug: runwayml/skills
+    source_url: https://github.com/runwayml/skills.git
+    local_name: runwayml__skills
+    branch: main
+    ref: afc9ef881328b78b216edc95ce11add366947fb4
+  sanity-io__agent-context:
+    repo_slug: sanity-io/agent-context
+    source_url: https://github.com/sanity-io/agent-context.git
+    local_name: sanity-io__agent-context
+    branch: main
+    ref: 91048bc73628ce95c97f67cb334738bf3c4b0110
+  sanity-io__agent-toolkit:
+    repo_slug: sanity-io/agent-toolkit
+    source_url: https://github.com/sanity-io/agent-toolkit.git
+    local_name: sanity-io__agent-toolkit
+    branch: main
+    ref: 4b1fb10bd707a22cf0cdfad5374ffc885f2ffa8d
+  sanity-io__next-sanity:
+    repo_slug: sanity-io/next-sanity
+    source_url: https://github.com/sanity-io/next-sanity.git
+    local_name: sanity-io__next-sanity
+    branch: main
+    ref: 8a29bbcf4317fb6730a53664f4209f54523fead8
+  sanity-io__plugins:
+    repo_slug: sanity-io/plugins
+    source_url: https://github.com/sanity-io/plugins.git
+    local_name: sanity-io__plugins
+    branch: main
+    ref: 977d301e5d1d7129fb2a650e65ec7fc944a70399
+  semgrep__agent-skills:
+    repo_slug: semgrep/agent-skills
+    source_url: https://github.com/semgrep/agent-skills.git
+    local_name: semgrep__agent-skills
+    branch: main
+    ref: df4b53393c9012b90f242ed014bd0f438f361871
+  semgrep__cursor-plugin:
+    repo_slug: semgrep/cursor-plugin
+    source_url: https://github.com/semgrep/cursor-plugin.git
+    local_name: semgrep__cursor-plugin
+    branch: main
+    ref: a6931d7f59d1f5aa8324f341c0fa3ca3026df318
+  semgrep__skills:
+    repo_slug: semgrep/skills
+    source_url: https://github.com/semgrep/skills.git
+    local_name: semgrep__skills
+    branch: main
+    ref: df4b53393c9012b90f242ed014bd0f438f361871
+  streamlit__agent-skills:
+    repo_slug: streamlit/agent-skills
+    source_url: https://github.com/streamlit/agent-skills.git
+    local_name: streamlit__agent-skills
+    branch: main
+    ref: 859bb0c124b6202953097a9cb1d71f555f2941a6
+  streamlit__streamlit:
+    repo_slug: streamlit/streamlit
+    source_url: https://github.com/streamlit/streamlit.git
+    local_name: streamlit__streamlit
+    branch: develop
+    ref: d30284e07e006cbb3014a6131314acc18500c7c0
+  stripe__agent-toolkit:
+    repo_slug: stripe/agent-toolkit
+    source_url: https://github.com/stripe/agent-toolkit.git
+    local_name: stripe__agent-toolkit
+    branch: main
+    ref: 18313f3dc653799bc0b521bdc9c15c4180bee99a
+  stripe__ai:
+    repo_slug: stripe/ai
+    source_url: https://github.com/stripe/ai.git
+    local_name: stripe__ai
+    branch: main
+    ref: 18313f3dc653799bc0b521bdc9c15c4180bee99a
+  stripe__purl:
+    repo_slug: stripe/purl
+    source_url: https://github.com/stripe/purl.git
+    local_name: stripe__purl
+    branch: main
+    ref: 7b5017ccd7776fe241893a0b62f9a46655557d54
+  supabase__agent-skills:
+    repo_slug: supabase/agent-skills
+    source_url: https://github.com/supabase/agent-skills.git
+    local_name: supabase__agent-skills
+    branch: main
+    ref: 760460c221d30d0db904ff28e8fa52af85672255
+  supabase__supabase:
+    repo_slug: supabase/supabase
+    source_url: https://github.com/supabase/supabase.git
+    local_name: supabase__supabase
+    branch: master
+    ref: 6fe6d9ea4670aa5875fccc4175907e0c5c5ceb59
+  sveltejs__ai-tools:
+    repo_slug: sveltejs/ai-tools
+    source_url: https://github.com/sveltejs/ai-tools.git
+    local_name: sveltejs__ai-tools
+    branch: main
+    ref: d06d758b81ecf30d87997be256f81cbea76ddc45
+  sveltejs__mcp:
+    repo_slug: sveltejs/mcp
+    source_url: https://github.com/sveltejs/mcp.git
+    local_name: sveltejs__mcp
+    branch: main
+    ref: d06d758b81ecf30d87997be256f81cbea76ddc45
+  tavily-ai__skills:
+    repo_slug: tavily-ai/skills
+    source_url: https://github.com/tavily-ai/skills.git
+    local_name: tavily-ai__skills
+    branch: main
+    ref: 41e6b3076ec3939274fe068904955491a7b3e3af
+  tinybirdco__tinybird-agent-skills:
+    repo_slug: tinybirdco/tinybird-agent-skills
+    source_url: https://github.com/tinybirdco/tinybird-agent-skills.git
+    local_name: tinybirdco__tinybird-agent-skills
+    branch: main
+    ref: a33c7fbc1a4684f2732267c12a106ee8ad853d53
+  tldraw__tldraw:
+    repo_slug: tldraw/tldraw
+    source_url: https://github.com/tldraw/tldraw.git
+    local_name: tldraw__tldraw
+    branch: main
+    ref: db8dea43f13b3fcff6d1dd1960dd23a98d586351
+  triggerdotdev__skills:
+    repo_slug: triggerdotdev/skills
+    source_url: https://github.com/triggerdotdev/skills.git
+    local_name: triggerdotdev__skills
+    branch: main
+    ref: 81d86fe736d669264f5052aca7e173d3cccbf96d
+  triggerdotdev__trigger.dev:
+    repo_slug: triggerdotdev/trigger.dev
+    source_url: https://github.com/triggerdotdev/trigger.dev.git
+    local_name: triggerdotdev__trigger.dev
+    branch: main
+    ref: 8244ac6f84b5fb48d8d7dbb4b9fd93e211424379
+  upstash__context7:
+    repo_slug: upstash/context7
+    source_url: https://github.com/upstash/context7.git
+    local_name: upstash__context7
+    branch: master
+    ref: 9dbec6fff6b2b63d94769d79ba615abd148590fb
+  upstash__context7-mcp:
+    repo_slug: upstash/context7-mcp
+    source_url: https://github.com/upstash/context7-mcp.git
+    local_name: upstash__context7-mcp
+    branch: master
+    ref: 9dbec6fff6b2b63d94769d79ba615abd148590fb
+  upstash__qstash-js:
+    repo_slug: upstash/qstash-js
+    source_url: https://github.com/upstash/qstash-js.git
+    local_name: upstash__qstash-js
+    branch: main
+    ref: fa423ae0a64a657e2b9496a9756a342e7265936a
+  upstash__ratelimit-js:
+    repo_slug: upstash/ratelimit-js
+    source_url: https://github.com/upstash/ratelimit-js.git
+    local_name: upstash__ratelimit-js
+    branch: main
+    ref: 5b5448a5f0bae809cd624a7c639771a8b2e227cb
+  upstash__redis-js:
+    repo_slug: upstash/redis-js
+    source_url: https://github.com/upstash/redis-js.git
+    local_name: upstash__redis-js
+    branch: main
+    ref: f59fa759afd2148339c87213c21addd0ef9cdd57
+  upstash__search-js:
+    repo_slug: upstash/search-js
+    source_url: https://github.com/upstash/search-js.git
+    local_name: upstash__search-js
+    branch: main
+    ref: ee63b7f9cf598870d4f0b71d031e3520812d8b9d
+  upstash__upstash-redis:
+    repo_slug: upstash/upstash-redis
+    source_url: https://github.com/upstash/upstash-redis.git
+    local_name: upstash__upstash-redis
+    branch: main
+    ref: f59fa759afd2148339c87213c21addd0ef9cdd57
+  upstash__vector-js:
+    repo_slug: upstash/vector-js
+    source_url: https://github.com/upstash/vector-js.git
+    local_name: upstash__vector-js
+    branch: master
+    ref: ad3ad721a1d5035c5a891830174cbba8bcd9d10d
+  upstash__workflow-js:
+    repo_slug: upstash/workflow-js
+    source_url: https://github.com/upstash/workflow-js.git
+    local_name: upstash__workflow-js
+    branch: main
+    ref: 841caad9958a27d86adf74eb97b8d4d3e1defb98
+  vercel-labs__add-skill:
+    repo_slug: vercel-labs/add-skill
+    source_url: https://github.com/vercel-labs/add-skill.git
+    local_name: vercel-labs__add-skill
+    branch: main
+    ref: 5c19f0f1965cafeeadd31528a0a579739bad5be2
+  vercel-labs__agent-browser:
+    repo_slug: vercel-labs/agent-browser
+    source_url: https://github.com/vercel-labs/agent-browser.git
+    local_name: vercel-labs__agent-browser
+    branch: main
+    ref: f9174513c2ae2b56108037c40ca0b775472c73fa
+  vercel-labs__agent-eval:
+    repo_slug: vercel-labs/agent-eval
+    source_url: https://github.com/vercel-labs/agent-eval.git
+    local_name: vercel-labs__agent-eval
+    branch: main
+    ref: d4c0a01a088cc242ba69eb8f7f1c75d1a7207151
+  vercel-labs__agent-skills:
+    repo_slug: vercel-labs/agent-skills
+    source_url: https://github.com/vercel-labs/agent-skills.git
+    local_name: vercel-labs__agent-skills
+    branch: main
+    ref: 64484e9a6022c81e3af59f5dcee6fb6d631bf53e
+  vercel-labs__agentic-commerce-skills:
+    repo_slug: vercel-labs/agentic-commerce-skills
+    source_url: https://github.com/vercel-labs/agentic-commerce-skills.git
+    local_name: vercel-labs__agentic-commerce-skills
+    branch: main
+    ref: 735241a60ffb77cea3c2c18a1ada0667e6565128
+  vercel-labs__ai:
+    repo_slug: vercel-labs/ai
+    source_url: https://github.com/vercel-labs/ai.git
+    local_name: vercel-labs__ai
+    branch: main
+    ref: f8c644c42f596f111b1e1c2ef771e192770d2180
+  vercel-labs__autoship:
+    repo_slug: vercel-labs/autoship
+    source_url: https://github.com/vercel-labs/autoship.git
+    local_name: vercel-labs__autoship
+    branch: main
+    ref: 6a2735fece141855e979cb29503303f54bae28c5
+  vercel-labs__bash-tool:
+    repo_slug: vercel-labs/bash-tool
+    source_url: https://github.com/vercel-labs/bash-tool.git
+    local_name: vercel-labs__bash-tool
+    branch: main
+    ref: 134d5fb01d13be12d87cdb21581260d57acf01a8
+  vercel-labs__before-and-after:
+    repo_slug: vercel-labs/before-and-after
+    source_url: https://github.com/vercel-labs/before-and-after.git
+    local_name: vercel-labs__before-and-after
+    branch: main
+    ref: 178594233450657b198b965635b3bba443bf9129
+  vercel-labs__claude-skills:
+    repo_slug: vercel-labs/claude-skills
+    source_url: https://github.com/vercel-labs/claude-skills.git
+    local_name: vercel-labs__claude-skills
+    branch: main
+    ref: 64484e9a6022c81e3af59f5dcee6fb6d631bf53e
+  vercel-labs__cursor-plugin:
+    repo_slug: vercel-labs/cursor-plugin
+    source_url: https://github.com/vercel-labs/cursor-plugin.git
+    local_name: vercel-labs__cursor-plugin
+    branch: main
+    ref: 95857183947fcc2a478f817c1e5d24ec054b21a9
+  vercel-labs__dev3000:
+    repo_slug: vercel-labs/dev3000
+    source_url: https://github.com/vercel-labs/dev3000.git
+    local_name: vercel-labs__dev3000
+    branch: main
+    ref: fa59ebfdceab1c490eac2664031cfa1224ba2397
+  vercel-labs__emulate:
+    repo_slug: vercel-labs/emulate
+    source_url: https://github.com/vercel-labs/emulate.git
+    local_name: vercel-labs__emulate
+    branch: main
+    ref: 80f084828cd95aaff6f115b41e8df3305234b514
+  vercel-labs__json-render:
+    repo_slug: vercel-labs/json-render
+    source_url: https://github.com/vercel-labs/json-render.git
+    local_name: vercel-labs__json-render
+    branch: main
+    ref: 40892a6af0b99d64ebc8415bd72544ef11b964fa
+  vercel-labs__migration-skills:
+    repo_slug: vercel-labs/migration-skills
+    source_url: https://github.com/vercel-labs/migration-skills.git
+    local_name: vercel-labs__migration-skills
+    branch: main
+    ref: a9bdb175792cbb7cf816732790e8020d3c8e2370
+  vercel-labs__next-browser:
+    repo_slug: vercel-labs/next-browser
+    source_url: https://github.com/vercel-labs/next-browser.git
+    local_name: vercel-labs__next-browser
+    branch: main
+    ref: a5e0759a5bd4a2d02e968c3249c8420fe34b77f8
+  vercel-labs__next-docs-agentic-rag:
+    repo_slug: vercel-labs/next-docs-agentic-rag
+    source_url: https://github.com/vercel-labs/next-docs-agentic-rag.git
+    local_name: vercel-labs__next-docs-agentic-rag
+    branch: main
+    ref: e33eff8120d983b742fd5662394dd52f9eb11a06
+  vercel-labs__next-skills:
+    repo_slug: vercel-labs/next-skills
+    source_url: https://github.com/vercel-labs/next-skills.git
+    local_name: vercel-labs__next-skills
+    branch: main
+    ref: 038954e07bfc313e97fa5f6ff7caf87226e4a782
+  vercel-labs__openreview:
+    repo_slug: vercel-labs/openreview
+    source_url: https://github.com/vercel-labs/openreview.git
+    local_name: vercel-labs__openreview
+    branch: main
+    ref: 672deb21e70e471e0536d5ad7a67c14b8359e97e
+  vercel-labs__portless:
+    repo_slug: vercel-labs/portless
+    source_url: https://github.com/vercel-labs/portless.git
+    local_name: vercel-labs__portless
+    branch: main
+    ref: 44e987db9ab1df9b40cd0f15c034f8df42932bf6
+  vercel-labs__py-ai:
+    repo_slug: vercel-labs/py-ai
+    source_url: https://github.com/vercel-labs/py-ai.git
+    local_name: vercel-labs__py-ai
+    branch: main
+    ref: 99f840f9ec198c08fd6148185db92373934ca93f
+  vercel-labs__ralph-gpu:
+    repo_slug: vercel-labs/ralph-gpu
+    source_url: https://github.com/vercel-labs/ralph-gpu.git
+    local_name: vercel-labs__ralph-gpu
+    branch: main
+    ref: 4f47ced574fc9cbef34a176642b356e12bc0a6f5
+  vercel-labs__sitecore-skills:
+    repo_slug: vercel-labs/sitecore-skills
+    source_url: https://github.com/vercel-labs/sitecore-skills.git
+    local_name: vercel-labs__sitecore-skills
+    branch: main
+    ref: 6190d42d736ca8b576a02578786152b9f9e4cfad
+  vercel-labs__skill-geist-learning-labs:
+    repo_slug: vercel-labs/skill-geist-learning-labs
+    source_url: https://github.com/vercel-labs/skill-geist-learning-labs.git
+    local_name: vercel-labs__skill-geist-learning-labs
+    branch: main
+    ref: 5fb4ff07b6dd79bb19076beb67bdda6edffc6ffc
+  vercel-labs__skill-remotion-geist:
+    repo_slug: vercel-labs/skill-remotion-geist
+    source_url: https://github.com/vercel-labs/skill-remotion-geist.git
+    local_name: vercel-labs__skill-remotion-geist
+    branch: main
+    ref: 4f7201370f10b31a4517c82619400c1acb0ed4e1
+  vercel-labs__skills:
+    repo_slug: vercel-labs/skills
+    source_url: https://github.com/vercel-labs/skills.git
+    local_name: vercel-labs__skills
+    branch: main
+    ref: 5c19f0f1965cafeeadd31528a0a579739bad5be2
+  vercel-labs__slack-agent-skill:
+    repo_slug: vercel-labs/slack-agent-skill
+    source_url: https://github.com/vercel-labs/slack-agent-skill.git
+    local_name: vercel-labs__slack-agent-skill
+    branch: main
+    ref: 04690f1c815c7370723b368b68b22f7777302750
+  vercel-labs__vercel-deploy-codex-skill:
+    repo_slug: vercel-labs/vercel-deploy-codex-skill
+    source_url: https://github.com/vercel-labs/vercel-deploy-codex-skill.git
+    local_name: vercel-labs__vercel-deploy-codex-skill
+    branch: main
+    ref: baeeb9d6d0acca47400dd4939aa6499100bbd0f0
+  vercel-labs__vercel-plugin:
+    repo_slug: vercel-labs/vercel-plugin
+    source_url: https://github.com/vercel-labs/vercel-plugin.git
+    local_name: vercel-labs__vercel-plugin
+    branch: main
+    ref: 2e79fc9698b0f25253a238f4ac5ab6d3265d266d
+  vercel-labs__webreel:
+    repo_slug: vercel-labs/webreel
+    source_url: https://github.com/vercel-labs/webreel.git
+    local_name: vercel-labs__webreel
+    branch: main
+    ref: 5cb748d3a51c655bf2d4a4cf42501b6366a3f28c
+  vercel__ai:
+    repo_slug: vercel/ai
+    source_url: https://github.com/vercel/ai.git
+    local_name: vercel__ai
+    branch: main
+    ref: f8c644c42f596f111b1e1c2ef771e192770d2180
+  vercel__ai-elements:
+    repo_slug: vercel/ai-elements
+    source_url: https://github.com/vercel/ai-elements.git
+    local_name: vercel__ai-elements
+    branch: main
+    ref: 66885cfee64e112ee306a229b7192228c9e268cd
+  vercel__chat:
+    repo_slug: vercel/chat
+    source_url: https://github.com/vercel/chat.git
+    local_name: vercel__chat
+    branch: main
+    ref: 91820173f467cd35eee7075694ec0254cc1aea8f
+  vercel__components.build:
+    repo_slug: vercel/components.build
+    source_url: https://github.com/vercel/components.build.git
+    local_name: vercel__components.build
+    branch: main
+    ref: 661e081cf5966ee46340ee97a8809abf064f76e1
+  vercel__examples:
+    repo_slug: vercel/examples
+    source_url: https://github.com/vercel/examples.git
+    local_name: vercel__examples
+    branch: main
+    ref: 2c854cc3a01f8d74bea650316901d1019a6aa640
+  vercel__flags:
+    repo_slug: vercel/flags
+    source_url: https://github.com/vercel/flags.git
+    local_name: vercel__flags
+    branch: main
+    ref: 9142790975004bd250374ff504aa015e6203fe25
+  vercel__microfrontends:
+    repo_slug: vercel/microfrontends
+    source_url: https://github.com/vercel/microfrontends.git
+    local_name: vercel__microfrontends
+    branch: main
+    ref: 73c2b153987738a59c2835c3cf9dc353b10491ed
+  vercel__next-forge:
+    repo_slug: vercel/next-forge
+    source_url: https://github.com/vercel/next-forge.git
+    local_name: vercel__next-forge
+    branch: main
+    ref: 9aad7123ef8accc79d6ece399f249c46bdb6b138
+  vercel__next.js:
+    repo_slug: vercel/next.js
+    source_url: https://github.com/vercel/next.js.git
+    local_name: vercel__next.js
+    branch: canary
+    ref: 16935744fbd44743e9546cbcc578be3e473c0035
+  vercel__nextjs-skills:
+    repo_slug: vercel/nextjs-skills
+    source_url: https://github.com/vercel/nextjs-skills.git
+    local_name: vercel__nextjs-skills
+    branch: main
+    ref: 038954e07bfc313e97fa5f6ff7caf87226e4a782
+  vercel__sandbox:
+    repo_slug: vercel/sandbox
+    source_url: https://github.com/vercel/sandbox.git
+    local_name: vercel__sandbox
+    branch: main
+    ref: cf13a34221c2b83c25c73d94929d05e0a697aecf
+  vercel__streamdown:
+    repo_slug: vercel/streamdown
+    source_url: https://github.com/vercel/streamdown.git
+    local_name: vercel__streamdown
+    branch: main
+    ref: 15ba1aee86ab053ada83326f563e78b4d2c7f4f7
+  vercel__turbo:
+    repo_slug: vercel/turbo
+    source_url: https://github.com/vercel/turbo.git
+    local_name: vercel__turbo
+    branch: main
+    ref: 379d47b7f1eea353dedc8fe3f5bd54fbe87aec85
+  vercel__turborepo:
+    repo_slug: vercel/turborepo
+    source_url: https://github.com/vercel/turborepo.git
+    local_name: vercel__turborepo
+    branch: main
+    ref: 379d47b7f1eea353dedc8fe3f5bd54fbe87aec85
+  vercel__vercel:
+    repo_slug: vercel/vercel
+    source_url: https://github.com/vercel/vercel.git
+    local_name: vercel__vercel
+    branch: main
+    ref: efaba3be7f4e95db371294d672da0824a9059d10
+  vercel__vercel-deploy-claude-code-plugin:
+    repo_slug: vercel/vercel-deploy-claude-code-plugin
+    source_url: https://github.com/vercel/vercel-deploy-claude-code-plugin.git
+    local_name: vercel__vercel-deploy-claude-code-plugin
+    branch: main
+    ref: ae067751b4f42c97d13054211657275029ca8b6d
+  vercel__vercel-plugin:
+    repo_slug: vercel/vercel-plugin
+    source_url: https://github.com/vercel/vercel-plugin.git
+    local_name: vercel__vercel-plugin
+    branch: main
+    ref: 2e79fc9698b0f25253a238f4ac5ab6d3265d266d
+  vercel__workflow:
+    repo_slug: vercel/workflow
+    source_url: https://github.com/vercel/workflow.git
+    local_name: vercel__workflow
+    branch: main
+    ref: 8e7083b327cc727c9a4363030be8c375f9863016
+  webflow__webflow-skills:
+    repo_slug: webflow/webflow-skills
+    source_url: https://github.com/webflow/webflow-skills.git
+    local_name: webflow__webflow-skills
+    branch: main
+    ref: 62181e454a1ed72a7f9788ddbc59b3404d6140fd
+  wix__react-native-navigation:
+    repo_slug: wix/react-native-navigation
+    source_url: https://github.com/wix/react-native-navigation.git
+    local_name: wix__react-native-navigation
+    branch: master
+    ref: b782b6a45b60ce5d632eb982b559792983f480d7
+  wix__skills:
+    repo_slug: wix/skills
+    source_url: https://github.com/wix/skills.git
+    local_name: wix__skills
+    branch: main
+    ref: 1c0a6f968794643b98b48c03dd77bc368abb1ba1
+  wordpress__agent-skills:
+    repo_slug: wordpress/agent-skills
+    source_url: https://github.com/wordpress/agent-skills.git
+    local_name: wordpress__agent-skills
+    branch: trunk
+    ref: c5c0697b120ec00e8fcf6a265f161c61dbc2581c

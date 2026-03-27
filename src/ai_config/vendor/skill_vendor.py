@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import configparser
 import logging
+import os
 import re
+import stat
 import shutil
 import subprocess
 import tempfile
@@ -14,6 +16,9 @@ from pathlib import Path
 import yaml
 
 from ai_config.vendor.models import (
+    DEFAULT_EXTERNAL_TARGET_ROOT,
+    DEFAULT_OFFICIAL_TARGET_ROOT,
+    DEFAULT_SKILLS_SH_OFFICIAL_MANIFEST,
     DEFAULT_VENDOR_MANIFEST,
     LegacyBootstrapResult,
     LegacyCleanupResult,
@@ -37,6 +42,7 @@ _GITHUB_REPO_PATTERN = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 _GIT_URL_PREFIXES = ("https://", "http://", "git@", "ssh://", "file://")
 _LEGACY_IMPORT_TOOL = "ai-config-vendor-skills bootstrap-legacy"
 _IMPORT_TOOL = "ai-config-vendor-skills import"
+_OFFICIAL_IMPORT_TOOL = "ai-config-vendor-skills sync-skills-sh-official"
 
 
 class VendorError(RuntimeError):
@@ -62,8 +68,21 @@ def _require_git_success(proc: subprocess.CompletedProcess[str], action: str) ->
     raise VendorError(f"{action} failed: {detail}")
 
 
+def _target_root_dir(repo_root: Path, target_root_rel: str) -> Path:
+    target_root = (repo_root / target_root_rel).resolve()
+    try:
+        target_root.relative_to(repo_root)
+    except ValueError as error:  # pragma: no cover - defensive path guard
+        raise VendorError(f"Target root must stay inside the repository: {target_root_rel}") from error
+    return target_root
+
+
 def _external_dir(repo_root: Path) -> Path:
-    return repo_root / "skills" / "external"
+    return _target_root_dir(repo_root, DEFAULT_EXTERNAL_TARGET_ROOT)
+
+
+def _repo_rel(path: Path, repo_root: Path) -> str:
+    return path.relative_to(repo_root).as_posix()
 
 
 def _provenance_path(target_dir: Path) -> Path:
@@ -104,7 +123,13 @@ def _remove_path(path: Path) -> None:
     if not path.exists():
         return
     if path.is_dir() and not path.is_symlink():
-        shutil.rmtree(path)
+        def _onerror(func: object, target: str, exc_info: tuple[type[BaseException], BaseException, object]) -> None:
+            if not isinstance(exc_info[1], PermissionError):
+                raise exc_info[1]
+            os.chmod(target, stat.S_IWRITE)
+            func(target)
+
+        shutil.rmtree(path, onerror=_onerror)
         return
     path.unlink()
 
@@ -367,13 +392,13 @@ def _sync_result_from_import(repo_root: Path, result: VendorImportResult, *, sou
 
 def import_skill_repo(spec: VendorImportSpec, *, repo_root: Path) -> VendorImportResult:
     repo_root = repo_root.resolve()
-    external_dir = _external_dir(repo_root)
-    external_dir.mkdir(parents=True, exist_ok=True)
+    target_root = _target_root_dir(repo_root, spec.target_root)
+    target_root.mkdir(parents=True, exist_ok=True)
 
     normalized_source = _normalize_source(spec.source_url)
     local_name = spec.local_name or _derive_local_name(normalized_source)
-    target_dir = external_dir / local_name
-    rel_target = str(target_dir.relative_to(repo_root))
+    target_dir = target_root / local_name
+    rel_target = _repo_rel(target_dir, repo_root)
     old_provenance = _existing_provenance(target_dir)
 
     if _is_git_submodule(repo_root, rel_target):
@@ -401,8 +426,8 @@ def import_skill_repo(spec: VendorImportSpec, *, repo_root: Path) -> VendorImpor
                 local_name=local_name,
                 status="up_to_date",
                 skill_count=old_provenance.skill_count,
-                target_dir=str(target_dir.relative_to(repo_root)),
-                provenance_path=str(_provenance_path(target_dir).relative_to(repo_root)),
+                target_dir=_repo_rel(target_dir, repo_root),
+                provenance_path=_repo_rel(_provenance_path(target_dir), repo_root),
                 message=f"Already up to date (SHA: {commit_sha[:12]}). Use --force to re-import.",
             )
 
@@ -416,8 +441,8 @@ def import_skill_repo(spec: VendorImportSpec, *, repo_root: Path) -> VendorImpor
                 local_name=local_name,
                 status="dry_run",
                 skill_count=len(skill_files),
-                target_dir=str(target_dir.relative_to(repo_root)),
-                provenance_path=str(_provenance_path(target_dir).relative_to(repo_root)),
+                target_dir=_repo_rel(target_dir, repo_root),
+                provenance_path=_repo_rel(_provenance_path(target_dir), repo_root),
                 message=f"Would import {len(skill_files)} skill(s).",
             )
 
@@ -447,7 +472,7 @@ def import_skill_repo(spec: VendorImportSpec, *, repo_root: Path) -> VendorImpor
             imported_at=old_provenance.imported_at if old_provenance and old_provenance.imported_at else import_ts,
             updated_at=import_ts,
             local_name=local_name,
-            import_tool=_IMPORT_TOOL,
+            import_tool=spec.import_tool or _IMPORT_TOOL,
         )
         provenance.write(_provenance_path(target_dir))
 
@@ -455,8 +480,8 @@ def import_skill_repo(spec: VendorImportSpec, *, repo_root: Path) -> VendorImpor
             local_name=local_name,
             status="imported" if old_provenance is None else "updated",
             skill_count=len(skill_files),
-            target_dir=str(target_dir.relative_to(repo_root)),
-            provenance_path=str(_provenance_path(target_dir).relative_to(repo_root)),
+            target_dir=_repo_rel(target_dir, repo_root),
+            provenance_path=_repo_rel(_provenance_path(target_dir), repo_root),
             orphaned_dirs=orphaned_dirs,
             message=f"Imported {len(skill_files)} skill(s).",
         )
@@ -517,13 +542,13 @@ def update_imported_skills(
 def remove_imported_skill(*, repo_root: Path, local_name: str, dry_run: bool = False) -> VendorImportResult:
     repo_root = repo_root.resolve()
     target_dir = _external_dir(repo_root) / local_name
-    rel_target = str(target_dir.relative_to(repo_root))
+    rel_target = _repo_rel(target_dir, repo_root)
     if not target_dir.exists():
         return VendorImportResult(
             local_name=local_name,
             status="missing",
             target_dir=rel_target,
-            provenance_path=str(_provenance_path(target_dir).relative_to(repo_root)),
+            provenance_path=_repo_rel(_provenance_path(target_dir), repo_root),
             message="Target directory does not exist.",
         )
 
@@ -540,7 +565,7 @@ def remove_imported_skill(*, repo_root: Path, local_name: str, dry_run: bool = F
             status="dry_run",
             skill_count=skill_count,
             target_dir=rel_target,
-            provenance_path=str(_provenance_path(target_dir).relative_to(repo_root)),
+            provenance_path=_repo_rel(_provenance_path(target_dir), repo_root),
             message="Would remove imported skill directory.",
         )
 
@@ -550,7 +575,7 @@ def remove_imported_skill(*, repo_root: Path, local_name: str, dry_run: bool = F
         status="removed",
         skill_count=skill_count,
         target_dir=rel_target,
-        provenance_path=str(_provenance_path(target_dir).relative_to(repo_root)),
+        provenance_path=_repo_rel(_provenance_path(target_dir), repo_root),
         message="Removed imported skill directory.",
     )
 
@@ -615,8 +640,8 @@ def inspect_vendor_state(repo_root: Path, manifest_rel: str = DEFAULT_VENDOR_MAN
     for entry in manifest.sources:
         target_dir = external_dir / entry.local_name
         provenance_path = _provenance_path(target_dir)
-        rel_target = str(target_dir.relative_to(repo_root))
-        rel_provenance = str(provenance_path.relative_to(repo_root))
+        rel_target = _repo_rel(target_dir, repo_root)
+        rel_provenance = _repo_rel(provenance_path, repo_root)
         provenance = _existing_provenance(target_dir)
         target_exists = target_dir.exists()
         provenance_exists = provenance is not None
@@ -681,8 +706,8 @@ def inspect_vendor_state(repo_root: Path, manifest_rel: str = DEFAULT_VENDOR_MAN
             if target_dir.name in managed_local_names:
                 continue
             provenance = _existing_provenance(target_dir)
-            rel_target = str(target_dir.relative_to(repo_root))
-            rel_provenance = str(_provenance_path(target_dir).relative_to(repo_root))
+            rel_target = _repo_rel(target_dir, repo_root)
+            rel_provenance = _repo_rel(_provenance_path(target_dir), repo_root)
             is_git_submodule = _is_git_submodule(repo_root, rel_target)
             git_ignored = _is_git_ignored(repo_root, rel_target)
 
@@ -734,13 +759,15 @@ def sync_vendor_manifest(
     *,
     repo_root: Path,
     manifest_rel: str = DEFAULT_VENDOR_MANIFEST,
+    target_root_rel: str = DEFAULT_EXTERNAL_TARGET_ROOT,
+    import_tool: str = _IMPORT_TOOL,
     prune: bool = False,
     dry_run: bool = False,
 ) -> list[VendorSyncResult]:
     repo_root = repo_root.resolve()
     manifest = load_vendor_manifest(repo_root, manifest_rel)
-    external_dir = _external_dir(repo_root)
-    external_dir.mkdir(parents=True, exist_ok=True)
+    target_root = _target_root_dir(repo_root, target_root_rel)
+    target_root.mkdir(parents=True, exist_ok=True)
 
     results: list[VendorSyncResult] = []
     manifest_local_names: set[str] = set()
@@ -753,10 +780,10 @@ def sync_vendor_manifest(
             )
 
         normalized_source = _normalize_source(entry.source_url)
-        target_dir = external_dir / entry.local_name
+        target_dir = target_root / entry.local_name
         provenance_path = _provenance_path(target_dir)
-        rel_target = str(target_dir.relative_to(repo_root))
-        rel_provenance = str(provenance_path.relative_to(repo_root))
+        rel_target = _repo_rel(target_dir, repo_root)
+        rel_provenance = _repo_rel(provenance_path, repo_root)
         manifest_local_names.add(entry.local_name)
 
         existing = _existing_provenance(target_dir)
@@ -829,6 +856,8 @@ def sync_vendor_manifest(
                 local_name=entry.local_name,
                 branch=entry.branch,
                 ref=entry.ref,
+                target_root=target_root_rel,
+                import_tool=import_tool,
                 dry_run=dry_run,
             ),
             repo_root=repo_root,
@@ -838,12 +867,12 @@ def sync_vendor_manifest(
     if not prune:
         return results
 
-    for target_dir in sorted(path for path in external_dir.iterdir() if path.is_dir() and not path.name.startswith(".")):
+    for target_dir in sorted(path for path in target_root.iterdir() if path.is_dir() and not path.name.startswith(".")):
         if target_dir.name in manifest_local_names:
             continue
         provenance = _existing_provenance(target_dir)
-        rel_target = str(target_dir.relative_to(repo_root))
-        rel_provenance = str(_provenance_path(target_dir).relative_to(repo_root))
+        rel_target = _repo_rel(target_dir, repo_root)
+        rel_provenance = _repo_rel(_provenance_path(target_dir), repo_root)
         if provenance is None:
             results.append(
                 VendorSyncResult(
@@ -898,6 +927,23 @@ def sync_vendor_manifest(
     return results
 
 
+def sync_skills_sh_official(
+    *,
+    repo_root: Path,
+    manifest_rel: str = DEFAULT_SKILLS_SH_OFFICIAL_MANIFEST,
+    prune: bool = False,
+    dry_run: bool = False,
+) -> list[VendorSyncResult]:
+    return sync_vendor_manifest(
+        repo_root=repo_root,
+        manifest_rel=manifest_rel,
+        target_root_rel=DEFAULT_OFFICIAL_TARGET_ROOT,
+        import_tool=_OFFICIAL_IMPORT_TOOL,
+        prune=prune,
+        dry_run=dry_run,
+    )
+
+
 def bootstrap_legacy_imports(
     *,
     repo_root: Path,
@@ -929,8 +975,8 @@ def bootstrap_legacy_imports(
     for target_dir in candidates:
         local = target_dir.name
         provenance_path = _provenance_path(target_dir)
-        rel_target = str(target_dir.relative_to(repo_root))
-        rel_provenance = str(provenance_path.relative_to(repo_root))
+        rel_target = _repo_rel(target_dir, repo_root)
+        rel_provenance = _repo_rel(provenance_path, repo_root)
 
         if not target_dir.exists():
             results.append(
@@ -1044,9 +1090,9 @@ def cleanup_legacy_submodules(
     results: list[LegacyCleanupResult] = []
 
     for target_dir in candidates:
-        rel_target = str(target_dir.relative_to(repo_root))
+        rel_target = _repo_rel(target_dir, repo_root)
         provenance_path = _provenance_path(target_dir)
-        rel_provenance = str(provenance_path.relative_to(repo_root))
+        rel_provenance = _repo_rel(provenance_path, repo_root)
         actions = [
             f"verify provenance exists at {rel_provenance}",
             f"verify {rel_target} is still registered as a git submodule",

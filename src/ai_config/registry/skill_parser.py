@@ -21,7 +21,7 @@ from ai_config.registry.normalization import normalize_target
 logger = logging.getLogger(__name__)
 
 # Skill layers expected at skills/<layer>/<skill-name>/SKILL.md
-SKILL_LAYERS = ("shared", "external", "imported", "custom", "codex", "antigravity", "gemini")
+SKILL_LAYERS = ("shared", "external", "imported", "official", "custom", "codex", "antigravity", "gemini")
 TARGET_LAYERS = {"codex", "antigravity", "gemini"}
 
 # Dedup precedence: earlier entries win when the same skill id appears in
@@ -32,6 +32,7 @@ LAYER_PRECEDENCE = [
     "codex",         # agent-specific
     "gemini",        # agent-specific
     "antigravity",   # agent-specific
+    "official",      # curated skills.sh official imports
     "imported",      # imported via skills.sh or similar
     "external",      # imported via scripts/import-skill.sh
 ]

@@ -21,6 +21,16 @@ def infer_source_repo_and_domain(skills_rel_path: Path) -> tuple[str, str]:
             domain = domain_hint
         return source_repo, domain
 
+    if layer == "official":
+        source_repo = parts[1] if len(parts) > 1 else "official"
+        domain = "official"
+        if len(parts) > 2:
+            domain_hint = parts[2]
+            if domain_hint in {"skills", "skill", "sources"} and len(parts) > 3:
+                domain_hint = parts[3]
+            domain = domain_hint
+        return source_repo, domain
+
     if layer == "imported":
         source_repo = parts[1] if len(parts) > 1 else "imported"
         domain = source_repo

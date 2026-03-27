@@ -16,6 +16,8 @@ import sys
 from pathlib import Path
 
 from ai_config.vendor.models import (
+    DEFAULT_SKILLS_SH_OFFICIAL_MANIFEST,
+    DEFAULT_SKILLS_SH_OFFICIAL_SKIPPED_REPORT,
     DEFAULT_VENDOR_MANIFEST,
     LegacyBootstrapResult,
     LegacyCleanupResult,
@@ -24,6 +26,7 @@ from ai_config.vendor.models import (
     VendorStatusReport,
     VendorSyncResult,
 )
+from ai_config.vendor.skills_sh_official import refresh_skills_sh_official_manifest
 from ai_config.vendor.skill_vendor import (
     VendorError,
     bootstrap_legacy_imports,
@@ -32,6 +35,7 @@ from ai_config.vendor.skill_vendor import (
     inspect_vendor_state,
     load_vendor_manifest,
     remove_imported_skill,
+    sync_skills_sh_official,
     sync_vendor_manifest,
     update_imported_skills,
 )
@@ -188,6 +192,42 @@ def build_parser() -> argparse.ArgumentParser:
     sync_p.add_argument("--prune", action="store_true", help="Prune vendor-managed dirs not present in the manifest")
     sync_p.add_argument("--dry-run", action="store_true", help="Show what would happen without writing files")
 
+    refresh_official_p = sub.add_parser(
+        "refresh-skills-sh-official-manifest",
+        help=(
+            "Fetch the current skills.sh official catalog, resolve public GitHub repo HEAD refs, "
+            "and write a pinned manifest plus skipped-report snapshot."
+        ),
+    )
+    refresh_official_p.add_argument(
+        "--manifest",
+        default=DEFAULT_SKILLS_SH_OFFICIAL_MANIFEST,
+        help=f"skills.sh official manifest relative path (default: {DEFAULT_SKILLS_SH_OFFICIAL_MANIFEST})",
+    )
+    refresh_official_p.add_argument(
+        "--skipped-report",
+        default=DEFAULT_SKILLS_SH_OFFICIAL_SKIPPED_REPORT,
+        help=(
+            "JSON report for official repos that were discovered on skills.sh but could not be resolved "
+            f"(default: {DEFAULT_SKILLS_SH_OFFICIAL_SKIPPED_REPORT})"
+        ),
+    )
+
+    sync_official_p = sub.add_parser(
+        "sync-skills-sh-official",
+        help=(
+            "Materialize the pinned skills.sh official manifest into skills/official/. "
+            "This layer outranks imported/external repos when skill ids collide."
+        ),
+    )
+    sync_official_p.add_argument(
+        "--manifest",
+        default=DEFAULT_SKILLS_SH_OFFICIAL_MANIFEST,
+        help=f"skills.sh official manifest relative path (default: {DEFAULT_SKILLS_SH_OFFICIAL_MANIFEST})",
+    )
+    sync_official_p.add_argument("--prune", action="store_true", help="Prune vendor-managed official dirs not present in the manifest")
+    sync_official_p.add_argument("--dry-run", action="store_true", help="Show what would happen without writing files")
+
     cleanup_p = sub.add_parser(
         "cleanup-legacy-submodule",
         help=(
@@ -275,6 +315,36 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "sync-manifest":
             load_vendor_manifest(repo_root, args.manifest)
             results = sync_vendor_manifest(
+                repo_root=repo_root,
+                manifest_rel=args.manifest,
+                prune=args.prune,
+                dry_run=args.dry_run,
+            )
+            for result in results:
+                _print_sync_result(result)
+            if any(result.status in {"imported", "updated", "pruned", "aligned"} for result in results):
+                print("Hint: Run 'ai-config-index --repo-root . --profile default' to rebuild the selector index.")
+            if any(result.status == "blocked" for result in results):
+                return 1
+            return 0
+
+        if args.command == "refresh-skills-sh-official-manifest":
+            summary = refresh_skills_sh_official_manifest(
+                repo_root=repo_root,
+                manifest_rel=args.manifest,
+                skipped_report_rel=args.skipped_report,
+            )
+            print("skills.sh official manifest refreshed")
+            print(f"  manifest: {summary['manifest_path']}")
+            print(f"  skipped_report: {summary['skipped_report_path']}")
+            print(f"  discovered: {summary['total_discovered']}")
+            print(f"  public: {summary['total_public']}")
+            print(f"  skipped: {summary['total_skipped']}")
+            return 0
+
+        if args.command == "sync-skills-sh-official":
+            load_vendor_manifest(repo_root, args.manifest)
+            results = sync_skills_sh_official(
                 repo_root=repo_root,
                 manifest_rel=args.manifest,
                 prune=args.prune,

@@ -99,6 +99,9 @@ pip install -e ".[dev,semantic]"
 
 ```bash
 ai-config-vendor-skills --repo-root . sync-manifest
+# optional, heavier official snapshot
+ai-config-vendor-skills --repo-root . refresh-skills-sh-official-manifest
+ai-config-vendor-skills --repo-root . sync-skills-sh-official
 ai-config-index --repo-root . --profile default
 ai-config-agent search "selector serving"
 ```

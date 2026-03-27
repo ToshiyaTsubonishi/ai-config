@@ -26,6 +26,7 @@ This is a custom skill.
 
 def test_custom_layer_in_skill_layers() -> None:
     assert "custom" in SKILL_LAYERS
+    assert "official" in SKILL_LAYERS
 
 
 def test_parse_custom_skill_file(tmp_path: Path) -> None:
@@ -55,3 +56,24 @@ def test_scan_skills_includes_custom_layer(tmp_path: Path) -> None:
     layers = {r.metadata["layer"] for r in records}
     assert "custom" in layers
     assert "shared" in layers
+
+
+def test_scan_skills_prefers_official_over_external_for_duplicate_ids(tmp_path: Path) -> None:
+    _write(
+        tmp_path / "skills" / "external" / "existing-fixed-source" / "duplicate-tool" / "SKILL.md",
+        "---\nname: duplicate-tool\ndescription: external duplicate\n---\n# External\n",
+    )
+    _write(
+        tmp_path / "skills" / "official" / "skills-sh-official" / "duplicate-tool" / "SKILL.md",
+        "---\nname: duplicate-tool\ndescription: official duplicate\n---\n# Official\n",
+    )
+    _write(
+        tmp_path / "skills" / "external" / "existing-fixed-source" / "unique-tool" / "SKILL.md",
+        "---\nname: unique-tool\ndescription: external unique\n---\n# Unique\n",
+    )
+
+    records = {record.id: record for record in scan_skills(tmp_path)}
+
+    assert records["skill:duplicate-tool"].metadata["layer"] == "official"
+    assert records["skill:duplicate-tool"].source_path == "skills/official/skills-sh-official/duplicate-tool/SKILL.md"
+    assert records["skill:unique-tool"].metadata["layer"] == "external"

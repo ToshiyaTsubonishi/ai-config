@@ -41,6 +41,8 @@ setup の内容:
 3. `config/vendor_skills.yaml` の pinned ref を `skills/external` に materialize / verify
 4. default profile で `.index` build
 
+`skills.sh official` snapshot は opt-in です。repo 数が多いため setup では同期しません。
+
 ### 環境変数
 
 ```bash
@@ -95,6 +97,20 @@ ai-config-vendor-skills --repo-root . sync-manifest
 - `config/vendor_skills.yaml` が正本
 - `skills/external` は scan target
 - `status` は local-only / network-free
+
+### 1b. Optional `skills.sh official` Snapshot
+
+```bash
+ai-config-vendor-skills --repo-root . refresh-skills-sh-official-manifest
+ai-config-vendor-skills --repo-root . sync-skills-sh-official
+```
+
+ポイント:
+
+- `config/skills_sh_official.yaml` は `https://skills.sh/official` から解決できた public repo の pinned snapshot
+- `config/skills_sh_official_skipped.json` には private / missing repo を残す
+- payload は `skills/official` に materialize される
+- `skills/official` は `skills/imported` / `skills/external` より先に dedup されるので、完全重複 skill id は official 側が勝つ
 
 ### 2. Build Index
 
