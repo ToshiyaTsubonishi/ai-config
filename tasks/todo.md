@@ -1,5 +1,43 @@
 # TODO
 
+## 2026-03-28 Latest Re-Setup Validation
+
+### Plan
+- [ ] Windows の `scripts/setup.ps1` を最新 `main` で再実行する
+- [ ] setup 後に vendor status / index build / doctor の基本検証を実行する
+- [ ] 結果を review に記録する
+
+### Progress
+- [x] 現状確認
+- [x] setup 実行
+- [x] 検証
+- [x] review
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `instructions/Lesson.md`
+  - `tasks/todo.md`
+- 実施内容:
+  - `scripts/setup.ps1` を最新 `main` で再実行した
+  - 初回 setup は `skills/external/*` の legacy vendor checkout に provenance (`.import.json`) がなく停止したため、`ai-config-vendor-skills bootstrap-legacy --all` で 7 件の既存 checkout を vendor 管理状態へ移行した
+  - setup 再実行後に index rebuild、vendor status、doctor を確認した
+  - `doctor` で残っていた `~/.codex/AGENTS.md` / `~/.gemini/GEMINI.md` の drift を repo 側 instruction に合わせて同期し、`instructions/Lesson.md` も `tasks/lessons.md` に追従させた
+- 検証:
+  - `powershell -ExecutionPolicy Bypass -File scripts/setup.ps1`
+  - `.venv\Scripts\ai-config-vendor-skills --repo-root . bootstrap-legacy --all --dry-run`
+  - `.venv\Scripts\ai-config-vendor-skills --repo-root . bootstrap-legacy --all`
+  - `.venv\Scripts\ai-config-vendor-skills --repo-root . status`
+  - `.venv\Scripts\ai-config-doctor --repo-root .`
+  - `powershell -ExecutionPolicy Bypass -File scripts/sync-instructions.ps1 status`
+- 検証結果:
+  - setup は 2 回目で成功し、vendor-managed external skills 7 件がすべて `ready` になった
+  - `.index` は 2026-03-28 00:18 JST に再生成され、`records.json` / `keyword_index.json` / `bm25.pkl` / `faiss.bin` / `summary.json` が更新された
+  - `ai-config-doctor` は instruction drift 解消後に pass（`google_api_key` と `codex_dispatch_autoroute` は skip のまま）となった
+
 ## 2026-03-27 Local/GitHub Official Skills Unification
 
 ### Plan
