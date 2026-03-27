@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:25:46Z",
+  "updatedAt": "2026-03-27T08:25:46Z",
+  "source": "firebase/agent-skills",
+  "sourceKey": "firebase__agent-skills",
+  "skillId": "firebase-firestore-enterprise-native-mode",
+  "name": "firebase-firestore-enterprise-native-mode",
+  "sourceCommit": "893a3f2986dc73b83059985464b3fcc1d01dd39e",
+  "sourceBranch": "main",
+  "sourcePath": "skills/firebase-firestore-enterprise-native-mode"
+}

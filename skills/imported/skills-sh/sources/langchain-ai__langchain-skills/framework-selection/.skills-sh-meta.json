@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:25:57Z",
+  "updatedAt": "2026-03-27T08:25:57Z",
+  "source": "langchain-ai/langchain-skills",
+  "sourceKey": "langchain-ai__langchain-skills",
+  "skillId": "framework-selection",
+  "name": "framework-selection",
+  "sourceCommit": "9dd360ba9932526f401f15d48238fb710d4d6836",
+  "sourceBranch": "main",
+  "sourcePath": "config/skills/framework-selection"
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:25:54Z",
+  "updatedAt": "2026-03-27T08:25:54Z",
+  "source": "huggingface/skills",
+  "sourceKey": "huggingface__skills",
+  "skillId": "huggingface-papers",
+  "name": "huggingface-papers",
+  "sourceCommit": "7aa8697975c7efe07c2f93d3e5c0795a6597efe0",
+  "sourceBranch": "main",
+  "sourcePath": "skills/huggingface-papers"
+}

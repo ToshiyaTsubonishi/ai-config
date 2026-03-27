@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:20:04Z",
+  "updatedAt": "2026-03-27T08:20:04Z",
+  "source": "browserbase/skills",
+  "sourceKey": "browserbase__skills",
+  "skillId": "browser",
+  "name": "browser",
+  "sourceCommit": "4747945fa99d04f4a69aa074d60ca0ec207fe14b",
+  "sourceBranch": "main",
+  "sourcePath": "skills/browser"
+}

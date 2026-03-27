@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:20:01Z",
+  "updatedAt": "2026-03-27T08:20:01Z",
+  "source": "bitwarden/ai-plugins",
+  "sourceKey": "bitwarden__ai-plugins",
+  "skillId": "threat-modeling",
+  "name": "threat-modeling",
+  "sourceCommit": "902f79e20394ae9b424a534fd81dce867b9993f5",
+  "sourceBranch": "main",
+  "sourcePath": "plugins/bitwarden-security-engineer/skills/threat-modeling"
+}

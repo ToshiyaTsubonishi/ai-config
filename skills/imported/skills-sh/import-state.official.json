@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-03-27T08:37:25Z",
+  "manifestPath": "config/skills_sh_official.yaml",
+  "status": {
+    "version": "1.0.0",
+    "captured_at": "2026-03-27",
+    "source_url": "https://skills.sh/official",
+    "total_sources": 79,
+    "covered_exact": 79,
+    "covered_in_imported": 78,
+    "covered_in_vendor": 3,
+    "missing_exact": 0,
+    "missing_pairs": []
+  },
+  "results": [
+    {
+      "pair": "posthog/posthog",
+      "source_key": "posthog__posthog",
+      "status": "imported",
+      "skill_count": 21,
+      "target_dir": "skills/imported/skills-sh/sources/posthog__posthog",
+      "source_commit": "b012ccfe34937ac34bada2a9fca35e5e90797328",
+      "source_branch": "master",
+      "message": "Imported 21 skill(s).",
+      "error": ""
+    },
+    {
+      "pair": "tldraw/tldraw",
+      "source_key": "tldraw__tldraw",
+      "status": "imported",
+      "skill_count": 17,
+      "target_dir": "skills/imported/skills-sh/sources/tldraw__tldraw",
+      "source_commit": "2b4c5b2f9b86d7d16d66a0d8ff00a4009981ed8a",
+      "source_branch": "main",
+      "message": "Imported 17 skill(s).",
+      "error": ""
+    },
+    {
+      "pair": "triggerdotdev/skills",
+      "source_key": "triggerdotdev__skills",
+      "status": "imported",
+      "skill_count": 6,
+      "target_dir": "skills/imported/skills-sh/sources/triggerdotdev__skills",
+      "source_commit": "81d86fe736d669264f5052aca7e173d3cccbf96d",
+      "source_branch": "main",
+      "message": "Imported 6 skill(s).",
+      "error": ""
+    },
+    {
+      "pair": "webflow/webflow-skills",
+      "source_key": "webflow__webflow-skills",
+      "status": "imported",
+      "skill_count": 22,
+      "target_dir": "skills/imported/skills-sh/sources/webflow__webflow-skills",
+      "source_commit": "54ac5dfb944b8a6d1a69248ee93d9d26936462f5",
+      "source_branch": "main",
+      "message": "Imported 22 skill(s).",
+      "error": ""
+    },
+    {
+      "pair": "wix/skills",
+      "source_key": "wix__skills",
+      "status": "imported",
+      "skill_count": 18,
+      "target_dir": "skills/imported/skills-sh/sources/wix__skills",
+      "source_commit": "1c0a6f968794643b98b48c03dd77bc368abb1ba1",
+      "source_branch": "main",
+      "message": "Imported 18 skill(s).",
+      "error": ""
+    },
+    {
+      "pair": "wordpress/agent-skills",
+      "source_key": "wordpress__agent-skills",
+      "status": "imported",
+      "skill_count": 14,
+      "target_dir": "skills/imported/skills-sh/sources/wordpress__agent-skills",
+      "source_commit": "c5c0697b120ec00e8fcf6a265f161c61dbc2581c",
+      "source_branch": "trunk",
+      "message": "Imported 14 skill(s).",
+      "error": ""
+    }
+  ]
+}

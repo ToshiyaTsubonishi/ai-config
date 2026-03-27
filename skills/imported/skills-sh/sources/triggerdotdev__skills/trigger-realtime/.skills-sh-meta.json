@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:37:21Z",
+  "updatedAt": "2026-03-27T08:37:21Z",
+  "source": "triggerdotdev/skills",
+  "sourceKey": "triggerdotdev__skills",
+  "skillId": "trigger-realtime",
+  "name": "trigger-realtime",
+  "sourceCommit": "81d86fe736d669264f5052aca7e173d3cccbf96d",
+  "sourceBranch": "main",
+  "sourcePath": "trigger-realtime"
+}

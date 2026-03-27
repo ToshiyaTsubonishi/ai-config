@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:32:43Z",
+  "updatedAt": "2026-03-27T08:32:43Z",
+  "source": "pytorch/pytorch",
+  "sourceKey": "pytorch__pytorch",
+  "skillId": "triaging-issues",
+  "name": "triaging-issues",
+  "sourceCommit": "790d5fb9165b0ef85ef8bfe4ffa741f6c27062f1",
+  "sourceBranch": "main",
+  "sourcePath": ".claude/skills/triaging-issues"
+}

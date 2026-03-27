@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:32:53Z",
+  "updatedAt": "2026-03-27T08:32:53Z",
+  "source": "sanity-io/agent-toolkit",
+  "sourceKey": "sanity-io__agent-toolkit",
+  "skillId": "seo-aeo-best-practices",
+  "name": "seo-aeo-best-practices",
+  "sourceCommit": "4b1fb10bd707a22cf0cdfad5374ffc885f2ffa8d",
+  "sourceBranch": "main",
+  "sourcePath": "skills/seo-aeo-best-practices"
+}

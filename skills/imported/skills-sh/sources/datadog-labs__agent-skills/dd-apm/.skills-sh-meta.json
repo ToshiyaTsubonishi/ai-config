@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:20:39Z",
+  "updatedAt": "2026-03-27T08:20:39Z",
+  "source": "datadog-labs/agent-skills",
+  "sourceKey": "datadog-labs__agent-skills",
+  "skillId": "dd-apm",
+  "name": "dd-apm",
+  "sourceCommit": "71f4a7bde4ded2673709caed4b04854fe5967015",
+  "sourceBranch": "main",
+  "sourcePath": "dd-apm"
+}

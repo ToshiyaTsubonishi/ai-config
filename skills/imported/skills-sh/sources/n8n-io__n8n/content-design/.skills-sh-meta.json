@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:27:27Z",
+  "updatedAt": "2026-03-27T08:27:27Z",
+  "source": "n8n-io/n8n",
+  "sourceKey": "n8n-io__n8n",
+  "skillId": "content-design",
+  "name": "content-design",
+  "sourceCommit": "0fd427de9f21dda424f3b154ffa8cd9a25888586",
+  "sourceBranch": "master",
+  "sourcePath": ".claude/skills/content-design"
+}

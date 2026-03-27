@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:19:59Z",
+  "updatedAt": "2026-03-27T08:19:59Z",
+  "source": "axiomhq/skills",
+  "sourceKey": "axiomhq__skills",
+  "skillId": "sre",
+  "name": "sre",
+  "sourceCommit": "b85f0efcd55ca3b2fc15e235f5a914a300c6c1a6",
+  "sourceBranch": "main",
+  "sourcePath": "skills/sre"
+}

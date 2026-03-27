@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:20:02Z",
+  "updatedAt": "2026-03-27T08:20:02Z",
+  "source": "box/box-for-ai",
+  "sourceKey": "box__box-for-ai",
+  "skillId": "box",
+  "name": "box",
+  "sourceCommit": "6d5d24ecc98aa5b1e99d8e771a0af6d93530a7c1",
+  "sourceBranch": "main",
+  "sourcePath": "skills/box"
+}

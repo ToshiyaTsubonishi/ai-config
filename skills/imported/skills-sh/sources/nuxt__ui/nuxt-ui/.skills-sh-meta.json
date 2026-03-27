@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:27:49Z",
+  "updatedAt": "2026-03-27T08:27:49Z",
+  "source": "nuxt/ui",
+  "sourceKey": "nuxt__ui",
+  "skillId": "nuxt-ui",
+  "name": "nuxt-ui",
+  "sourceCommit": "90a94fb162d532ada26012bfe1ab82adc9217988",
+  "sourceBranch": "v4",
+  "sourcePath": "skills/nuxt-ui"
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:20:38Z",
+  "updatedAt": "2026-03-27T08:20:38Z",
+  "source": "dagster-io/erk",
+  "sourceKey": "dagster-io__erk",
+  "skillId": "fdt-refactor-mock-to-fake",
+  "name": "fdt-refactor-mock-to-fake",
+  "sourceCommit": "2a179eaeaaa56a502e744c8b3d1aa9a7896f72c8",
+  "sourceBranch": "master",
+  "sourcePath": ".agents/skills/fdt-refactor-mock-to-fake"
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:20:40Z",
+  "updatedAt": "2026-03-27T08:20:40Z",
+  "source": "dbt-labs/dbt-agent-skills",
+  "sourceKey": "dbt-labs__dbt-agent-skills",
+  "skillId": "working-with-dbt-mesh",
+  "name": "working-with-dbt-mesh",
+  "sourceCommit": "a21c3538ee3cc4b5a38b2da33522d11077998f30",
+  "sourceBranch": "main",
+  "sourcePath": "skills/dbt/skills/working-with-dbt-mesh"
+}

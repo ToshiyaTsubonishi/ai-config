@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:32:52Z",
+  "updatedAt": "2026-03-27T08:32:52Z",
+  "source": "runwayml/skills",
+  "sourceKey": "runwayml__skills",
+  "skillId": "integrate-documents",
+  "name": "integrate-documents",
+  "sourceCommit": "afc9ef881328b78b216edc95ce11add366947fb4",
+  "sourceBranch": "main",
+  "sourcePath": "skills/integrate-documents"
+}

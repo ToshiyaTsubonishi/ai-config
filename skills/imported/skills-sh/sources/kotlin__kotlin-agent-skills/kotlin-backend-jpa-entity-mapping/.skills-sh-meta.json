@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:25:56Z",
+  "updatedAt": "2026-03-27T08:25:56Z",
+  "source": "kotlin/kotlin-agent-skills",
+  "sourceKey": "kotlin__kotlin-agent-skills",
+  "skillId": "kotlin-backend-jpa-entity-mapping",
+  "name": "kotlin-backend-jpa-entity-mapping",
+  "sourceCommit": "56f0d35f3a74d88e380542b41e65c901e9a881f3",
+  "sourceBranch": "main",
+  "sourcePath": "skills/kotlin-backend-jpa-entity-mapping"
+}

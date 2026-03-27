@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:26:10Z",
+  "updatedAt": "2026-03-27T08:26:10Z",
+  "source": "mapbox/mapbox-agent-skills",
+  "sourceKey": "mapbox__mapbox-agent-skills",
+  "skillId": "mapbox-style-patterns",
+  "name": "mapbox-style-patterns",
+  "sourceCommit": "38483cac8e4e90217243effb9a030c87811e2aa3",
+  "sourceBranch": "main",
+  "sourcePath": "skills/mapbox-style-patterns"
+}

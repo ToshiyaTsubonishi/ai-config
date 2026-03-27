@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:20:02Z",
+  "updatedAt": "2026-03-27T08:20:02Z",
+  "source": "brave/brave-search-skills",
+  "sourceKey": "brave__brave-search-skills",
+  "skillId": "web-search",
+  "name": "web-search",
+  "sourceCommit": "4ec7d3ec72192752c105f5b4a1afe83709843769",
+  "sourceBranch": "main",
+  "sourcePath": "skills/web-search"
+}

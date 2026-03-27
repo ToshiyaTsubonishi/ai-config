@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:26:05Z",
+  "updatedAt": "2026-03-27T08:26:05Z",
+  "source": "launchdarkly/agent-skills",
+  "sourceKey": "launchdarkly__agent-skills",
+  "skillId": "launchdarkly-flag-create",
+  "name": "launchdarkly-flag-create",
+  "sourceCommit": "0a3dfef3ce4d14f436fa25717a2302575053e36c",
+  "sourceBranch": "main",
+  "sourcePath": "skills/feature-flags/launchdarkly-flag-create"
+}

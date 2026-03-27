@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:19:56Z",
+  "updatedAt": "2026-03-27T08:19:56Z",
+  "source": "apify/agent-skills",
+  "sourceKey": "apify__agent-skills",
+  "skillId": "apify-actor-development",
+  "name": "apify-actor-development",
+  "sourceCommit": "6d522216c99f7fa4e936b8f1c068fbbb0484258f",
+  "sourceBranch": "main",
+  "sourcePath": "skills/apify-actor-development"
+}

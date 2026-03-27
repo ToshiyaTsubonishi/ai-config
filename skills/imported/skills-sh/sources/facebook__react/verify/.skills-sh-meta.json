@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:25:44Z",
+  "updatedAt": "2026-03-27T08:25:44Z",
+  "source": "facebook/react",
+  "sourceKey": "facebook__react",
+  "skillId": "verify",
+  "name": "verify",
+  "sourceCommit": "3cb2c42013eda273ac449126ab9fcc115a09d39d",
+  "sourceBranch": "main",
+  "sourcePath": ".claude/skills/verify"
+}

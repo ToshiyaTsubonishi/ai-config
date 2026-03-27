@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:28:40Z",
+  "updatedAt": "2026-03-27T08:28:40Z",
+  "source": "openshift/hypershift",
+  "sourceKey": "openshift__hypershift",
+  "skillId": "konflux-ec-violations",
+  "name": "konflux-ec-violations",
+  "sourceCommit": "37e3785d743c57c1e0b35a2ab8e32f9d4a69fd0e",
+  "sourceBranch": "main",
+  "sourcePath": ".claude/skills/konflux-ec-violations"
+}

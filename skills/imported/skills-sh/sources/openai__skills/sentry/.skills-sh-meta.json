@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:27:53Z",
+  "updatedAt": "2026-03-27T08:27:53Z",
+  "source": "openai/skills",
+  "sourceKey": "openai__skills",
+  "skillId": "sentry",
+  "name": "sentry",
+  "sourceCommit": "736f600bf6ecbc000c04f1d2710b990899f28903",
+  "sourceBranch": "main",
+  "sourcePath": "skills/.curated/sentry"
+}

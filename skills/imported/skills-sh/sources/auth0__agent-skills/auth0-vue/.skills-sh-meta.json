@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:19:57Z",
+  "updatedAt": "2026-03-27T08:19:57Z",
+  "source": "auth0/agent-skills",
+  "sourceKey": "auth0__agent-skills",
+  "skillId": "auth0-vue",
+  "name": "auth0-vue",
+  "sourceCommit": "fbcbfb16f50e2ea9154285ee2e656e6076249326",
+  "sourceBranch": "main",
+  "sourcePath": "plugins/auth0-sdks/skills/auth0-vue"
+}

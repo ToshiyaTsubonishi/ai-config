@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:32:10Z",
+  "updatedAt": "2026-03-27T08:32:10Z",
+  "source": "pulumi/agent-skills",
+  "sourceKey": "pulumi__agent-skills",
+  "skillId": "pulumi-automation-api",
+  "name": "pulumi-automation-api",
+  "sourceCommit": "b6b942fc6e34517e2bbc52d6db04ca529baf3ad4",
+  "sourceBranch": "main",
+  "sourcePath": "authoring/skills/pulumi-automation-api"
+}

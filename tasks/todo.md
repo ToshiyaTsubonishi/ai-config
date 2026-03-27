@@ -1,5 +1,109 @@
 # TODO
 
+## 2026-03-27 Official Skills Backfill
+
+### Plan
+- [x] `skills.sh/official` の 79 exact pair を frozen manifest として `config/skills_sh_official.yaml` に記録する
+- [x] vendor helper を再利用できる共通 import utility を切り出し、official sync CLI を追加する
+- [x] `status` / `sync` / `import-state.official.json` を実装し、exact coverage を判定できるようにする
+- [x] missing 53 official repo を `skills/imported/skills-sh/sources` に materialize する
+- [x] tests / docs / setup-index-doctor-search verification を更新して review を残す
+
+### Progress
+- [x] 現状調査
+- [x] manifest / helpers
+- [x] CLI / tests
+- [x] sync 実行
+- [x] verification / review
+
+### Review
+- 更新ファイル:
+  - `README.md`
+  - `pyproject.toml`
+  - `config/skills_sh_official.yaml`
+  - `skills/imported/skills-sh/README.md`
+  - `skills/imported/skills-sh/import-state.official.json`
+  - `skills/imported/skills-sh/sources/<53 official source dirs>`
+  - `src/ai_config/import_utils.py`
+  - `src/ai_config/official_skills.py`
+  - `src/ai_config/vendor/skill_vendor.py`
+  - `tests/test_official_skills.py`
+  - `tasks/todo.md`
+- 実施内容:
+  - `skills.sh/official` の 2026-03-27 snapshot を frozen manifest `config/skills_sh_official.yaml` に固定した
+  - vendor/import 共通の clone / discovery / sync helper を `src/ai_config/import_utils.py` に切り出し、vendor workflow は wrapper 経由で既存挙動を維持した
+  - `ai-config-official-skills` CLI を追加し、official exact coverage の `status` / `sync` と `import-state.official.json` を実装した
+  - official sync は shallow clone、clone failure/timeout 時の GitHub archive fallback、source 単位の failure aggregation を持つようにした
+  - missing 53 exact official repo を `skills/imported/skills-sh/sources/<creator>__<repo>/...` に materialize し、各 skill dir に `.skills-sh-meta.json` を書いた
+  - docs を更新し、legacy top20/top500 snapshot と official exact coverage workflow を分離した
+- 検証:
+  - `PYTHONPATH=src .venv/bin/python -m pytest tests/test_official_skills.py -q`
+  - `PYTHONPATH=src .venv/bin/python -m pytest tests/test_vendor_skills.py -q`
+  - `PYTHONPATH=src .venv/bin/python -m ai_config.official_skills status --repo-root . --json`
+  - `PYTHONPATH=src .venv/bin/python -m ai_config.official_skills sync --repo-root . --dry-run --json`
+  - `PYTHONPATH=src .venv/bin/python -m ai_config.official_skills sync --repo-root . --json`
+  - `bash scripts/setup.sh`
+  - `.venv/bin/ai-config-official-skills status --repo-root . --json`
+  - `.venv/bin/ai-config-index --repo-root . --profile default`
+  - `.venv/bin/ai-config-agent search "openai skills" --index-dir ./.index --top-k 5`
+  - `.venv/bin/ai-config-agent search "auth0 agent skills" --index-dir ./.index --top-k 5`
+  - `.venv/bin/ai-config-agent search "browserbase skills" --index-dir ./.index --top-k 5`
+  - `.venv/bin/ai-config-doctor --repo-root .`
+  - `git diff --check`
+- 検証結果:
+  - official status は実装前 `total_sources=79`, `covered_exact=26`, `missing_exact=53`、sync 後 `covered_exact=79`, `missing_exact=0`
+  - `tests/test_official_skills.py` は `7 passed`、`tests/test_vendor_skills.py` は `13 passed`
+  - `bash scripts/setup.sh` と `.venv/bin/ai-config-index --repo-root . --profile default` は成功し、default index は `total_records=2177`
+  - representative search では `openai__skills/openai-docs`, `auth0__agent-skills/auth0-migration`, `browserbase__skills/browserbase-cli` を返した
+  - `ai-config-doctor --repo-root .` は `dispatch_resolution` を含む official import 由来の check を通し、失敗は既存の `codex_instructions`, `gemini_instructions`, `antigravity_cli` のみ
+  - `git diff --check` は clean
+
+## 2026-03-27 Source Refresh Validation
+
+### Plan
+- [x] `config/sources.yaml` と `config/vendor_skills.yaml` の履歴を確認し、新規 source 追加の有無を特定する
+- [x] 再セットアップ前提の依存状態と dispatch 利用可否を確認する
+- [x] `scripts/setup.sh` を再実行して vendor sync と index build を通す
+- [x] `ai-config-doctor --repo-root .` で setup 後の状態を検証する
+- [x] 結果を review に記録して diff hygiene を確認する
+
+### Progress
+- [x] 現状調査
+- [x] plan 記録
+- [x] setup 実行
+- [x] doctor 検証
+- [x] review
+
+### Review
+- 更新ファイル:
+  - `src/ai_config/executor/plan_boundary.py`
+  - `tests/test_plan_boundary.py`
+  - `tasks/todo.md`
+- source 調査:
+  - `origin/main` は 2026-03-27 時点で local `main` と一致
+  - 現在の live manifest は `config/vendor_skills.yaml` の 7 source (`streamlit`, `remotion`, `anthropics-skills`, `anthropics-knowledge-work-plugins`, `antigravity-awesome-skills`, `nextlevelbuilder-ui-ux-pro-max-skill`, `claude-ads`)
+  - 最後の新規 source 追加は 2026-03-09 の commit `5391f9b` で `claude-ads` を `config/sources.yaml` に追加した変更
+  - 2026-03-12 の commit `1077713` で external skill seed は `config/vendor_skills.yaml` へ移管され、現在の `config/sources.yaml` は active entry なし
+- 実施内容:
+  - `scripts/setup.sh` を 2 回実行し、vendor sync と default index build を再実行した
+  - setup 後の installed package では `DispatchCLIPlanExecutor` が checkout root を package path から誤推定し、`dispatch_resolution` が fail することを再現した
+  - executor が `repo_root` 側の checkout を優先して sibling `ai-config-dispatch` と `PYTHONPATH` を解決するよう修正した
+  - installed package 経由の sibling resolution を固定する regression test を追加した
+- 検証:
+  - `git -C /Users/tsytbns/Documents/GitHub/ai-config fetch --all --prune`
+  - `.venv/bin/ai-config-vendor-skills --repo-root . status`
+  - `PYTHONPATH=src .venv/bin/python -m pytest tests/test_plan_boundary.py -q`
+  - `PYTHONPATH=src .venv/bin/python -m pytest tests/test_doctor.py -q`
+  - `bash scripts/setup.sh`
+  - `.venv/bin/ai-config-doctor --repo-root .`
+  - `git diff --check`
+- 検証結果:
+  - vendor status は `ready=7`, `missing=0`, `needs_sync=0`
+  - setup 後の index build は `total_records=1514`
+  - `tests/test_plan_boundary.py` は `10 passed`, `tests/test_doctor.py` は `5 passed`
+  - doctor の `dispatch_resolution` は `source=sibling_checkout` で pass に改善した
+  - doctor 全体は引き続き `codex_instructions`, `gemini_instructions`, `antigravity_cli` の既存環境要因で fail
+
 ## 2026-03-26 Phase 4 Rename Evaluation
 
 ### Plan

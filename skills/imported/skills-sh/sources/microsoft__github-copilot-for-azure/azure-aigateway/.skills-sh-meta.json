@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:27:01Z",
+  "updatedAt": "2026-03-27T08:27:01Z",
+  "source": "microsoft/github-copilot-for-azure",
+  "sourceKey": "microsoft__github-copilot-for-azure",
+  "skillId": "azure-aigateway",
+  "name": "azure-aigateway",
+  "sourceCommit": "e9285b05c936a03a0450f1939fef7fb69472e6e5",
+  "sourceBranch": "main",
+  "sourcePath": "plugin/skills/azure-aigateway"
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:19:56Z",
+  "updatedAt": "2026-03-27T08:19:56Z",
+  "source": "apify/agent-skills",
+  "sourceKey": "apify__agent-skills",
+  "skillId": "apify-ultimate-scraper",
+  "name": "apify-ultimate-scraper",
+  "sourceCommit": "6d522216c99f7fa4e936b8f1c068fbbb0484258f",
+  "sourceBranch": "main",
+  "sourcePath": "skills/apify-ultimate-scraper"
+}

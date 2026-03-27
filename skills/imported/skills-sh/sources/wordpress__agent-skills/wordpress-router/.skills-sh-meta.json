@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:37:25Z",
+  "updatedAt": "2026-03-27T08:37:25Z",
+  "source": "wordpress/agent-skills",
+  "sourceKey": "wordpress__agent-skills",
+  "skillId": "wordpress-router",
+  "name": "wordpress-router",
+  "sourceCommit": "c5c0697b120ec00e8fcf6a265f161c61dbc2581c",
+  "sourceBranch": "trunk",
+  "sourcePath": "skills/wordpress-router"
+}

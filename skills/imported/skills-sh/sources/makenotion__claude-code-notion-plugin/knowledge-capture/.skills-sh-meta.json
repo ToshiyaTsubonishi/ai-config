@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:26:08Z",
+  "updatedAt": "2026-03-27T08:26:08Z",
+  "source": "makenotion/claude-code-notion-plugin",
+  "sourceKey": "makenotion__claude-code-notion-plugin",
+  "skillId": "knowledge-capture",
+  "name": "knowledge-capture",
+  "sourceCommit": "9847f2aa1a15f25df35ed1fb7b4557dbb60cd651",
+  "sourceBranch": "main",
+  "sourcePath": "skills/notion/knowledge-capture"
+}

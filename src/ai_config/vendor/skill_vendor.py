@@ -8,11 +8,21 @@ import re
 import shutil
 import subprocess
 import tempfile
-from datetime import datetime, timezone
 from pathlib import Path
 
 import yaml
 
+from ai_config.import_utils import (
+    cleanup_clone as _shared_cleanup_clone,
+    clone_source as _shared_clone_source,
+    derive_local_name as _shared_derive_local_name,
+    find_skill_files as _shared_find_skill_files,
+    normalize_source as _shared_normalize_source,
+    remove_path as _shared_remove_path,
+    run_git as _shared_run_git,
+    sync_directory as _shared_sync_directory,
+    utc_now as _shared_utc_now,
+)
 from ai_config.vendor.models import (
     DEFAULT_VENDOR_MANIFEST,
     LegacyBootstrapResult,
@@ -44,13 +54,13 @@ class VendorError(RuntimeError):
 
 
 def _utc_now() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    return _shared_utc_now()
 
 
 def _run_git(args: list[str], *, cwd: Path, check: bool = True) -> subprocess.CompletedProcess[str]:
     cmd = ["git", *args]
     logger.debug("Running: %s (cwd=%s)", " ".join(cmd), cwd)
-    return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, check=check)
+    return _shared_run_git(args, cwd=cwd, check=check)
 
 
 def _require_git_success(proc: subprocess.CompletedProcess[str], action: str) -> None:
@@ -71,64 +81,29 @@ def _provenance_path(target_dir: Path) -> Path:
 
 
 def _normalize_source(source: str) -> str:
-    raw = source.strip()
-    if not raw:
-        raise VendorError("Source must not be empty.")
-    if raw.startswith(_GIT_URL_PREFIXES):
-        return raw
-
-    possible_path = Path(raw).expanduser()
-    if possible_path.exists():
-        return str(possible_path.resolve())
-
-    if _GITHUB_REPO_PATTERN.fullmatch(raw):
-        return f"https://github.com/{raw}.git"
-
-    raise VendorError(f"Cannot parse source: {source}")
+    try:
+        return _shared_normalize_source(source)
+    except ValueError as exc:
+        raise VendorError(str(exc)) from exc
 
 
 def _derive_local_name(source: str) -> str:
-    trimmed = source.rstrip("/").split("/")[-1]
-    if trimmed.endswith(".git"):
-        trimmed = trimmed[:-4]
-    if trimmed:
-        return trimmed
-    raise VendorError(f"Cannot derive local name from source: {source}")
+    try:
+        return _shared_derive_local_name(source)
+    except ValueError as exc:
+        raise VendorError(str(exc)) from exc
 
 
 def _find_skill_files(root: Path) -> list[Path]:
-    return sorted(path for path in root.rglob("SKILL.md") if ".git" not in path.parts)
+    return _shared_find_skill_files(root)
 
 
 def _remove_path(path: Path) -> None:
-    if not path.exists():
-        return
-    if path.is_dir() and not path.is_symlink():
-        shutil.rmtree(path)
-        return
-    path.unlink()
+    _shared_remove_path(path)
 
 
 def _sync_directory(src_dir: Path, dest_dir: Path, *, preserve_names: set[str] | None = None) -> None:
-    preserve_names = preserve_names or set()
-    dest_dir.mkdir(parents=True, exist_ok=True)
-
-    source_names: set[str] = set()
-    for child in src_dir.iterdir():
-        if child.name == ".git":
-            continue
-        source_names.add(child.name)
-        target = dest_dir / child.name
-        _remove_path(target)
-        if child.is_dir():
-            shutil.copytree(child, target, ignore=shutil.ignore_patterns(".git"))
-        else:
-            shutil.copy2(child, target)
-
-    for child in list(dest_dir.iterdir()):
-        if child.name in preserve_names or child.name in source_names:
-            continue
-        _remove_path(child)
+    _shared_sync_directory(src_dir, dest_dir, preserve_names=preserve_names)
 
 
 def _remove_orphaned_dirs(target_dir: Path, imported_dirs: list[str]) -> list[str]:
@@ -172,30 +147,11 @@ def _collect_provenance(
 
 
 def _clone_source(source: str, *, branch: str | None, ref: str | None) -> tuple[Path, str, str]:
-    temp_dir = Path(tempfile.mkdtemp(prefix="ai-config-vendor-"))
-    clone_dir = temp_dir / "repo"
-    clone_args = ["clone", "--quiet"]
-    if branch and not ref:
-        clone_args.extend(["--branch", branch])
-    clone_args.extend([source, str(clone_dir)])
-    try:
-        _run_git(clone_args, cwd=temp_dir)
-        if ref:
-            _run_git(["checkout", "--quiet", ref], cwd=clone_dir)
-        elif branch:
-            _run_git(["checkout", "--quiet", branch], cwd=clone_dir, check=False)
-        commit_sha = _run_git(["rev-parse", "HEAD"], cwd=clone_dir).stdout.strip()
-        clone_branch = _run_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd=clone_dir).stdout.strip()
-        if clone_branch == "HEAD":
-            clone_branch = branch or ""
-        return clone_dir, commit_sha, clone_branch
-    except Exception:
-        shutil.rmtree(temp_dir, ignore_errors=True)
-        raise
+    return _shared_clone_source(source, branch=branch, ref=ref)
 
 
 def _cleanup_clone(clone_dir: Path) -> None:
-    shutil.rmtree(clone_dir.parent, ignore_errors=True)
+    _shared_cleanup_clone(clone_dir)
 
 
 def _existing_provenance(target_dir: Path) -> VendorProvenance | None:

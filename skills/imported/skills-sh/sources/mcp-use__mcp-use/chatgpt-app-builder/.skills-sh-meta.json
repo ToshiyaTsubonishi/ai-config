@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:26:46Z",
+  "updatedAt": "2026-03-27T08:26:46Z",
+  "source": "mcp-use/mcp-use",
+  "sourceKey": "mcp-use__mcp-use",
+  "skillId": "chatgpt-app-builder",
+  "name": "chatgpt-app-builder",
+  "sourceCommit": "0ec60680e9e4e0b1c280961352c8eeeb846f99dd",
+  "sourceBranch": "main",
+  "sourcePath": "skills/chatgpt-app-builder"
+}

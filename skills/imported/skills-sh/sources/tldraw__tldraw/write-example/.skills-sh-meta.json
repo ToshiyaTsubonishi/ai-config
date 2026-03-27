@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:37:19Z",
+  "updatedAt": "2026-03-27T08:37:19Z",
+  "source": "tldraw/tldraw",
+  "sourceKey": "tldraw__tldraw",
+  "skillId": "write-example",
+  "name": "write-example",
+  "sourceCommit": "2b4c5b2f9b86d7d16d66a0d8ff00a4009981ed8a",
+  "sourceBranch": "main",
+  "sourcePath": ".claude/skills/write-example"
+}

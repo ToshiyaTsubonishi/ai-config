@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:33:03Z",
+  "updatedAt": "2026-03-27T08:33:03Z",
+  "source": "tinybirdco/tinybird-agent-skills",
+  "sourceKey": "tinybirdco__tinybird-agent-skills",
+  "skillId": "tinybird-best-practices",
+  "name": "tinybird-best-practices",
+  "sourceCommit": "a33c7fbc1a4684f2732267c12a106ee8ad853d53",
+  "sourceBranch": "main",
+  "sourcePath": "skills/tinybird-best-practices"
+}

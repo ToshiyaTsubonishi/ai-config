@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:37:24Z",
+  "updatedAt": "2026-03-27T08:37:24Z",
+  "source": "wix/skills",
+  "sourceKey": "wix__skills",
+  "skillId": "wix-cli-dashboard-page",
+  "name": "wix-cli-dashboard-page",
+  "sourceCommit": "1c0a6f968794643b98b48c03dd77bc368abb1ba1",
+  "sourceBranch": "main",
+  "sourcePath": "skills/wix-cli-dashboard-page"
+}

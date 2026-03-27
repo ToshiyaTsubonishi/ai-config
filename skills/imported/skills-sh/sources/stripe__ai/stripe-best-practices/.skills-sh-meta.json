@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:33:01Z",
+  "updatedAt": "2026-03-27T08:33:01Z",
+  "source": "stripe/ai",
+  "sourceKey": "stripe__ai",
+  "skillId": "stripe-best-practices",
+  "name": "stripe-best-practices",
+  "sourceCommit": "42954a7f0946d687285c820f5b85a4bcb8357e25",
+  "sourceBranch": "main",
+  "sourcePath": "skills/stripe-best-practices"
+}

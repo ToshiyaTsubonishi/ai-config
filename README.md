@@ -128,6 +128,8 @@ setup が行うこと:
 
 network を避けたい場合だけ `--skip-vendor-sync` / `-SkipVendorSync` を使います。
 
+`skills.sh/official` の exact coverage は setup に含めません。official backfill は frozen manifest `config/skills_sh_official.yaml` を正本にして、必要なときだけ `ai-config-official-skills` で `skills/imported/skills-sh/sources` へ materialize します。
+
 ## Register MCP
 
 ```powershell
@@ -154,6 +156,10 @@ PORT=8080 ai-config-selector-serving --repo-root . --index-dir ./.index
 
 # vendor observability
 ai-config-vendor-skills --repo-root . status
+
+# skills.sh official exact coverage
+ai-config-official-skills status --repo-root .
+ai-config-official-skills sync --repo-root .
 
 # full doctor
 ai-config-doctor --repo-root .
@@ -213,8 +219,12 @@ ai-config/
 
 - `skills/external` は stable scan target のまま維持
 - `config/vendor_skills.yaml` が curated vendor source の正本
+- `config/skills_sh_official.yaml` が `skills.sh/official` の frozen exact pair 正本
+- official coverage の missing source は `skills/imported/skills-sh/sources/<creator>__<repo>/...` に import する
+- official coverage は exact `creator/repo` match のみを数える。alias や別 repo は coverage 扱いにしない
 - `ai-config-sources` は MCP source 管理と legacy cleanup のみ担当
 - external payload の import / update / provenance は `ai-config-vendor-skills` が担当
+- official payload の import / update / provenance は `ai-config-official-skills` が担当
 
 ## More Docs
 

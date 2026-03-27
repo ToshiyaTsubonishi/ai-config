@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:26:48Z",
+  "updatedAt": "2026-03-27T08:26:48Z",
+  "source": "medusajs/medusa-agent-skills",
+  "sourceKey": "medusajs__medusa-agent-skills",
+  "skillId": "new-user",
+  "name": "new-user",
+  "sourceCommit": "48385888e6fa424fd290f81bdf7a4e2d0b63649c",
+  "sourceBranch": "main",
+  "sourcePath": "plugins/medusa-dev/skills/new-user"
+}

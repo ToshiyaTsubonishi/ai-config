@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:26:06Z",
+  "updatedAt": "2026-03-27T08:26:06Z",
+  "source": "livekit/agent-skills",
+  "sourceKey": "livekit__agent-skills",
+  "skillId": "livekit-agents",
+  "name": "livekit-agents",
+  "sourceCommit": "d86b6458a8f80bb41c67ef29a04b45849e9ad38d",
+  "sourceBranch": "main",
+  "sourcePath": "skills/livekit-agents"
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:25:48Z",
+  "updatedAt": "2026-03-27T08:25:48Z",
+  "source": "flutter/skills",
+  "sourceKey": "flutter__skills",
+  "skillId": "flutter-handling-http-and-json",
+  "name": "flutter-handling-http-and-json",
+  "sourceCommit": "4ad7731305db281c946183d6a295647492e4fac5",
+  "sourceBranch": "main",
+  "sourcePath": "skills/flutter-handling-http-and-json"
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:19:58Z",
+  "updatedAt": "2026-03-27T08:19:58Z",
+  "source": "automattic/agent-skills",
+  "sourceKey": "automattic__agent-skills",
+  "skillId": "wp-rest-api",
+  "name": "wp-rest-api",
+  "sourceCommit": "48d4aa21d0da0e7bda1c7ac155fef2e16b87aa25",
+  "sourceBranch": "trunk",
+  "sourcePath": "skills/wp-rest-api"
+}

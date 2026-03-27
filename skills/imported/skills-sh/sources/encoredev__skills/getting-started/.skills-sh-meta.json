@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:20:42Z",
+  "updatedAt": "2026-03-27T08:20:42Z",
+  "source": "encoredev/skills",
+  "sourceKey": "encoredev__skills",
+  "skillId": "getting-started",
+  "name": "getting-started",
+  "sourceCommit": "91fda02311c65b57c0f56d793c1aa01420083002",
+  "sourceBranch": "main",
+  "sourcePath": "encore/getting-started"
+}

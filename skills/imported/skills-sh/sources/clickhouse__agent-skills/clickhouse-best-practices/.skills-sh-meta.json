@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:20:04Z",
+  "updatedAt": "2026-03-27T08:20:04Z",
+  "source": "clickhouse/agent-skills",
+  "sourceKey": "clickhouse__agent-skills",
+  "skillId": "clickhouse-best-practices",
+  "name": "clickhouse-best-practices",
+  "sourceCommit": "fab8c0077a42aad93069dbc2b65170191edbf52a",
+  "sourceBranch": "main",
+  "sourcePath": "skills/clickhouse-best-practices"
+}

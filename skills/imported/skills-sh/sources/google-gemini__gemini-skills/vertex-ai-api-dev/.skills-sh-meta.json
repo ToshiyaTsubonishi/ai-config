@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:25:51Z",
+  "updatedAt": "2026-03-27T08:25:51Z",
+  "source": "google-gemini/gemini-skills",
+  "sourceKey": "google-gemini__gemini-skills",
+  "skillId": "vertex-ai-api-dev",
+  "name": "vertex-ai-api-dev",
+  "sourceCommit": "51f1bedafbd15776826dae6242482b2017f2e568",
+  "sourceBranch": "main",
+  "sourcePath": "skills/vertex-ai-api-dev"
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:37:23Z",
+  "updatedAt": "2026-03-27T08:37:23Z",
+  "source": "webflow/webflow-skills",
+  "sourceKey": "webflow__webflow-skills",
+  "skillId": "cms-best-practices",
+  "name": "cms-best-practices",
+  "sourceCommit": "54ac5dfb944b8a6d1a69248ee93d9d26936462f5",
+  "sourceBranch": "main",
+  "sourcePath": "plugins/webflow-skills/skills/cms-best-practices"
+}

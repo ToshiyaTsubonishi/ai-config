@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:32:55Z",
+  "updatedAt": "2026-03-27T08:32:55Z",
+  "source": "semgrep/skills",
+  "sourceKey": "semgrep__skills",
+  "skillId": "semgrep",
+  "name": "semgrep",
+  "sourceCommit": "df4b53393c9012b90f242ed014bd0f438f361871",
+  "sourceBranch": "main",
+  "sourcePath": "skills/semgrep"
+}

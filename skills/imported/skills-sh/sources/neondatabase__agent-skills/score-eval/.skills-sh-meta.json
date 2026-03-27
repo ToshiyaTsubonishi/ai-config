@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:27:29Z",
+  "updatedAt": "2026-03-27T08:27:29Z",
+  "source": "neondatabase/agent-skills",
+  "sourceKey": "neondatabase__agent-skills",
+  "skillId": "score-eval",
+  "name": "score-eval",
+  "sourceCommit": "1304e290a0b24b3f46d60ee20e9f40271db9b41c",
+  "sourceBranch": "main",
+  "sourcePath": "evals/neon-postgres-egress-optimizer/.claude/skills/score-eval"
+}

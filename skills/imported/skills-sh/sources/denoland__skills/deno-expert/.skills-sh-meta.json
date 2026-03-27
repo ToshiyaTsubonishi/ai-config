@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:20:41Z",
+  "updatedAt": "2026-03-27T08:20:41Z",
+  "source": "denoland/skills",
+  "sourceKey": "denoland__skills",
+  "skillId": "deno-expert",
+  "name": "deno-expert",
+  "sourceCommit": "1a4267f4fc60d75839d740ae39a7e0bb0170cf0b",
+  "sourceBranch": "main",
+  "sourcePath": "skills/deno-expert"
+}

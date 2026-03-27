@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -206,6 +207,27 @@ def test_dispatch_cli_plan_executor_prefers_external_repo_checkout(monkeypatch, 
     assert isinstance(env, dict)
     assert str(external_repo / "src") in str(env.get("PYTHONPATH", ""))
     assert "exec-ext" == result["execution_id"]
+
+
+def test_dispatch_cli_plan_executor_resolves_sibling_from_repo_root_when_installed(monkeypatch, tmp_path: Path) -> None:
+    repo_root = tmp_path / "ai-config"
+    (repo_root / "src" / "ai_config").mkdir(parents=True)
+    (repo_root / "pyproject.toml").write_text("[project]\nname='ai-config'\n", encoding="utf-8")
+    external_repo = tmp_path / "ai-config-dispatch"
+    (external_repo / "src" / "ai_config_dispatch").mkdir(parents=True)
+    (external_repo / "pyproject.toml").write_text("[project]\nname='ai-config-dispatch'\n", encoding="utf-8")
+    (external_repo / "src" / "ai_config_dispatch" / "cli.py").write_text("def main():\n    pass\n", encoding="utf-8")
+
+    executor = DispatchCLIPlanExecutor(repo_root=repo_root)
+    executor._ai_config_repo_root = tmp_path / "installed" / "site-packages" / "ai_config"
+
+    resolution = executor.describe_runtime_resolution()
+
+    assert resolution["source"] == "sibling_checkout"
+    env = resolution["env"]
+    assert isinstance(env, dict)
+    pythonpath = str(env.get("PYTHONPATH", "")).split(os.pathsep)
+    assert pythonpath[:2] == [str(external_repo / "src"), str(repo_root / "src")]
 
 
 def test_dispatch_cli_plan_executor_production_mode_ignores_sibling_checkout(monkeypatch, tmp_path: Path) -> None:

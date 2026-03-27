@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "origin": "skills.sh/official",
+  "capturedAt": "2026-03-27",
+  "importedAt": "2026-03-27T08:25:49Z",
+  "updatedAt": "2026-03-27T08:25:49Z",
+  "source": "getsentry/skills",
+  "sourceKey": "getsentry__skills",
+  "skillId": "gha-security-review",
+  "name": "gha-security-review",
+  "sourceCommit": "07ec616b5aaede831440185aa3f73a4b8bacd138",
+  "sourceBranch": "main",
+  "sourcePath": "plugins/sentry-skills/skills/gha-security-review"
+}
