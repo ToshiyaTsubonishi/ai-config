@@ -220,6 +220,7 @@ ai-config/
 
 - `skills/external` は stable scan target のまま維持
 - `skills/official` は `skills.sh official` snapshot 用の opt-in higher-precedence layer
+- `skills/imported/skills-sh` の official backfill artifact は historical seed として残し、current source of truth にはしない
 - `config/vendor_skills.yaml` が curated vendor source の正本
 - `config/skills_sh_official.yaml` は public に解決できた `skills.sh official` repo の pinned snapshot
 - `ai-config-sources` は MCP source 管理と legacy cleanup のみ担当

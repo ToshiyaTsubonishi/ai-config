@@ -40,3 +40,12 @@
 - **期待動作**: local state を返す観測 API では、実装前に severity と JSON contract を固定する
 - **実際の動作**: 初期実装案では `extra_local` と `unmanaged_local` の扱い差、`schema_version` / `generated_at` を明示していなかった
 - **ルール**: 新しい observability/status API を追加するときは、実装前に「どの状態が fail/pass か」と「JSON schema version / generation timestamp」を必ず決めてから着手する
+
+## 2026-03-27: local / GitHub 競合は merge 状態と index まで確認する
+
+### ミス 6: working tree だけ見て remote 競合の実態を過小評価しやすい
+
+- **状況**: ユーザーから「ローカル最新と GitHub 最新が衝突しているかもしれない」と指摘を受けた
+- **期待動作**: `git status`、`git diff --cached --name-status`、`.git/MERGE_HEAD` まで見て、未コミット差分だけでなく staged remote changes / merge in progress を先に把握する
+- **実際の動作**: 初見では working tree の modified files だけ見えて、merge 途中であることと staged 側の大量差分を後から掴んだ
+- **ルール**: local と GitHub の統合作業では、最初に `git status` と `git diff --cached --name-status` と `MERGE_HEAD` の有無を必ず確認し、conflict marker 混入ファイルも検索してから統合方針を決める

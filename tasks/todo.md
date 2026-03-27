@@ -9,10 +9,36 @@
 
 ### Progress
 - [x] 現状調査
-- [ ] 統合方針の確定
-- [ ] 競合解消
-- [ ] 検証
+- [x] 統合方針の確定
+- [x] 競合解消
+- [x] 検証
 - [ ] push
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- canonical 判断:
+  - official skills の正本は local 実装 (`skills/official` layer + `ai-config-vendor-skills refresh/sync-skills-sh-official`) を採用する
+  - 理由は `skills.sh` 側を exact overlap だけ優先し、custom/shared/local skill と固定 vendor source を壊さずに併存させる要件に最も素直だから
+  - `origin/main` の `skills/imported/skills-sh/sources` 直下への official snapshot 大量投入、`ai-config-official-skills` CLI、exact-coverage 専用 workflow は採用しない
+  - ただし `src/ai_config/executor/plan_boundary.py` と `tests/test_plan_boundary.py` の sibling checkout resolution 修正は別件の有益な回帰修正として取り込む
+- 更新ファイル:
+  - `README.md`
+  - `skills/imported/skills-sh/README.md`
+  - `src/ai_config/executor/plan_boundary.py`
+  - `tasks/lessons.md`
+  - `tasks/todo.md`
+  - `tests/test_plan_boundary.py`
+- 検証:
+  - `PYTHONPATH=src .venv\Scripts\python.exe -m pytest tests/test_plan_boundary.py tests/test_skill_parser_custom_layer.py tests/test_registry_path_metadata.py tests/test_skills_sh_official.py tests/test_vendor_skills.py -q`
+  - `git diff --check`
+  - `git diff --cached --check`
+- 検証結果:
+  - focused pytest は `34 passed`
+  - conflict marker は除去済み
+  - diff hygiene は whitespace error なし（CRLF warning のみ）
 
 ## 2026-03-27 skills.sh Official Import
 

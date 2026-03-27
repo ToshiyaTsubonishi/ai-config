@@ -81,8 +81,17 @@ class DispatchCLIPlanExecutor:
     def _allow_in_repo_fallback(self) -> bool:
         return self._flag_enabled("AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK")
 
+    def _ai_config_checkout_root(self) -> Path:
+        candidate = self.repo_root
+        if (candidate / "pyproject.toml").exists() and (candidate / "src" / "ai_config").exists():
+            return candidate
+        fallback = self._ai_config_repo_root
+        if (fallback / "pyproject.toml").exists() and (fallback / "src" / "ai_config").exists():
+            return fallback
+        return candidate
+
     def _external_repo_root(self) -> Path | None:
-        candidate = self._ai_config_repo_root.parent / "ai-config-dispatch"
+        candidate = self._ai_config_checkout_root().parent / "ai-config-dispatch"
         if not (candidate / "pyproject.toml").exists():
             return None
         if not (candidate / "src" / "ai_config_dispatch" / "cli.py").exists():
@@ -93,7 +102,7 @@ class DispatchCLIPlanExecutor:
         env = dict(os.environ)
         python_paths = [
             str(external_repo / "src"),
-            str(self._ai_config_repo_root / "src"),
+            str(self._ai_config_checkout_root() / "src"),
         ]
         existing = env.get("PYTHONPATH", "")
         if existing:
