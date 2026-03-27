@@ -12,7 +12,7 @@
 - [x] 統合方針の確定
 - [x] 競合解消
 - [x] 検証
-- [ ] push
+- [x] push
 
 ### Review
 - [x] updated files
@@ -39,6 +39,8 @@
   - focused pytest は `34 passed`
   - conflict marker は除去済み
   - diff hygiene は whitespace error なし（CRLF warning のみ）
+- GitHub:
+  - `origin/main` に `f50df3c` まで push 済み
 
 ## 2026-03-27 skills.sh Official Import
 
