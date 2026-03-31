@@ -1,5 +1,45 @@
 # TODO
 
+## 2026-03-31 GCP GUI Setup Guide for Open WebUI + MCPO
+
+### Plan
+- [x] GCP コンソール中心で進める初心者向けセットアップガイドを追加する
+- [x] 必要な Secret / Cloud Build / Cloud Run / Open WebUI 接続手順を 1 本にまとめる
+- [x] ガイドの存在と主要項目を tests で固定し、review を記録する
+
+### Progress
+- [x] 現状調査
+- [x] tests
+- [x] guide
+- [x] docs linkage
+- [x] 検証
+- [x] review
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `deploy/cloudrun/README.md`
+  - `deploy/cloudrun/gcp-gui-setup-guide.ja.md`
+  - `tests/test_cloudrun_deploy_templates.py`
+  - `tasks/todo.md`
+- 実施内容:
+  - GCP コンソールを使って進める前提で、Cloud Build / Secret Manager / Cloud Run / Open WebUI 接続確認までを 1 本にまとめた日本語ガイドを追加した
+  - guide では project / region / service 名 / service account / 追加すべき Secret / Cloud Run の具体設定値を、今回の環境前提で埋めた
+  - `ghcr` Artifact Registry が read-only の場合に備えて、標準 Docker repo を作る分岐も追加した
+  - `deploy/cloudrun/README.md` から新しい GUI guide へリンクし、README 側から辿れるようにした
+  - pytest に guide の存在確認と主要キーワードの回帰チェックを追加した
+- 検証:
+  - `.venv/bin/python -m pytest tests/test_cloudrun_deploy_templates.py -q`
+  - `.venv/bin/python -m pytest tests/test_cloudrun_deploy_templates.py tests/test_selector_serving.py -q`
+  - `git diff --check`
+- 検証結果:
+  - guide を含む Cloud Run template tests と既存 selector-serving regression を合わせて `10 passed`
+  - `git diff --check` は clean
+  - README から guide へリンクでき、guide 本文に Secret Manager / Cloud Build / Cloud Run / Open WebUI 接続確認の主要手順が含まれることを確認した
+
 ## 2026-03-31 Cloud Run Open WebUI + MCPO Deployment YAML
 
 ### Plan

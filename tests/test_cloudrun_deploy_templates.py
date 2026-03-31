@@ -119,6 +119,7 @@ def test_cloudrun_readme_covers_mcpo_topology() -> None:
     text = (DEPLOY_DIR / "README.md").read_text(encoding="utf-8")
 
     for expected in [
+        "gcp-gui-setup-guide.ja.md",
         "ai-config-selector.service.yaml",
         "ai-config-mcpo.service.yaml",
         "open-webui.service.mcpo.yaml",
@@ -128,5 +129,26 @@ def test_cloudrun_readme_covers_mcpo_topology() -> None:
         "ENABLE_PERSISTENT_CONFIG=False",
         "ENABLE_LOGIN_FORM=False",
         "/openapi.json",
+    ]:
+        assert expected in text
+
+
+def test_gcp_gui_setup_guide_covers_console_flow() -> None:
+    text = (DEPLOY_DIR / "gcp-gui-setup-guide.ja.md").read_text(encoding="utf-8")
+
+    for expected in [
+        "Cloud Build",
+        "Cloud Run",
+        "Secret Manager",
+        "MCPO_API_KEY",
+        "OPENWEBUI_TOOL_SERVER_CONNECTIONS",
+        "Secret Manager Secret Accessor",
+        "ai-config-selector",
+        "ai-config-mcpo",
+        "open-webui",
+        "ENABLE_PERSISTENT_CONFIG",
+        "ENABLE_LOGIN_FORM",
+        "Open WebUI",
+        "＋",
     ]:
         assert expected in text
