@@ -1,5 +1,48 @@
 # TODO
 
+## 2026-03-31 Cloud Run Open WebUI + MCPO Deployment YAML
+
+### Plan
+- [x] Cloud Run 用の `ai-config-selector` / `ai-config-mcpo` / `open-webui` Service YAML を追加する
+- [x] Open WebUI の `TOOL_SERVER_CONNECTIONS` secret 用 sample JSON と deploy 手順を追加する
+- [x] YAML / JSON / README の整合性を tests で固定し、review を記録する
+
+### Progress
+- [x] 現状調査
+- [x] tests
+- [x] templates
+- [x] docs
+- [x] 検証
+- [x] review
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `deploy/cloudrun/README.md`
+  - `deploy/cloudrun/ai-config-selector.service.yaml`
+  - `deploy/cloudrun/ai-config-mcpo.service.yaml`
+  - `deploy/cloudrun/open-webui.service.mcpo.yaml`
+  - `deploy/cloudrun/open-webui.tool-server-connections.example.json`
+  - `tests/test_cloudrun_deploy_templates.py`
+  - `tasks/todo.md`
+- 実施内容:
+  - `ai-config-selector-serving` を Cloud Run でそのまま `/mcp` 公開する Service YAML を追加した
+  - `ghcr.io/open-webui/mcpo:v0.0.20` を別 Service として配置し、`ai-config-selector` の `/mcp` を `streamable-http` で OpenAPI 化する YAML を追加した
+  - 添付の `open-webui` export をもとに、server-managed field を落とした再適用用 Service YAML を作り、`ENABLE_PERSISTENT_CONFIG=False`、`ENABLE_OAUTH_PERSISTENT_CONFIG=False`、`ENABLE_LOGIN_FORM=False`、`ENABLE_DIRECT_CONNECTIONS=True`、`TOOL_SERVER_CONNECTIONS` secret 参照を追加した
+  - `OPENWEBUI_TOOL_SERVER_CONNECTIONS` secret 用の example JSON と、secret 作成 / build / deploy / verify 手順を `deploy/cloudrun/README.md` に追加した
+  - YAML / JSON / README の期待値を固定する pytest を追加した
+- 検証:
+  - `.venv/bin/python -m pytest tests/test_cloudrun_deploy_templates.py -q`
+  - `.venv/bin/python -m pytest tests/test_cloudrun_deploy_templates.py tests/test_selector_serving.py -q`
+  - `git diff --check`
+- 検証結果:
+  - 新規 Cloud Run template tests と既存 selector-serving regression を合わせて `9 passed`
+  - `git diff --check` は clean
+  - deploy テンプレート 3 点と secret sample 1 点が parse 可能で、README に deploy / verify 手順が含まれることを確認した
+
 ## 2026-03-28 Latest Re-Setup Validation
 
 ### Plan

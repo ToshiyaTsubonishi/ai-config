@@ -1,0 +1,19 @@
+[
+  {
+    "type": "openapi",
+    "url": "https://ai-config-mcpo-424287527578.asia-northeast1.run.app",
+    "spec_type": "url",
+    "spec": "",
+    "path": "openapi.json",
+    "auth_type": "bearer",
+    "key": "__REPLACE_WITH_MCPO_API_KEY__",
+    "config": {
+      "enable": true
+    },
+    "info": {
+      "id": "ai-config-mcpo",
+      "name": "ai-config (MCPO)",
+      "description": "ai-config selector tools exposed through MCPO on Cloud Run"
+    }
+  }
+]
