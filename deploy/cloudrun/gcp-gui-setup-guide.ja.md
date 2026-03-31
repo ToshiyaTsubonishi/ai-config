@@ -4,12 +4,14 @@
 
 やることは大きく 4 つです。
 
-1. `ai-config-selector-serving` のイメージを GCP に置く
+1. `ai-config-selector-serving` のコンテナイメージを用意する
 2. Cloud Run に `ai-config-selector` と `ai-config-mcpo` を作る
 3. 既存の `open-webui` サービスに接続設定を追加する
 4. Open WebUI 画面から接続できることを確認する
 
-このガイドは「できるだけ GCP コンソール GUI で進めたい」人向けに書いています。必要なところだけ、値の作成や確認用に短いコマンドを補足していますが、必須ではありません。
+このガイドは「できるだけ GCP コンソール GUI で進めたい」人向けに書いています。今回の会社環境を前提に、GitHub を GCP に接続しない、`gcloud` は使いません、という条件で組み直しています。
+
+つまり、この版のガイドでは GCP の中で build はしません。`ai-config-selector-serving` は事前にコンテナイメージを用意して、そのイメージ URL を Cloud Run に入れる方式で進めます。
 
 ## 0. 先に全体像をつかむ
 
@@ -41,6 +43,7 @@
 | ai-config selector のサービス名 | `ai-config-selector` |
 | MCPO のサービス名 | `ai-config-mcpo` |
 | 既存の Service Account | `open-webui-runner@sbi-art-auction.iam.gserviceaccount.com` |
+| ai-config selector image URL | あなたが事前に用意したイメージ URL |
 | ai-config selector URL | `https://ai-config-selector-424287527578.asia-northeast1.run.app` |
 | ai-config selector MCP URL | `https://ai-config-selector-424287527578.asia-northeast1.run.app/mcp` |
 | MCPO URL | `https://ai-config-mcpo-424287527578.asia-northeast1.run.app` |
@@ -69,9 +72,11 @@ GCP コンソールで、次の API が有効か確認します。
 3. 次が有効になっているか確認します
 
 - Cloud Run Admin API
-- Cloud Build API
-- Artifact Registry API
 - Secret Manager API
+
+次の API は、あなたのイメージ置き場に応じて必要なら確認してください。
+
+- Artifact Registry API
 
 もし無効なものがあれば `ライブラリ` から検索して有効化してください。
 
@@ -82,75 +87,65 @@ GCP コンソールで、次の API が有効か確認します。
 
 このサービスアカウントは、Cloud Run から Secret を読むために使います。
 
-## 3. ai-config のコンテナイメージを用意する
+## 3. `ai-config-selector-serving` のイメージを事前に用意する
 
-Cloud Run で `ai-config-selector` を動かすには、この repo の `deploy/cloudrun/Dockerfile` からイメージを build する必要があります。
+ここが今回のいちばん大事な前提です。
 
-今回は GUI で進めやすいように、Cloud Build の Trigger を 1 回作る方法で進めます。
+このガイドでは GitHub を GCP に接続しない、`gcloud` は使いません、という条件なので、GCP コンソールの中だけでこの repo の Dockerfile を build する流れは main route にしません。
 
-### 3-1. GitHub リポジトリを Cloud Build に接続する
+その代わり、`ai-config-selector-serving` は事前にコンテナイメージを用意しておきます。
 
-1. GCP コンソールで `Cloud Build` を開きます
-2. 左メニューの `リポジトリ` を開きます
-3. まだこの repo がつながっていなければ `リポジトリを接続` を押します
-4. GitHub を選び、`ToshiyaTsubonishi/ai-config` を接続します
+使える置き場の例:
 
-すでに接続済みなら、この章は飛ばして大丈夫です。
+- GHCR
+- Docker Hub
+- 社内レジストリ
+- すでにあなたの project で使える Artifact Registry
 
-### 3-2. Build Trigger を作る
+いちばん大事なのは「Cloud Run が pull できる完成済みイメージ URL を 1 本持っていること」です。
 
-1. `Cloud Build` → `トリガー` を開きます
-2. `トリガーを作成` を押します
-3. 次の値を入れます
+### 3-1. まず決めること
 
-| 項目 | 入力する値 |
-|---|---|
-| 名前 | `ai-config-selector-main` |
-| リージョン | `global` のままで OK |
-| イベント | `ブランチへ push` |
-| ソース | `ToshiyaTsubonishi/ai-config` |
-| ブランチ | `^main$` |
-| 構成 | `Dockerfile` |
-| Dockerfile の場所 | `deploy/cloudrun/Dockerfile` |
-| ビルド コンテキスト | `.` |
-| イメージ名 | `asia-northeast1-docker.pkg.dev/sbi-art-auction/ghcr/ai-config/ai-config-selector-serving:main` |
+あなたが使うイメージ URL を 1 つ決めて、手元にメモしてください。
 
-4. `作成` を押します
+例:
 
-### 3-3. Trigger を 1 回実行する
+```text
+ghcr.io/your-org/ai-config-selector-serving:main
+```
 
-1. 作成した `ai-config-selector-main` を開きます
-2. `実行` を押します
-3. `履歴` で build が成功するまで待ちます
+または
 
-成功すると、Cloud Run から使えるイメージができます。
+```text
+docker.io/your-org/ai-config-selector-serving:main
+```
 
-### 3-4. もしイメージ push が失敗したら
-
-ここは初心者が一番ハマりやすいポイントです。
-
-`ghcr` という Artifact Registry が「GitHub Container Registry のミラー専用」で read-only の場合、custom image を push できません。その場合は次の対応に切り替えてください。
-
-1. `Artifact Registry` を開きます
-2. `リポジトリを作成` を押します
-3. 次の値で Docker リポジトリを作ります
-
-| 項目 | 値 |
-|---|---|
-| 名前 | `cloud-run` |
-| 形式 | `Docker` |
-| モード | `標準` |
-| リージョン | `asia-northeast1` |
-
-4. Trigger の `イメージ名` を次に変更します
+または
 
 ```text
 asia-northeast1-docker.pkg.dev/sbi-art-auction/cloud-run/ai-config-selector-serving:main
 ```
 
-5. 以後、Cloud Run の `ai-config-selector` でも同じイメージ URL を使います
+### 3-2. どのイメージ URL を使えばいいかわからないとき
 
-このガイド本文では、既存の設定に合わせて `ghcr` パスを先に書いています。もし build に失敗したら、この分岐だけ読み替えてください。
+次のどれかが現実的です。
+
+1. すでに別の許可された環境で build 済みのイメージ URL をもらう
+2. 社内の CI/CD や社内レジストリに一度だけ image を置いてもらう
+3. すでに GCP 側にある Artifact Registry の書き込み権限を持つ人に初回 build だけ依頼する
+
+この guide の残りは、イメージ URL が 1 本決まっていれば、そのまま進められます。
+
+### 3-3. `ghcr` リポジトリについて
+
+以前のメモでは `asia-northeast1-docker.pkg.dev/sbi-art-auction/ghcr/ai-config/ai-config-selector-serving:main` を例にしていました。
+
+これはそのまま使える場合もありますが、会社環境では次のどちらかです。
+
+1. すでにそのパスへ push 済みで、そのまま使える
+2. `ghcr` がミラー用や read-only で使えない
+
+後者なら無理に合わせず、あなたが実際に pull できるイメージ URL を優先してください。GUI で Cloud Run に入れる値は、YAML 例よりも「実際に存在する image URL」のほうが優先です。
 
 ## 4. Secret Manager で新しい Secret を作る
 
@@ -257,9 +252,9 @@ Cloud Run から Secret を読むには、サービスアカウントに `Secret
 |---|---|
 | サービス名 | `ai-config-selector` |
 | リージョン | `asia-northeast1` |
-| コンテナ イメージ URL | `asia-northeast1-docker.pkg.dev/sbi-art-auction/ghcr/ai-config/ai-config-selector-serving:main` |
+| コンテナ イメージ URL | 3 章で決めた `ai-config-selector-serving` のイメージ URL |
 
-もし 3-4 の分岐に入った場合は、ここも `cloud-run` リポジトリのイメージ URL に読み替えてください。
+もし迷ったら、「今あなたの環境で本当に pull できる完成済み image URL」をそのまま入れてください。
 
 ### 5-2. 認証とネットワーク
 
@@ -486,13 +481,13 @@ Cloud Run デプロイに関係するツールを探して
 
 よくある原因:
 
-- build したイメージが古い
-- Cloud Build が失敗していた
+- 受け取ったイメージが古い
+- イメージ自体が正しく build されていない
 - イメージ URL が違う
 
 見る場所:
 
-1. `Cloud Build` → `履歴`
+1. image を用意した担当者に、どの image URL / tag を使うべきか確認する
 2. `Cloud Run` → `ai-config-selector` → `ログ`
 
 ### 症状 2. `ai-config-mcpo` は動くが Open WebUI から接続できない
@@ -552,7 +547,7 @@ Cloud Run デプロイに関係するツールを探して
 
 ここまで終わったら、次だけ確認してください。
 
-- Cloud Build の `ai-config-selector` image build が成功している
+- `ai-config-selector-serving` の image URL が 1 本決まっている
 - Cloud Run の `ai-config-selector` が `Ready`
 - Cloud Run の `ai-config-mcpo` が `Ready`
 - `Secret Manager` に `MCPO_API_KEY` がある
@@ -576,7 +571,7 @@ Cloud Run デプロイに関係するツールを探して
 
 - Cloud Run deploy: `https://cloud.google.com/run/docs/deploying`
 - Cloud Run secrets: `https://cloud.google.com/run/docs/configuring/services/secrets`
-- Cloud Build triggers: `https://cloud.google.com/build/docs/automating-builds/create-manage-triggers`
+- Artifact Registry Docker images: `https://cloud.google.com/artifact-registry/docs/docker/store-docker-container-images`
 - Open WebUI env config: `https://docs.openwebui.com/reference/env-configuration/`
 - Open WebUI MCP / OpenAPI tools: `https://docs.openwebui.com/features/extensibility/plugin/tools/openapi-servers/open-webui/`
 - MCPO README: `https://github.com/open-webui/mcpo`

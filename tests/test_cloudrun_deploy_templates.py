@@ -137,7 +137,6 @@ def test_gcp_gui_setup_guide_covers_console_flow() -> None:
     text = (DEPLOY_DIR / "gcp-gui-setup-guide.ja.md").read_text(encoding="utf-8")
 
     for expected in [
-        "Cloud Build",
         "Cloud Run",
         "Secret Manager",
         "MCPO_API_KEY",
@@ -150,5 +149,19 @@ def test_gcp_gui_setup_guide_covers_console_flow() -> None:
         "ENABLE_LOGIN_FORM",
         "Open WebUI",
         "＋",
+    ]:
+        assert expected in text
+
+
+def test_gcp_gui_setup_guide_handles_no_github_no_gcloud_constraints() -> None:
+    text = (DEPLOY_DIR / "gcp-gui-setup-guide.ja.md").read_text(encoding="utf-8")
+
+    for expected in [
+        "GitHub を GCP に接続しない",
+        "`gcloud` は使いません",
+        "事前にコンテナイメージ",
+        "GHCR",
+        "Docker Hub",
+        "社内レジストリ",
     ]:
         assert expected in text

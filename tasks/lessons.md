@@ -1,5 +1,14 @@
 # Lessons Learned
 
+## 2026-03-31: デプロイ guide では enterprise 制約を最初に固定する
+
+### ミス 7: GUI guide で GitHub 連携と `gcloud` 利用を暗黙に前提化した
+
+- **状況**: GCP GUI セットアップガイドを書いたが、Cloud Build trigger のために GitHub を GCP に接続し、必要に応じて `gcloud` を使える前提が混ざっていた
+- **期待動作**: 会社環境の制約がありそうなセットアップ文書では、最初に「CLI が使えるか」「GitHub / 外部 SCM を GCP に接続できるか」「どのレジストリが使えるか」を固定し、不可なら prebuilt image 前提の手順に切り替える
+- **実際の動作**: 最初の guide は個人開発寄りの前提を含み、企業環境ではそのまま辿れない導線になっていた
+- **ルール**: デプロイ / セットアップガイドを書くときは、冒頭で `CLI可否 / SCM連携可否 / レジストリ制約` を明文化する。どれかが不可なら、GCP 内 build を主ルートにせず、`事前に用意した image を GUI で載せる` 方式を第一候補にする
+
 ## 2026-03-03: ai-config-dispatch とai-config-selector の活用
 
 ### ミス 1: ai-config-dispatch を使用しなかった

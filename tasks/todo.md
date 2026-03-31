@@ -1,5 +1,44 @@
 # TODO
 
+## 2026-03-31 GCP GUI Guide Constraint Update
+
+### Plan
+- [x] GitHub 連携なし / `gcloud` なし前提で GUI guide を組み直す
+- [x] `ai-config` イメージは事前に用意済みとする前提と、その理由を guide に明記する
+- [x] ユーザー修正を `tasks/lessons.md` に記録し、tests / review を更新する
+
+### Progress
+- [x] 現状調査
+- [x] tests
+- [x] guide update
+- [x] lessons
+- [x] 検証
+- [x] review
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `deploy/cloudrun/gcp-gui-setup-guide.ja.md`
+  - `tasks/lessons.md`
+  - `tests/test_cloudrun_deploy_templates.py`
+  - `tasks/todo.md`
+- 実施内容:
+  - GCP GUI guide の主導線を `GitHub 連携なし / gcloud なし / GCP 内 build なし` 前提へ切り替えた
+  - `ai-config-selector-serving` は事前に用意した image URL を Cloud Run GUI へ貼る方式に変更し、Cloud Build trigger を main route から外した
+  - image 置き場は `Artifact Registry` または `Docker Hub` を推奨し、`GHCR` は主ルートにしない方針へ更新した
+  - ユーザー修正を `tasks/lessons.md` に記録し、今後は enterprise 制約を guide 冒頭で固定するルールを追加した
+  - pytest に `GitHub を GCP に接続しない` / ``gcloud`` 不使用 / prebuilt image 前提を確認する回帰チェックを追加した
+- 検証:
+  - `.venv/bin/python -m pytest tests/test_cloudrun_deploy_templates.py -q`
+  - `git diff --check`
+- 検証結果:
+  - guide / README / template tests は `7 passed`
+  - `git diff --check` は clean
+  - guide 本文に `GitHub を GCP に接続しない`、``gcloud`` 不使用、prebuilt image 前提、`GHCR` / `Docker Hub` / `社内レジストリ` の扱いが含まれることを確認した
+
 ## 2026-03-31 GCP GUI Setup Guide for Open WebUI + MCPO
 
 ### Plan
