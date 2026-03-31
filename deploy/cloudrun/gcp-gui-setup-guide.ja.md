@@ -95,6 +95,8 @@ GCP コンソールで、次の API が有効か確認します。
 
 その代わり、`ai-config-selector-serving` は事前にコンテナイメージを用意しておきます。
 
+今は手元で Docker が使えるとのことなので、いちばん自然なのは「この repo を手元で build して、そのままレジストリへ push する」流れです。
+
 使える置き場の例:
 
 - GHCR
@@ -126,7 +128,128 @@ docker.io/your-org/ai-config-selector-serving:main
 asia-northeast1-docker.pkg.dev/sbi-art-auction/cloud-run/ai-config-selector-serving:main
 ```
 
-### 3-2. どのイメージ URL を使えばいいかわからないとき
+### 3-2. ローカル Docker で build して push する
+
+ここから先は、手元のターミナルで作業します。`gcloud` は使わず、Docker だけで進めます。
+
+まず、この repo のルートで image を build します。
+
+```bash
+docker build -f deploy/cloudrun/Dockerfile -t ai-config-selector-serving:local .
+```
+
+これで `ai-config-selector-serving:local` というローカル image ができます。
+
+次に、どのレジストリへ push するかで手順が分かれます。
+
+#### A. GHCR に push する
+
+GitHub Container Registry を使う方法です。GitHub を GCP に接続する必要はありません。
+
+```bash
+docker login ghcr.io -u YOUR_GITHUB_USERNAME
+docker tag ai-config-selector-serving:local ghcr.io/YOUR_GITHUB_USERNAME/ai-config-selector-serving:main
+docker push ghcr.io/YOUR_GITHUB_USERNAME/ai-config-selector-serving:main
+```
+
+この方法で大事なのは、`docker login` に使う GitHub token に `write:packages` が入っていることです。
+
+`gh auth login` を使ったあとでも、scope が足りないことがあります。確認するなら次です。
+
+```bash
+gh auth status
+```
+
+表示された `Token scopes` に `write:packages` が含まれていれば OK です。
+
+さらに、GHCR の `YOUR_GITHUB_USERNAME` は「GitHub repo owner の見た目の名前」ではなく、「実際に認証している GitHub login 名」または push 権限のある org 名を使います。
+
+確認するなら次です。
+
+```bash
+gh api user --jq '.login'
+```
+
+たとえば login が `tsytbns` なら、image URL は次です。
+
+```text
+ghcr.io/tsytbns/ai-config-selector-serving:main
+```
+
+`ghcr.io/ToshiyaTsubonishi/...` のように repo owner 側で push しようとして `denied` になる場合は、この namespace の違いを疑ってください。
+
+もし token の権限が足りないと、push 時に次のようなエラーになります。
+
+```text
+permission_denied: The token provided does not match expected scopes
+```
+
+このエラーが出たら、GitHub の Personal Access Token を見直してください。少なくとも `write:packages` が必要です。
+
+もし `docker login` の時点で次のようなエラーが出ることもあります。
+
+```text
+error saving credentials: error storing credentials - err: exec: "docker-credential-desktop": executable file not found in $PATH
+```
+
+これは `~/.docker/config.json` が `credsStore: "desktop"` を見ているのに、`docker-credential-desktop` が入っていない状態です。
+
+その場合の最短回避は、認証保存用に一時的な Docker config を使う方法です。
+
+```bash
+mkdir -p /tmp/docker-ghcr
+printf '{"auths":{}}\n' > /tmp/docker-ghcr/config.json
+printf '%s' "$(gh auth token)" | docker --config /tmp/docker-ghcr login ghcr.io -u YOUR_GITHUB_USERNAME --password-stdin
+docker --config /tmp/docker-ghcr tag ai-config-selector-serving:local ghcr.io/YOUR_GITHUB_USERNAME/ai-config-selector-serving:main
+docker --config /tmp/docker-ghcr push ghcr.io/YOUR_GITHUB_USERNAME/ai-config-selector-serving:main
+```
+
+push が成功したら、Cloud Run に入れる image URL は次になります。
+
+```text
+ghcr.io/YOUR_GITHUB_USERNAME/ai-config-selector-serving:main
+```
+
+#### B. Docker Hub に push する
+
+Docker Hub を使えるなら、いちばん説明がシンプルです。
+
+```bash
+docker login
+docker tag ai-config-selector-serving:local docker.io/YOUR_ORG/ai-config-selector-serving:main
+docker push docker.io/YOUR_ORG/ai-config-selector-serving:main
+```
+
+push が成功したら、Cloud Run に入れる image URL は次になります。
+
+```text
+docker.io/YOUR_ORG/ai-config-selector-serving:main
+```
+
+#### C. Artifact Registry に push する
+
+すでに使える Artifact Registry があるなら、それでも大丈夫です。
+
+```bash
+docker tag ai-config-selector-serving:local asia-northeast1-docker.pkg.dev/sbi-art-auction/REPOSITORY/ai-config-selector-serving:main
+docker push asia-northeast1-docker.pkg.dev/sbi-art-auction/REPOSITORY/ai-config-selector-serving:main
+```
+
+ただし、ここは会社環境だと少し詰まりやすいです。
+
+- その `REPOSITORY` が事前に存在している必要があります
+- あなたのアカウントに push 権限が必要です
+- 権限が足りないと、次のようなエラーになります
+
+```text
+Permission 'artifactregistry.repositories.uploadArtifacts' denied on resource (or it may not exist).
+```
+
+このエラーが出たら、Artifact Registry の repository path が正しいか、または `Artifact Registry Writer` 相当の権限があるかを確認してください。
+
+また、`gcloud` を使わない環境では Artifact Registry への Docker 認証を別途用意する必要があることがあります。会社ルールで許されるなら、初回は GHCR または Docker Hub のほうが進めやすいことが多いです。
+
+### 3-3. どのイメージ URL を使えばいいかわからないとき
 
 次のどれかが現実的です。
 
@@ -136,7 +259,7 @@ asia-northeast1-docker.pkg.dev/sbi-art-auction/cloud-run/ai-config-selector-serv
 
 この guide の残りは、イメージ URL が 1 本決まっていれば、そのまま進められます。
 
-### 3-3. `ghcr` リポジトリについて
+### 3-4. `ghcr` リポジトリについて
 
 以前のメモでは `asia-northeast1-docker.pkg.dev/sbi-art-auction/ghcr/ai-config/ai-config-selector-serving:main` を例にしていました。
 

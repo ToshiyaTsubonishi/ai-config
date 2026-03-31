@@ -1,5 +1,85 @@
 # TODO
 
+## 2026-03-31 Cloud Run YAML Refresh for Published GHCR Image
+
+### Plan
+- [x] `ai-config-selector` の Cloud Run YAML を GHCR digest に更新する
+- [x] `ai-config-mcpo` / `open-webui` テンプレートとの整合を確認し、必要な差分だけ反映する
+- [x] template tests と diff hygiene を再実行し、review を記録する
+
+### Progress
+- [x] 現状確認
+- [x] YAML update
+- [x] tests
+- [x] review
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `deploy/cloudrun/ai-config-selector.service.yaml`
+  - `tests/test_cloudrun_deploy_templates.py`
+  - `tasks/todo.md`
+- 実施内容:
+  - `ai-config-selector` の image を古い Artifact Registry path から `ghcr.io/tsytbns/ai-config-selector-serving@sha256:bd606a4de2c81e98fb99c5217b5e5a83fee817a1b856583b4017c0980c463eb8` に更新した
+  - template test の selector image 期待値を digest 固定へ更新した
+  - `deploy/cloudrun/ai-config-mcpo.service.yaml` の `AI_CONFIG_SELECTOR_MCP_URL` と `MCPO_API_KEY` secret 参照、`deploy/cloudrun/open-webui.service.mcpo.yaml` の `OPENWEBUI_TOOL_SERVER_CONNECTIONS` 参照は現行前提と一致しており、追加変更は不要なことを確認した
+  - ユーザー提示の `Pasted code.yaml` と見比べ、`open-webui.service.mcpo.yaml` は live service export に MCPO 接続 env を加えた派生テンプレートとして整合していることを確認した
+- 検証:
+  - `.venv/bin/python -m pytest tests/test_cloudrun_deploy_templates.py -q`
+  - `git diff --check`
+- 検証結果:
+  - Cloud Run template tests は `7 passed`
+  - `git diff --check` は clean
+
+## 2026-03-31 Local Docker Build/Push Guidance for Cloud Run
+
+### Plan
+- [x] ローカル Docker で `ai-config-selector-serving` を build できることを確認する
+- [x] GHCR / Artifact Registry の push 可否と必要権限を実測で確認する
+- [x] GUI guide / lessons / tests を更新して、ローカル build→push の手順を明文化する
+
+### Progress
+- [x] 現状確認
+- [x] local docker build
+- [x] registry push validation
+- [x] docs / tests / lessons
+- [x] 検証
+- [x] review
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `deploy/cloudrun/gcp-gui-setup-guide.ja.md`
+  - `tasks/lessons.md`
+  - `tasks/todo.md`
+  - `tests/test_cloudrun_deploy_templates.py`
+- 実施内容:
+  - local Docker が使える前提で、`docker build -f deploy/cloudrun/Dockerfile` から GHCR / Docker Hub / Artifact Registry へ tag / push する具体手順を GUI guide に追加した
+  - GHCR は `gh auth login` 後でも `gh auth status` に `write:packages` が必要なこと、足りない場合は `permission_denied: The token provided does not match expected scopes` になることを guide に明記した
+  - GHCR は repo owner 名ではなく、実際に認証している GitHub login / org namespace を使うこと、`gh api user --jq '.login'` で確認できることを guide に追加した
+  - `docker-credential-desktop` helper がない環境向けに、一時 `docker --config /tmp/docker-ghcr` を使う回避手順を guide に追加した
+  - Artifact Registry は `artifactregistry.repositories.uploadArtifacts` denied が典型エラーであることと、repository path / writer 権限の確認が必要なことを guide に追加した
+  - ユーザー修正を `tasks/lessons.md` に記録し、guide の回帰テストに local Docker build/push と権限エラーの説明を固定した
+- 実測メモ:
+  - local build は `docker build -f deploy/cloudrun/Dockerfile -t ai-config-selector-serving:local .` で成功した
+  - GHCR push は `gh auth status` 上の token scopes が `gist`, `read:org`, `repo`, `workflow` のみで、`write:packages` 不足のため失敗した
+  - `gh auth refresh -h github.com -s write:packages` 後は scope 問題が解消した
+  - `~/.docker/config.json` は `credsStore: "desktop"` だったが、`docker-credential-desktop` が存在せず通常の `docker login` が失敗した
+  - GHCR は `ghcr.io/ToshiyaTsubonishi/...` では `denied` になり、`ghcr.io/tsytbns/ai-config-selector-serving:main` への push が成功した
+  - Artifact Registry push は `Permission 'artifactregistry.repositories.uploadArtifacts' denied on resource (or it may not exist).` で失敗した
+- 検証:
+  - `.venv/bin/python -m pytest tests/test_cloudrun_deploy_templates.py -q`
+  - `git diff --check`
+- 検証結果:
+  - guide 回帰テストは `7 passed`
+  - `git diff --check` は clean
+
 ## 2026-03-31 GCP GUI Guide Constraint Update
 
 ### Plan

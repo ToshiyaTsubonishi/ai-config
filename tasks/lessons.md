@@ -1,5 +1,23 @@
 # Lessons Learned
 
+## 2026-03-31: prebuilt image 前提でも local Docker path を書く
+
+### ミス 8: guide に「事前に image を用意する」だけ書いて手元 Docker の導線を省いた
+
+- **状況**: GCP GUI guide を enterprise 制約に合わせて prebuilt image 前提へ直したが、ユーザー側では local Docker が使える状況だった
+- **期待動作**: `GitHub 連携なし / gcloud なし` でも local Docker が使えるなら、`docker build` から `docker tag` / `docker push` までの最短導線を guide にそのまま書く
+- **実際の動作**: 「事前に image URL を用意する」とだけ書いたため、どこで何を build / push すればよいかが途中でわかりにくくなった
+- **ルール**: deploy guide で prebuilt image を前提にするときも、local Docker があり得るなら `build -> tag -> push -> Cloud Run に貼る` の具体コマンドと、GHCR / Artifact Registry の典型的な権限エラーを必ず併記する
+
+## 2026-03-31: GHCR troubleshooting は namespace と Docker credsStore を先に見る
+
+### ミス 9: GHCR の denied を token scope だけの問題だと見なしやすい
+
+- **状況**: `write:packages` を付けても GHCR push が `denied` で失敗し、さらに `docker login` では `docker-credential-desktop` missing が出た
+- **期待動作**: GHCR では `gh auth status` の scope だけでなく、`gh api user --jq '.login'` で実際の login 名を確認し、その namespace に push する。加えて `~/.docker/config.json` の `credsStore` が壊れていないかを見る
+- **実際の動作**: 最初は repo owner ベースの `ghcr.io/ToshiyaTsubonishi/...` を試し、認証済み account `tsytbns` の namespace との差を見落とした。Docker 側も `credsStore: "desktop"` の helper 不在で login が保存できなかった
+- **ルール**: GHCR push で `denied` が出たら、まず `gh auth status` の `write:packages`、次に `gh api user --jq '.login'` と push 先 namespace、最後に `~/.docker/config.json` の credential helper を確認する。helper 欠落時は一時 `DOCKER_CONFIG` で回避する
+
 ## 2026-03-31: デプロイ guide では enterprise 制約を最初に固定する
 
 ### ミス 7: GUI guide で GitHub 連携と `gcloud` 利用を暗黙に前提化した

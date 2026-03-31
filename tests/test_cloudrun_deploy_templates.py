@@ -30,7 +30,10 @@ def test_ai_config_selector_service_template() -> None:
 
     container = service["spec"]["template"]["spec"]["containers"][0]
     assert container["name"] == "ai-config-selector-1"
-    assert container["image"].endswith("/ai-config-selector-serving:main")
+    assert (
+        container["image"]
+        == "ghcr.io/tsytbns/ai-config-selector-serving@sha256:bd606a4de2c81e98fb99c5217b5e5a83fee817a1b856583b4017c0980c463eb8"
+    )
     assert container["ports"] == [{"name": "http1", "containerPort": 8080}]
     assert container["livenessProbe"]["httpGet"]["path"] == "/healthz"
     assert container["startupProbe"]["tcpSocket"]["port"] == 8080
@@ -163,5 +166,12 @@ def test_gcp_gui_setup_guide_handles_no_github_no_gcloud_constraints() -> None:
         "GHCR",
         "Docker Hub",
         "社内レジストリ",
+        "docker build -f deploy/cloudrun/Dockerfile",
+        "gh auth status",
+        "gh api user --jq '.login'",
+        "write:packages",
+        "docker-credential-desktop",
+        "docker --config /tmp/docker-ghcr",
+        "artifactregistry.repositories.uploadArtifacts",
     ]:
         assert expected in text
