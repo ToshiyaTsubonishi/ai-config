@@ -152,7 +152,7 @@ def test_selector_serving_exposes_read_only_http_mcp_and_health_endpoints(tmp_pa
     assert readiness["surface"] == "selector-serving"
     assert readiness["runtime_mode"] == "read_only"
     assert readiness["record_count"] == 1
-    assert readiness["index_format_version"] == 3
+    assert readiness["index_format_version"] == 4
     assert readiness["profile"] == "default"
     assert readiness["index_dir"] == str(index_dir.resolve())
     assert "summary.json" in readiness["required_artifacts"]

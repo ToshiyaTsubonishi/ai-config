@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from ai_config.registry.models import ToolRecord, load_records
+from ai_config.tokenization import tokenize_for_search
 
 logger = logging.getLogger(__name__)
 
@@ -118,13 +119,16 @@ class ToolIndex:
 
     def _keyword_search(self, query: str, top_k: int) -> list[dict[str, Any]]:
         """Simple keyword-based search fallback."""
-        query_lower = query.lower()
+        query_tokens = {token for token in tokenize_for_search(query)}
+        if not query_tokens:
+            return []
+
         scored: list[tuple[float, ToolRecord]] = []
         for r in self._records:
-            text = r.search_text.lower()
-            score = sum(1 for word in query_lower.split() if word in text)
+            record_tokens = set(tokenize_for_search(r.search_text))
+            score = len(query_tokens.intersection(record_tokens))
             if score > 0:
-                scored.append((score, r))
+                scored.append((float(score), r))
 
         scored.sort(key=lambda x: x[0], reverse=True)
         return [self._summarize(r.to_dict() | {"score": s}) for s, r in scored[:top_k]]

@@ -15,16 +15,13 @@ from rank_bm25 import BM25Okapi
 from ai_config.registry.index_builder import EMBEDDING_DIM, EMBEDDING_MODEL
 from ai_config.registry.models import ToolRecord, load_records
 from ai_config.registry.normalization import normalize_targets
+from ai_config.tokenization import tokenize_for_search
 
 logger = logging.getLogger(__name__)
 
 SUPPORTED_EMBEDDING_BACKENDS = {"sentence_transformer", "hash"}
 SUPPORTED_VECTOR_BACKENDS = {"faiss", "numpy"}
-MIN_SUPPORTED_INDEX_FORMAT = 3
-
-
-def _tokenize(text: str) -> list[str]:
-    return [tok for tok in text.lower().split() if tok]
+MIN_SUPPORTED_INDEX_FORMAT = 4
 
 
 def _infer_source_repo_from_source_path(source_path: str) -> str:
@@ -46,7 +43,7 @@ def _infer_source_repo_from_source_path(source_path: str) -> str:
 
 def _hash_embedding(text: str, dim: int) -> np.ndarray:
     vec = np.zeros((dim,), dtype=np.float32)
-    for token in _tokenize(text):
+    for token in tokenize_for_search(text):
         h = hash(token)
         idx = h % dim
         sign = 1.0 if (h & 1) == 0 else -1.0
@@ -159,7 +156,7 @@ class HybridRetriever:
             hits.extend(exact_name_to_ids[q])
         if q in exact_id_to_id:
             hits.append(exact_id_to_id[q])
-        for token in _tokenize(query):
+        for token in tokenize_for_search(query):
             hits.extend(token_to_ids.get(token, []))
 
         ordered: list[int] = []
@@ -249,7 +246,7 @@ class HybridRetriever:
                 semantic_scores[ii] = float(sims[ii])
 
         # bm25
-        bm25_values = self.bm25.get_scores(_tokenize(query))
+        bm25_values = self.bm25.get_scores(tokenize_for_search(query))
         bm25_top = np.argsort(bm25_values)[::-1][: min(bm25_k, len(self.records))]
         bm25_ranking = [int(i) for i in bm25_top if bm25_values[int(i)] > 0]
         bm25_scores = {int(i): float(bm25_values[int(i)]) for i in bm25_ranking}

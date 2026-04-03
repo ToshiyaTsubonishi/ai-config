@@ -7,7 +7,7 @@ from ai_config.registry.index_builder import build_index
 from ai_config.registry.models import ToolRecord
 
 
-def test_index_builder_writes_v3_contract_artifacts(tmp_path: Path) -> None:
+def test_index_builder_writes_v4_contract_artifacts(tmp_path: Path) -> None:
     records = [
         ToolRecord(
             id="skill:test",
@@ -33,6 +33,6 @@ def test_index_builder_writes_v3_contract_artifacts(tmp_path: Path) -> None:
         assert (tmp_path / artifact).exists(), artifact
 
     summary = json.loads((tmp_path / "summary.json").read_text(encoding="utf-8"))
-    assert summary["index_format_version"] == 3
+    assert summary["index_format_version"] == 4
     for key in ("index_format_version", "embedding_backend", "vector_backend", "embedding_dim", "profile"):
         assert key in summary

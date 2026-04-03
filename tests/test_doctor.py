@@ -69,7 +69,7 @@ def _write_vendor_manifest(repo_root: Path, *, sources: dict[str, dict[str, str]
 
 
 def _write_index(repo_root: Path, records: list[dict[str, object]]) -> None:
-    _write(repo_root / ".index" / "summary.json", json.dumps({"index_format_version": 3}, ensure_ascii=False))
+    _write(repo_root / ".index" / "summary.json", json.dumps({"index_format_version": 4}, ensure_ascii=False))
     _write(repo_root / ".index" / "records.json", json.dumps(records, ensure_ascii=False, indent=2))
 
 

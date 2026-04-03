@@ -19,7 +19,7 @@ def _make_records() -> list[ToolRecord]:
         ToolRecord(
             id="skill:deep-research",
             name="deep-research",
-            description="Web調査を複数ステップで実行し、出典付きの調査レポートを作成する",
+            description="日本語の調査を複数ステップで実行し、出典付きの調査レポートを作成する",
             source_path="skills/custom/deep-research/SKILL.md",
             tool_kind="skill",
             metadata={"layer": "custom"},
@@ -51,10 +51,9 @@ def test_tool_index_search_keyword_fallback(tmp_path: Path) -> None:
     save_records(records, str(tmp_path / "records.json"))
 
     index = ToolIndex(tmp_path)
-    results = index.search("web 調査 research", top_k=3)
+    results = index.search("日本語調査", top_k=3)
 
     assert len(results) > 0
-    # deep-research should match because it mentions web and 調査
     ids = [r["id"] for r in results]
     assert "skill:deep-research" in ids
 

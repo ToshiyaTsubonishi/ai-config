@@ -22,19 +22,16 @@ import numpy as np
 from rank_bm25 import BM25Okapi
 
 from ai_config.registry.models import ToolRecord
+from ai_config.tokenization import tokenize_for_search
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_INDEX_DIR = ".index"
 EMBEDDING_MODEL = "intfloat/multilingual-e5-small"
 EMBEDDING_DIM = 384
-INDEX_FORMAT_VERSION = 3
+INDEX_FORMAT_VERSION = 4
 EMBEDDING_BACKEND = os.getenv("AI_CONFIG_EMBEDDING_BACKEND", "hash")
 VECTOR_BACKEND = os.getenv("AI_CONFIG_VECTOR_BACKEND", "numpy")
-
-
-def _tokenize(text: str) -> list[str]:
-    return [tok for tok in text.lower().split() if tok]
 
 
 def _atomic_write_bytes(path: Path, payload: bytes) -> None:
@@ -58,7 +55,7 @@ def _atomic_write_pickle(path: Path, payload: Any) -> None:
 def _build_hash_embeddings(texts: list[str], dim: int = EMBEDDING_DIM) -> np.ndarray:
     vectors = np.zeros((len(texts), dim), dtype=np.float32)
     for i, text in enumerate(texts):
-        for token in _tokenize(text):
+        for token in tokenize_for_search(text):
             h = hash(token)
             idx = h % dim
             sign = 1.0 if (h & 1) == 0 else -1.0
@@ -79,8 +76,7 @@ def _keyword_index(records: list[ToolRecord]) -> dict[str, Any]:
         name_key = record.name.lower().strip()
         exact_name_to_ids.setdefault(name_key, []).append(record.id)
 
-        seed_text = " ".join([record.id, record.name, record.description, " ".join(record.tags)])
-        for token in _tokenize(seed_text):
+        for token in tokenize_for_search(record.search_text):
             bucket = token_to_ids.setdefault(token, [])
             if record.id not in bucket:
                 bucket.append(record.id)
@@ -149,7 +145,7 @@ def build_index(
 
     vector_backend_used = _vector_backend_write(index_dir, embeddings, vector_backend)
 
-    bm25 = BM25Okapi([_tokenize(text) for text in texts])
+    bm25 = BM25Okapi([tokenize_for_search(text) for text in texts])
     _atomic_write_pickle(index_dir / "bm25.pkl", bm25)
 
     keyword_index = _keyword_index(records)

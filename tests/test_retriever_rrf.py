@@ -69,3 +69,31 @@ def test_rrf_and_filters(tmp_path: Path) -> None:
 
     exec_only = retriever.search("bigquery", top_k=10, executable_only=True)
     assert all(h.record.metadata.get("executable", True) is not False for h in exec_only)
+
+
+def test_rrf_handles_japanese_queries_without_spaces(tmp_path: Path) -> None:
+    records = [
+        ToolRecord(
+            id="skill:japanese-research",
+            name="japanese-research",
+            description="日本語の調査手順を整理するガイド",
+            source_path="skills/shared/japanese-research/SKILL.md",
+            tool_kind="skill",
+            tags=["capability:research"],
+        ),
+        ToolRecord(
+            id="skill:english-review",
+            name="english-review",
+            description="Review code changes with a senior engineer lens",
+            source_path="skills/shared/english-review/SKILL.md",
+            tool_kind="skill",
+            tags=["capability:review"],
+        ),
+    ]
+    build_index(records, tmp_path, embedding_backend="hash", vector_backend="numpy")
+
+    retriever = HybridRetriever(tmp_path)
+    hits = retriever.search("日本語調査", top_k=2)
+
+    assert hits
+    assert hits[0].record.id == "skill:japanese-research"
