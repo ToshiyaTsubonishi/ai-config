@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "description": "Golden retrieval cases for the default selector profile.",
+  "cases": [
+    {
+      "query": "frontend-patterns react nextjs performance",
+      "expected_id": "skill:frontend-patterns"
+    },
+    {
+      "query": "security review authentication handling user input secrets api endpoints payment sensitive features",
+      "expected_id": "skill:security-review"
+    },
+    {
+      "query": "tdd-workflow red green refactor coverage",
+      "expected_id": "skill:tdd-workflow"
+    },
+    {
+      "query": "documentation-lookup libraries frameworks api references code examples",
+      "expected_id": "skill:documentation-lookup"
+    },
+    {
+      "query": "filesystem list directory allowed directories mcp",
+      "expected_id": "mcp:filesystem"
+    },
+    {
+      "query": "GitHub PR branching repository automation",
+      "expected_id": "skill:github"
+    },
+    {
+      "query": "sbi-future-scout 未来技術 トレンド 調査",
+      "expected_id": "skill:sbi-future-scout"
+    }
+  ]
+}

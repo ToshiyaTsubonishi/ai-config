@@ -1,0 +1,48 @@
+name: Retrieval Eval
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  retrieval-eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout ai-config
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev]
+
+      - name: Build selector index
+        run: |
+          PYTHONPATH=src python -m ai_config.build_index --repo-root . --index-dir ./.index
+
+      - name: Run retrieval eval
+        run: |
+          PYTHONPATH=src python -m ai_config.evals.retrieval_eval \
+            --index-dir ./.index \
+            --cases config/evals/retrieval_golden_cases.json \
+            --json-output .artifacts/retrieval-eval.json \
+            --min-hit-at-3 1.0 \
+            --min-mrr 0.8
+
+      - name: Upload retrieval eval report
+        uses: actions/upload-artifact@v4
+        with:
+          name: retrieval-eval-report
+          path: .artifacts/retrieval-eval.json

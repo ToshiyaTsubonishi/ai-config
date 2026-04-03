@@ -30,6 +30,7 @@ ai-config-vendor-skills = "ai_config.vendor.cli:main"
 ai-config-mcp-server = "ai_config.mcp_server.server:main"
 ai-config-selector-serving = "ai_config.mcp_server.serving:main"
 ai-config-doctor = "ai_config.doctor:main"
+ai-config-retrieval-eval = "ai_config.evals.retrieval_eval:main"
 
 [build-system]
 requires = ["hatchling"]
