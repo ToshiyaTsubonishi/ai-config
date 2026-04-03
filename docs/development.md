@@ -131,6 +131,7 @@ python -m ai_config.mcp_server.serving --repo-root . --index-dir ./.index
 .venv/bin/python -m pytest tests/test_plan_boundary.py -q
 .venv/bin/python -m pytest tests/test_cli_smoke.py -q
 .venv/bin/python -m pytest tests/test_selector_serving.py -q
+.venv/bin/python -m pytest tests/test_retrieval_eval.py -q
 ```
 
 ### Planner / runtime regression
@@ -147,6 +148,21 @@ python -m ai_config.mcp_server.serving --repo-root . --index-dir ./.index
 ```bash
 .venv/bin/python -m pytest tests/ -q
 ```
+
+### Retrieval Eval
+
+```bash
+.venv/bin/python -m ai_config.build_index --repo-root . --index-dir ./.index
+PYTHONPATH=src .venv/bin/python -m ai_config.evals.retrieval_eval \
+  --index-dir ./.index \
+  --cases config/evals/retrieval_golden_cases.json \
+  --min-hit-at-3 1.0 \
+  --min-mrr 0.8
+```
+
+- `--top-k` は search depth を表し、`hit@5` を含むため `5` 以上のみ許可します。
+- `mrr` は `top_k` 内で見つかった rank 全体を使って計算します。`top_k=10` で 8 位にいれば `1/8` を加算します。
+- case file の `expected_id` は index に存在する必要があり、typo は metric 低下ではなく設定ミスとして fail fast します。
 
 ## Current Test Map
 

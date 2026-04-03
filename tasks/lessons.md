@@ -1,5 +1,14 @@
 # Lessons Learned
 
+## 2026-04-03: Eval CLI の可変引数は metric contract と一致させる
+
+### ミス 10: `--top-k` を可変に見せつつ metric の一部を固定深さのままにした
+
+- **状況**: retrieval eval CLI に `--top-k` を追加したが、実装では `top_k=max(args.top_k, 5)` としつつ、`mrr` の加算も `rank <= 5` のときだけ行っていた
+- **期待動作**: 可変の search depth を exposed するなら、metric 側もその深さと整合させる。少なくとも `MRR` は `top_k` 内で見つかった rank 全体を使って計算する
+- **実際の動作**: `--top-k 10` で expected tool が 8 位でも rank 自体は取れるのに、`MRR` では 0 扱いになる不自然な contract になっていた
+- **ルール**: Eval / benchmark CLI では、公開オプションの意味と metric 計算を必ず一致させる。固定深さの metric を出すなら引数も固定化するか最小値を明示し、case file の参照 ID は typo を metric 劣化に混ぜず fail fast で弾く
+
 ## 2026-03-31: prebuilt image 前提でも local Docker path を書く
 
 ### ミス 8: guide に「事前に image を用意する」だけ書いて手元 Docker の導線を省いた

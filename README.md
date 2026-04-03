@@ -229,6 +229,7 @@ ai-config/
 ## More Docs
 
 - [docs/overview.md](docs/overview.md)
+- [docs/product-direction.ja.md](docs/product-direction.ja.md)
 - [docs/architecture.md](docs/architecture.md)
 - [docs/operations.md](docs/operations.md)
 - [docs/development.md](docs/development.md)

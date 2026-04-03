@@ -1,0 +1,13 @@
+{
+  "name": "ai-config-ai-ambassador-april-2026",
+  "private": true,
+  "version": "0.1.0",
+  "description": "PptxGenJS source for the April 2026 AI Ambassador presentation",
+  "scripts": {
+    "build": "node deck.js",
+    "build:strict": "PPTX_STRICT_LAYOUT=1 node deck.js"
+  },
+  "dependencies": {
+    "pptxgenjs": "^3.12.0"
+  }
+}

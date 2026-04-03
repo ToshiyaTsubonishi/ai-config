@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0D1726"/>
+      <stop offset="100%" stop-color="#14243A"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" rx="34" fill="url(#bg)"/>
+  <rect x="70" y="62" width="1460" height="62" rx="18" fill="#1E314D"/>
+  <circle cx="116" cy="93" r="9" fill="#EA4335"/>
+  <circle cx="146" cy="93" r="9" fill="#FBBC05"/>
+  <circle cx="176" cy="93" r="9" fill="#34A853"/>
+  <text x="220" y="102" font-size="26" fill="#D8E6FA" font-family="Courier New, monospace">local evidence / ai-config-agent search "open webui mcp" --index-dir ./.index</text>
+
+  <text x="100" y="188" font-size="34" font-weight="700" fill="#FFFFFF" font-family="Arial, sans-serif">selector が返した候補の例</text>
+
+  <text x="100" y="264" font-size="25" fill="#7CE0A2" font-family="Courier New, monospace">$ .venv/bin/ai-config-agent search "open webui mcp" --index-dir ./.index</text>
+  <text x="100" y="324" font-size="24" fill="#DCE8F7" font-family="Courier New, monospace">1. [mcp_server] eslint (rrf=0.0237, sem=0.0000, bm25=5.3475)</text>
+  <text x="138" y="360" font-size="22" fill="#8FB7E7" font-family="Courier New, monospace">id=mcp:eslint source=config/master/ai-sync.yaml</text>
+  <text x="138" y="392" font-size="22" fill="#8FB7E7" font-family="Courier New, monospace">MCP server: eslint</text>
+
+  <text x="100" y="454" font-size="24" fill="#DCE8F7" font-family="Courier New, monospace">2. [mcp_server] google-knowledge-mcp (rrf=0.0234, sem=0.0000, bm25=5.3475)</text>
+  <text x="138" y="490" font-size="22" fill="#8FB7E7" font-family="Courier New, monospace">id=mcp:google-knowledge-mcp source=config/master/ai-sync.yaml</text>
+
+  <text x="100" y="552" font-size="24" fill="#DCE8F7" font-family="Courier New, monospace">5. [mcp_server] notion-mcp (rrf=0.0225, sem=0.0000, bm25=5.3475)</text>
+  <text x="138" y="588" font-size="22" fill="#8FB7E7" font-family="Courier New, monospace">id=mcp:notion-mcp source=config/master/ai-sync.yaml</text>
+
+  <rect x="100" y="646" width="1380" height="166" rx="24" fill="#13233A" stroke="#274367" stroke-width="3"/>
+  <text x="136" y="698" font-size="24" font-weight="700" fill="#FFFFFF" font-family="Arial, sans-serif">この画面で伝えたいこと</text>
+  <text x="136" y="740" font-size="22" fill="#D7E3F4" font-family="Arial, sans-serif">・ai-config は「答えを直接出す」のではなく、まず使うべき候補を返す</text>
+  <text x="136" y="774" font-size="22" fill="#D7E3F4" font-family="Arial, sans-serif">・search のあとに detail lookup や downstream MCP 確認へ進められる</text>
+</svg>

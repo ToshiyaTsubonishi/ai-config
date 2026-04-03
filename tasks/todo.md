@@ -1,5 +1,135 @@
 # TODO
 
+## 2026-04-03 Product Direction Doc
+
+### Plan
+- [x] 共通仕様書と既存 docs の役割を照合し、文書の位置づけを決める
+- [x] repo の方針・あるべき姿・目指す姿をまとめた north star 文書を追加する
+- [x] docs index / README から辿れるようにして、review を記録する
+
+### Progress
+- [x] 共通仕様書の確認
+- [x] 方針文書の追加
+- [x] docs index の更新
+- [x] review
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `docs/product-direction.ja.md`
+  - `docs/README.md`
+  - `README.md`
+  - `tasks/todo.md`
+- 実施内容:
+  - repo の中核文書と、外部の `AIコーディング前提・開発共通仕様書 v2.0` を照合し、`ai-config` の product north star を定義する文書を追加した
+  - 新しい文書では、方針、あるべき姿、非目標、実務利用を見据えた到達目標、今後 6 か月の優先順位、判断に迷ったときの問いを固定した
+  - Container First / Environment Agnostic / Stateless by Default / Config over Code / Readable by Humans の思想と、`ai-config` の control plane / read-only / boundary 重視の思想が同じ方向を向くように整理した
+  - `docs/README.md` と `README.md` にリンクを追加し、repo から辿れる状態にした
+- 検証:
+  - `mcp__ai_config_selector__search_tools(query="documentation writing repo policy principles strategy architecture guidance")`
+  - `mcp__ai_config_selector__get_tool_detail(tool_id="skill:documentation")`
+  - `sed -n '1,240p' '/Users/tsytbns/Library/CloudStorage/GoogleDrive-t.tsubonishi@gmail.com/マイドライブ/AI/-開発共通仕様書-.md'`
+  - `sed -n '1,260p' docs/product-direction.ja.md`
+  - `git diff --check`
+- 検証結果:
+  - 新規文書は、実装詳細ではなく product direction に焦点を当てた粒度で追加できた
+  - docs index と root README から新文書へ辿れることを確認した
+  - `git diff --check` は clean
+
+## 2026-04-03 AI Ambassador April Deck Build
+
+### Plan
+- [x] `docs/presentations/2026-04-ai-ambassador/` に発表用 deck 一式を作る
+- [x] PptxGenJS で 13 枚の 4 月版 deck を生成し、補助図・台本・素材をそろえる
+- [x] 可能な範囲でレンダリング / レイアウト検証を行い、review を記録する
+
+### Progress
+- [x] 2 月 deck の構成、色、レイアウト傾向を確認
+- [x] `slides` skill の helper / validation scripts を確認
+- [x] SVG assets / speaker notes / deck.js 作成
+- [x] PPTX 生成
+- [x] 検証
+- [x] review
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `docs/presentations/2026-04-ai-ambassador/deck.js`
+  - `docs/presentations/2026-04-ai-ambassador/deck.pptx`
+  - `docs/presentations/2026-04-ai-ambassador/package.json`
+  - `docs/presentations/2026-04-ai-ambassador/speaker-notes.md`
+  - `docs/presentations/2026-04-ai-ambassador/assets/architecture-overview.svg`
+  - `docs/presentations/2026-04-ai-ambassador/assets/openwebui-connection.svg`
+  - `docs/presentations/2026-04-ai-ambassador/assets/selector-search.svg`
+  - `docs/presentations/2026-04-ai-ambassador/assets/validation-evidence.svg`
+  - `docs/presentations/2026-04-ai-ambassador/pptxgenjs_helpers/*`
+  - `tasks/todo.md`
+- 実施内容:
+  - 2 月 deck の 13 枚 / 16:9 / 企業向けテンプレート感を踏襲しつつ、4 月版を PptxGenJS で新規作成した
+  - `ai-config` を主題に、background / approach / artifact / outcome / future の流れで 13 枚に再構成した
+  - 発表用の補助図を SVG で 4 点追加し、Open WebUI 接続、selector 結果、architecture、validation evidence を deck に組み込んだ
+  - スライドごとの話し方とライブデモ / フォールバック文を `speaker-notes.md` に記載した
+  - repo ルールに合わせ、selector 起点確認と sibling `ai-config-dispatch` の workflow list 確認も行った
+- 検証:
+  - `mcp__ai_config_selector__search_tools(query=\"slides pptx image generation presentation assets validation render pptxgenjs speaker notes\")`
+  - `mcp__ai_config_selector__get_tool_detail(tool_id=\"skill:slides\")`
+  - `PYTHONPATH=../ai-config-dispatch/src:src .venv/bin/python -m ai_config_dispatch.cli --list-workflows`
+  - `NODE_PATH=/tmp/ai-config-pptx-deps/node_modules node docs/presentations/2026-04-ai-ambassador/deck.js`
+  - `python3 - <<'PY' ... ZipFile('docs/presentations/2026-04-ai-ambassador/deck.pptx') ...` で slide count 確認
+  - `qlmanage -t -s 1800 -o /tmp/deck_thumbs docs/presentations/2026-04-ai-ambassador/deck.pptx`
+  - `python3 - <<'PY' ... xml.etree.ElementTree ...` で SVG parse 確認
+  - `git diff --check`
+- 検証結果:
+  - `deck.pptx` は生成に成功し、PPTX 内の slide count は `13` だった
+  - `qlmanage` で first-slide thumbnail 生成に成功し、表紙レイアウトを目視確認できた
+  - 4 つの SVG assets はすべて XML parse に成功した
+  - `git diff --check` は clean
+  - host には `libreoffice` / `pdftoppm` / `fc-list` がないため、全 13 枚の PNG render、`slides_test.py`、`detect_font.py` の完全実行は未了
+  - `PPTX_STRICT_LAYOUT=1` の overlap diagnostics は、カード背景とその上のテキスト、チップ付きパネルのような意図的な重なりも警告対象にするため、今回の card-based layout ではノイズが多かった
+
+## 2026-04-03 AI Development Progress Presentation Support
+
+### Plan
+- [x] repo の一次資料を読み、ai-config の役割と価値を整理する
+- [x] Open WebUI + MCPO 連携のデモ導線を確認する
+- [x] 非エンジニア向けの発表メモと想定 Q&A を作成する
+
+### Progress
+- [x] selector / constitution / operations / deploy docs を確認
+- [x] local search / schema / selector-serving readiness を検証
+- [x] 発表メモを `docs/ai-development-progress-report.ja.md` に作成
+- [x] review
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `docs/ai-development-progress-report.ja.md`
+  - `tasks/todo.md`
+- 実施内容:
+  - `docs/constitution.md`、`docs/overview.md`、`docs/architecture.md`、`docs/operations.md`、`README.md`、`deploy/cloudrun/README.md` を読み、ai-config を execution runtime ではなく selector / planner の control plane として説明する骨子を整理した
+  - Open WebUI 連携は `ai-config-selector-serving` -> `MCPO` -> `Open WebUI` の構成で説明できること、Cloud Run テンプレートと sample secret JSON が repo にあることを確認した
+  - 非エンジニアがエンジニア向けに話しやすいように、30 秒版、3 分版、デモ台本、想定 Q&A をまとめた日本語メモを追加した
+- 検証:
+  - `mcp__ai_config_selector__search_tools(query=\"ai-config repository inspection planning documentation presentation repo analysis dispatch selector\")`
+  - `mcp__ai_config_selector__get_tool_detail(tool_id=\"skill:doc-coauthoring\")`
+  - `.venv/bin/ai-config-agent search "open webui mcp" --index-dir ./.index`
+  - `.venv/bin/ai-config-agent schema approved-plan`
+  - `PORT=8091 .venv/bin/ai-config-selector-serving --repo-root . --index-dir ./.index`
+  - `curl -fsS http://127.0.0.1:8091/healthz`
+  - `curl -fsS http://127.0.0.1:8091/readyz`
+- 検証結果:
+  - `ai-config-agent search` と `schema approved-plan` は成功した
+  - local `selector-serving` は `/healthz` で `{\"status\":\"ok\"}`、`/readyz` で `read_only` surface と index readiness を返し、検証時点の `record_count` は `2177` だった
+
 ## 2026-03-31 Cloud Run YAML Refresh for Published GHCR Image
 
 ### Plan

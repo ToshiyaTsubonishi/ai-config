@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 from ai_config.evals.retrieval_eval import (
     RetrievalEvalCase,
     evaluate_retrieval_cases,
     load_retrieval_eval_cases,
     main,
+    validate_expected_ids,
 )
 from ai_config.registry.index_builder import build_index
 from ai_config.registry.models import ToolRecord
@@ -157,7 +159,7 @@ def test_retrieval_eval_main_fails_when_threshold_unmet(tmp_path: Path) -> None:
                 "cases": [
                     {
                         "query": "filesystem list directory",
-                        "expected_id": "skill:missing",
+                        "expected_id": "skill:security-review",
                     }
                 ],
             },
@@ -179,3 +181,124 @@ def test_retrieval_eval_main_fails_when_threshold_unmet(tmp_path: Path) -> None:
     )
 
     assert exit_code == 1
+
+
+def test_evaluate_retrieval_cases_counts_mrr_beyond_top_5() -> None:
+    hit_ids = [
+        "skill:one",
+        "skill:two",
+        "skill:three",
+        "skill:four",
+        "skill:five",
+        "skill:target",
+    ]
+
+    class _FakeRetriever:
+        def search(self, query: str, top_k: int = 5) -> list[SimpleNamespace]:
+            assert query == "deep ranking"
+            assert top_k == 10
+            return [SimpleNamespace(record=SimpleNamespace(id=tool_id)) for tool_id in hit_ids[:top_k]]
+
+    report = evaluate_retrieval_cases(
+        _FakeRetriever(),  # type: ignore[arg-type]
+        [RetrievalEvalCase(query="deep ranking", expected_id="skill:target")],
+        top_k=10,
+    )
+
+    assert report.hit_at_5 == 0.0
+    assert report.mrr == 1.0 / 6.0
+    assert report.cases[0].rank == 6
+
+
+def test_validate_expected_ids_fails_for_missing_tool(tmp_path: Path) -> None:
+    _build_eval_index(tmp_path)
+    retriever = HybridRetriever(tmp_path)
+
+    try:
+        validate_expected_ids(
+            retriever,
+            [
+                RetrievalEvalCase(
+                    query="missing expected",
+                    expected_id="skill:not-in-index",
+                )
+            ],
+        )
+    except ValueError as exc:
+        assert "skill:not-in-index" in str(exc)
+    else:
+        raise AssertionError("validate_expected_ids should fail when expected_id is missing from the index")
+
+
+def test_retrieval_eval_main_fails_when_top_k_below_5(tmp_path: Path) -> None:
+    index_dir = tmp_path / "index"
+    _build_eval_index(index_dir)
+    cases_path = tmp_path / "cases.json"
+    cases_path.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "cases": [
+                    {
+                        "query": "filesystem list directory",
+                        "expected_id": "mcp:filesystem",
+                    }
+                ],
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    try:
+        main(
+            [
+                "--index-dir",
+                str(index_dir),
+                "--cases",
+                str(cases_path),
+                "--top-k",
+                "3",
+            ]
+        )
+    except ValueError as exc:
+        assert "--top-k must be >= 5" in str(exc)
+    else:
+        raise AssertionError("main should reject top_k values below 5")
+
+
+def test_retrieval_eval_main_fails_when_expected_id_missing_from_index(tmp_path: Path) -> None:
+    index_dir = tmp_path / "index"
+    _build_eval_index(index_dir)
+    cases_path = tmp_path / "cases.json"
+    cases_path.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "cases": [
+                    {
+                        "query": "filesystem list directory",
+                        "expected_id": "skill:not-in-index",
+                    }
+                ],
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    try:
+        main(
+            [
+                "--index-dir",
+                str(index_dir),
+                "--cases",
+                str(cases_path),
+            ]
+        )
+    except ValueError as exc:
+        assert "skill:not-in-index" in str(exc)
+    else:
+        raise AssertionError("main should fail fast when an expected_id is missing from the index")

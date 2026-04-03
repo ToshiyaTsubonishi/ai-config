@@ -49,6 +49,19 @@ class RetrievalEvalReport:
         }
 
 
+def validate_expected_ids(
+    retriever: HybridRetriever,
+    cases: list[RetrievalEvalCase],
+) -> None:
+    available_ids = {record.id for record in retriever.records}
+    missing_ids = sorted({case.expected_id for case in cases if case.expected_id not in available_ids})
+    if missing_ids:
+        raise ValueError(
+            "Eval cases reference expected_id values that are not present in the index: "
+            + ", ".join(missing_ids)
+        )
+
+
 def load_retrieval_eval_cases(path: Path) -> list[RetrievalEvalCase]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
@@ -93,6 +106,7 @@ def evaluate_retrieval_cases(
             hit_at_3 += 1
         if rank is not None and rank <= 5:
             hit_at_5 += 1
+        if rank is not None:
             reciprocal_rank_sum += 1.0 / rank
 
         results.append(
@@ -164,7 +178,12 @@ def main(argv: list[str] | None = None) -> int:
         default=Path("config/evals/retrieval_golden_cases.json"),
         help="Path to retrieval eval JSON cases",
     )
-    parser.add_argument("--top-k", type=int, default=5, help="Search top-k for evaluation")
+    parser.add_argument(
+        "--top-k",
+        type=int,
+        default=5,
+        help="Search depth for evaluation (must be >= 5 because the report includes hit@5)",
+    )
     parser.add_argument("--json-output", type=Path, default=None, help="Optional path to write JSON report")
     parser.add_argument("--min-hit-at-1", type=float, default=None, help="Fail if hit@1 is below this value")
     parser.add_argument("--min-hit-at-3", type=float, default=None, help="Fail if hit@3 is below this value")
@@ -172,9 +191,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--min-mrr", type=float, default=None, help="Fail if MRR is below this value")
     args = parser.parse_args(argv)
 
+    if args.top_k < 5:
+        raise ValueError("--top-k must be >= 5 because retrieval eval reports hit@5.")
+
     retriever = HybridRetriever(args.index_dir)
     cases = load_retrieval_eval_cases(args.cases)
-    report = evaluate_retrieval_cases(retriever, cases, top_k=max(args.top_k, 5))
+    validate_expected_ids(retriever, cases)
+    report = evaluate_retrieval_cases(retriever, cases, top_k=args.top_k)
 
     _print_human_report(report)
 
