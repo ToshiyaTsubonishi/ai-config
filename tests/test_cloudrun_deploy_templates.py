@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 import yaml
@@ -35,7 +37,7 @@ def test_ai_config_selector_service_template() -> None:
         == "ghcr.io/tsytbns/ai-config-selector-serving@sha256:bd606a4de2c81e98fb99c5217b5e5a83fee817a1b856583b4017c0980c463eb8"
     )
     assert container["ports"] == [{"name": "http1", "containerPort": 8080}]
-    assert container["livenessProbe"]["httpGet"]["path"] == "/healthz"
+    assert container["livenessProbe"]["httpGet"]["path"] == "/livez"
     assert container["startupProbe"]["tcpSocket"]["port"] == 8080
     assert container.get("env", []) == []
 
@@ -123,6 +125,8 @@ def test_cloudrun_readme_covers_mcpo_topology() -> None:
 
     for expected in [
         "gcp-gui-setup-guide.ja.md",
+        "cloudbuild.selector.yaml",
+        "render_selector_service.py",
         "ai-config-selector.service.yaml",
         "ai-config-mcpo.service.yaml",
         "open-webui.service.mcpo.yaml",
@@ -131,9 +135,18 @@ def test_cloudrun_readme_covers_mcpo_topology() -> None:
         "OPENWEBUI_TOOL_SERVER_CONNECTIONS",
         "ENABLE_PERSISTENT_CONFIG=False",
         "ENABLE_LOGIN_FORM=False",
+        "/livez",
         "/openapi.json",
+        "--config deploy/cloudrun/cloudbuild.selector.yaml",
     ]:
         assert expected in text
+
+
+def test_cloudrun_readme_avoids_invalid_gcloud_build_flag() -> None:
+    text = (DEPLOY_DIR / "README.md").read_text(encoding="utf-8")
+
+    assert "gcloud builds submit \\\n  --tag" not in text
+    assert "gcloud builds submit \\\n  --project \"$PROJECT_ID\" \\\n  --config deploy/cloudrun/cloudbuild.selector.yaml" in text
 
 
 def test_gcp_gui_setup_guide_covers_console_flow() -> None:
@@ -151,6 +164,7 @@ def test_gcp_gui_setup_guide_covers_console_flow() -> None:
         "ENABLE_PERSISTENT_CONFIG",
         "ENABLE_LOGIN_FORM",
         "Open WebUI",
+        "/livez",
         "＋",
     ]:
         assert expected in text
@@ -174,4 +188,54 @@ def test_gcp_gui_setup_guide_handles_no_github_no_gcloud_constraints() -> None:
         "docker --config /tmp/docker-ghcr",
         "artifactregistry.repositories.uploadArtifacts",
     ]:
+        assert expected in text
+
+
+def test_cloudbuild_selector_config_uses_deploy_dockerfile() -> None:
+    payload = _load_yaml("cloudbuild.selector.yaml")
+
+    step = payload["steps"][0]
+    assert step["name"] == "gcr.io/cloud-builders/docker"
+    assert step["args"] == ["build", "-f", "deploy/cloudrun/Dockerfile", "-t", "${_IMAGE}", "."]
+    assert payload["images"] == ["${_IMAGE}"]
+
+
+def test_render_selector_service_script(tmp_path: Path) -> None:
+    output_path = tmp_path / "selector.yaml"
+
+    subprocess.run(
+        [
+            sys.executable,
+            str(DEPLOY_DIR / "render_selector_service.py"),
+            "--project-id",
+            "abiding-aspect-457603-m8",
+            "--project-number",
+            "546079316858",
+            "--region",
+            "asia-northeast1",
+            "--image",
+            "asia-northeast1-docker.pkg.dev/abiding-aspect-457603-m8/cloud-run-source-deploy/ai-config-selector-serving:test",
+            "--service-name",
+            "ai-config-selector-test",
+            "--output",
+            str(output_path),
+        ],
+        check=True,
+    )
+
+    rendered = yaml.safe_load(output_path.read_text(encoding="utf-8"))
+    container = rendered["spec"]["template"]["spec"]["containers"][0]
+
+    assert rendered["metadata"]["name"] == "ai-config-selector-test"
+    assert rendered["metadata"]["namespace"] == "546079316858"
+    assert rendered["metadata"]["labels"]["cloud.googleapis.com/location"] == "asia-northeast1"
+    assert container["name"] == "ai-config-selector-test-1"
+    assert container["image"].endswith("/ai-config-selector-serving:test")
+    assert "serviceAccountName" not in rendered["spec"]["template"]["spec"]
+
+
+def test_selector_dockerfile_installs_rust_toolchain_for_sudachipy() -> None:
+    text = (DEPLOY_DIR / "Dockerfile").read_text(encoding="utf-8")
+
+    for expected in ["build-essential", "cargo", "rustc"]:
         assert expected in text

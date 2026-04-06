@@ -37,7 +37,7 @@ spec:
           periodSeconds: 240
           failureThreshold: 1
           httpGet:
-            path: /healthz
+            path: /livez
             port: 8080
         startupProbe:
           timeoutSeconds: 240

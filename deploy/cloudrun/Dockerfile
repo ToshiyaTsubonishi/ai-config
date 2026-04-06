@@ -7,7 +7,12 @@ ENV PYTHONUNBUFFERED=1 \
 WORKDIR /app
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git ca-certificates \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        cargo \
+        git \
+        rustc \
+        ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 COPY . /app
