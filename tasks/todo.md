@@ -1,5 +1,65 @@
 # TODO
 
+## 2026-04-06 Test GCP Deploy for `abiding-aspect-457603-m8`
+
+### Plan
+- [x] 現行の `deploy/cloudrun` 構成と GCP 側の前提（API / registry / deploy 方法）を確認する
+- [x] `ai-config-selector-serving` を test project `abiding-aspect-457603-m8` にデプロイして `/livez` `/readyz` と MCP 呼び出しを検証する
+- [x] 実測で見えた改善点を `deploy/cloudrun` と関連 tests / docs に反映する
+
+### Progress
+- [x] repo ルール (`docs/constitution.md` / `instructions/Agent.md` / `tasks/lessons.md`) の確認
+- [x] `ai-config-selector` と Cloud Run deploy 資料の現状確認
+- [x] `ai-config-selector` / GCP deploy 向け selector search と `docker-expert` 詳細の確認
+- [x] test project の API / Artifact Registry の確認
+- [x] local ARM build failure (`SudachiPy` + Rust compiler 不足) の再現
+- [x] `deploy/cloudrun/Dockerfile` / Cloud Build / render helper / docs / tests の更新
+- [x] Cloud Build 成功 (`48b0973e-6063-4b59-8f8c-65347141977b`, `dd3d4092-0bf0-4d47-8841-fbb3acf4bb51`)
+- [x] Cloud Run deploy 成功 (`ai-config-selector`, region `asia-northeast1`)
+- [x] remote `/livez` `/readyz` と remote MCP `search_tools` の検証
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `deploy/cloudrun/Dockerfile`
+  - `deploy/cloudrun/cloudbuild.selector.yaml`
+  - `deploy/cloudrun/render_selector_service.py`
+  - `deploy/cloudrun/ai-config-selector.service.yaml`
+  - `deploy/cloudrun/README.md`
+  - `deploy/cloudrun/gcp-gui-setup-guide.ja.md`
+  - `src/ai_config/mcp_server/serving.py`
+  - `tests/test_cloudrun_deploy_templates.py`
+  - `tasks/todo.md`
+- 実施内容:
+  - test project `abiding-aspect-457603-m8` (`546079316858`) に対して Cloud Build で `ai-config-selector-serving` image を build / push し、Cloud Run `ai-config-selector` へ deploy した
+  - 現物 deploy で local Apple Silicon Docker build が `SudachiPy` の source build 時に `can't find Rust compiler` で失敗すること、README の `gcloud builds submit --tag ... -f ...` が実コマンドとして無効なことを確認した
+  - builder stage に Rust toolchain を追加し、`cloudbuild.selector.yaml` を新設して remote Cloud Build の正式な build 経路を追加した
+  - production 固定値のままでは他 project へそのまま apply しにくかったため、`render_selector_service.py` を追加して project / region / image / service account を差し替えた selector manifest を生成できるようにした
+  - Cloud Run 公開 URL では `/healthz` が外形確認に向かず、`/readyz` は public に動作したため、互換 route を残しつつ public smoke check と liveness probe を `/livez` に切り替えた
+- 検証:
+  - `mcp__ai_config_selector__search_tools(query="GCP Cloud Run MCP deployment, container deploy validation, deployment docs improvement for ai-config repository", top_k=8)`
+  - `mcp__ai_config_selector__get_tool_detail(tool_id="skill:docker-expert")`
+  - `PYTHONPATH=src .venv/bin/python -m ai_config.dispatch.cli --dry-run --json --cwd . 'Deploy ai-config selector MCP to test GCP project abiding-aspect-457603-m8 (project number 546079316858), verify Cloud Run health/readiness, then improve deploy/cloudrun artifacts and docs based on the actual deployment results.'`
+  - `.venv/bin/python -m pytest tests/test_cloudrun_deploy_templates.py -q`
+  - `gcloud builds submit --project abiding-aspect-457603-m8 --config deploy/cloudrun/cloudbuild.selector.yaml --substitutions "_IMAGE=asia-northeast1-docker.pkg.dev/abiding-aspect-457603-m8/cloud-run-source-deploy/ai-config-selector-serving:test-20260406-161014" .`
+  - `gcloud builds submit --project abiding-aspect-457603-m8 --config deploy/cloudrun/cloudbuild.selector.yaml --substitutions "_IMAGE=asia-northeast1-docker.pkg.dev/abiding-aspect-457603-m8/cloud-run-source-deploy/ai-config-selector-serving:test-20260406-162020-livez" .`
+  - `python3 deploy/cloudrun/render_selector_service.py --project-id abiding-aspect-457603-m8 --project-number 546079316858 --region asia-northeast1 --image asia-northeast1-docker.pkg.dev/abiding-aspect-457603-m8/cloud-run-source-deploy/ai-config-selector-serving:test-20260406-162020-livez --service-name ai-config-selector --output /tmp/ai-config-selector.livez.yaml`
+  - `gcloud run services replace /tmp/ai-config-selector.livez.yaml --project abiding-aspect-457603-m8 --region asia-northeast1`
+  - `curl -fsS https://ai-config-selector-546079316858.asia-northeast1.run.app/livez`
+  - `curl -fsS https://ai-config-selector-546079316858.asia-northeast1.run.app/readyz`
+  - `.venv/bin/python - <<'PY' ... streamablehttp_client('https://ai-config-selector-546079316858.asia-northeast1.run.app/mcp') ... session.call_tool('search_tools', {'query': 'cloud run deploy', 'top_k': 3}) ... PY`
+  - `gcloud run services describe ai-config-selector --project abiding-aspect-457603-m8 --region asia-northeast1 --format='yaml(status.url,status.latestReadyRevisionName,spec.template.spec.containers[0].image,spec.template.spec.containers[0].livenessProbe.httpGet.path,spec.template.metadata.annotations,status.traffic)'`
+  - `git diff --check`
+- 検証結果:
+  - remote Cloud Build は 2 回とも success。最終 image は `asia-northeast1-docker.pkg.dev/abiding-aspect-457603-m8/cloud-run-source-deploy/ai-config-selector-serving:test-20260406-162020-livez`、digest は `sha256:b1cebdb70161f35d0c466d23dfcead39d17facbe65afbce1c5e8f3cc6763a6c9`
+  - Cloud Run `ai-config-selector` は revision `ai-config-selector-00002-txv` で ready。`gcloud run services describe` の canonical URL は `https://ai-config-selector-ho3weg4mmq-an.a.run.app`
+  - public `curl` で `/livez` は `{"status":"ok"}`、`/readyz` は `record_count=1371` を含む ready payload を返した
+  - remote MCP streamable HTTP で `search_tools` 呼び出しが成功し、JSON payload を取得できた
+  - local Apple Silicon Docker build は Dockerfile 旧版で `SudachiPy` source build 時に Rust compiler 不足で失敗することを確認でき、今回の Dockerfile 変更理由を再現できた
+
 ## 2026-04-03 Product Direction Doc
 
 ### Plan

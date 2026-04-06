@@ -141,6 +141,57 @@ mcp_servers:
       PROJECT_ID: ""
     timeout_ms: 30000
 
+  mlit-geospatial-mcp:
+    transport: "stdio"
+    command: "python"
+    args:
+      - "${MLIT_GEOSPATIAL_MCP_DIR}/src/server.py"
+    env:
+      LIBRARY_API_KEY: ""
+      PYTHONUNBUFFERED: "1"
+      LOG_LEVEL: "WARNING"
+    timeout_ms: 30000
+    # 不動産情報ライブラリAPIを統合呼び出し（国土交通省）
+    # 利用前に https://www.reinfolib.mlit.go.jp/api/request/ でAPIキーを申請し
+    # MLIT_GEOSPATIAL_MCP_DIR にリポジトリのパスを設定してください。
+    # https://github.com/chirikuuka/mlit-geospatial-mcp
+
+  tax-law-mcp:
+    transport: "stdio"
+    command: "npx"
+    args: ["-y", "tax-law-mcp"]
+    env: {}
+    timeout_ms: 30000
+    # 日本の税法・通達・裁決事例を取得するMCPサーバー
+    # e-Gov法令API v2 / 国税庁サイト / 国税不服審判所
+    # https://github.com/kentaroajisaka/tax-law-mcp
+
+  labor-law-mcp:
+    transport: "stdio"
+    command: "npx"
+    args: ["-y", "labor-law-mcp"]
+    env: {}
+    timeout_ms: 30000
+    # 日本の労働・社会保険法令と行政通達を取得するMCPサーバー
+    # e-Gov法令API v2 / 厚労省法令等DB / 安全衛生情報センター（JAISH）
+    # https://github.com/kentaroajisaka/labor-law-mcp
+
+  genai-toolbox:
+    transport: "stdio"
+    command: "npx"
+    args: ["-y", "@toolbox-sdk/server", "--prebuilt=${TOOLBOX_DATABASE}"]
+    env:
+      TOOLBOX_DATABASE: "postgres"
+    timeout_ms: 30000
+    # MCP Toolbox for Databases (googleapis/genai-toolbox)
+    # AIエージェントとデータベースを接続するオープンソースMCPサーバー
+    # TOOLBOX_DATABASE に接続先DBを指定 (postgres / mysql / bigquery / alloydb 等)
+    # 接続用の環境変数は DB の種類に応じて設定:
+    #   PostgreSQL: POSTGRES_HOST, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB
+    #   BigQuery:   GOOGLE_CLOUD_PROJECT, BQ_DATASET
+    # 詳細: https://googleapis.github.io/genai-toolbox/reference/prebuilt-tools/
+    # https://github.com/googleapis/genai-toolbox
+
 # ---------------------------------------------------------------------------
 # Skill sets — indexed for dynamic selection
 # ---------------------------------------------------------------------------

@@ -28,9 +28,18 @@ def _default_port() -> int:
 
 
 def _register_runtime_routes(mcp: object, readiness: RuntimeIndexStatus) -> None:
-    @mcp.custom_route("/healthz", methods=["GET"], include_in_schema=False)  # type: ignore[attr-defined]
-    async def healthz(_request: Request) -> Response:
+    async def _live_payload(_request: Request) -> Response:
         return JSONResponse({"status": "ok"})
+
+    # Cloud Run public routing may special-case /healthz. Keep it for backward
+    # compatibility with older local checks, and expose /livez for external smoke tests.
+    @mcp.custom_route("/healthz", methods=["GET"], include_in_schema=False)  # type: ignore[attr-defined]
+    async def healthz(request: Request) -> Response:
+        return await _live_payload(request)
+
+    @mcp.custom_route("/livez", methods=["GET"], include_in_schema=False)  # type: ignore[attr-defined]
+    async def livez(request: Request) -> Response:
+        return await _live_payload(request)
 
     @mcp.custom_route("/readyz", methods=["GET"], include_in_schema=False)  # type: ignore[attr-defined]
     async def readyz(_request: Request) -> Response:

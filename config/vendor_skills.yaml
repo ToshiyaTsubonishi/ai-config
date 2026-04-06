@@ -45,3 +45,15 @@ sources:
     local_name: "claude-ads"
     branch: "main"
     ref: "5d7c5d12b6f5a61771f17f8d4e67b2460e4afbbb"
+
+  academic-research-skills:
+    source_url: "https://github.com/Imbad0202/academic-research-skills"
+    local_name: "academic-research-skills"
+    branch: "main"
+    ref: "573967f7c59b2edae816b3c9ed9fd2682216ea99"
+
+  gemini-skills:
+    source_url: "https://github.com/google-gemini/gemini-skills"
+    local_name: "gemini-skills"
+    branch: "main"
+    ref: "5b655a47ac6d03a2d96d6e64ca051b6a7fe62296"
