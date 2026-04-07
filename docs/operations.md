@@ -263,6 +263,19 @@ GitHub Actions:
 - default track: `ai-config-dispatch@main`
 - optional stable track: repo variable `AI_CONFIG_DISPATCH_STABLE_REF` または `workflow_dispatch` input
 
+required check policy:
+
+- `ai-config` の protected `main` では job `ai-config vs ai-config-dispatch@main` を required check にする
+- `ai-config-dispatch` の protected `main` では job `ai-config-dispatch vs ai-config@main` を required check にする
+- `compat-stable` job は repo variable / `workflow_dispatch` input があるときだけ出る conditional job なので、required にはしない
+
+stable track policy:
+
+- release tag が無い間は `AI_CONFIG_DISPATCH_STABLE_REF` / `AI_CONFIG_STABLE_REF` に branch 名ではなく exact commit SHA を入れる
+- stable ref を進める前に main track の compatibility workflow と local smoke を green にする
+- stable ref を更新したら、両 repo で `workflow_dispatch` を 1 回ずつ実行して stable track の green run を残す
+- 手元で GitHub auth が無い場合は local smoke を先に回し、authenticated な環境で `workflow_dispatch` を実行する
+
 ## Troubleshooting
 
 ### `.index` がない / 壊れている

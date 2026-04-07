@@ -1,5 +1,64 @@
 # TODO
 
+## 2026-04-08 Phase 2-3 Operational Close (Operations-Only)
+
+### Plan
+- [x] production mode の dispatch resolution を current main と installed-runtime 環境で確認する
+- [x] production で `AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK` を使わない方針を deploy docs に明記する
+- [x] compatibility workflow の required check 方針と stable track 運用案を整理する
+- [x] stable ref 候補 SHA で local preflight を回し、`workflow_dispatch` 実施条件を確認する
+- [x] 実施結果を docs / `tasks/todo.md` に反映する
+
+### Progress
+- [x] selector / dispatch workflow / Cloud Run docs / GitHub auth 状態を確認
+- [x] current main の production doctor check を実測
+- [x] installed runtime を入れた isolated env で production doctor check を実測
+- [x] cross-repo compatibility / stable SHA preflight を実施
+- [x] docs / review
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `deploy/cloudrun/README.md`
+  - `docs/operations.md`
+  - `tasks/todo.md`
+- 実施内容:
+  - current main の `.venv` で `AI_CONFIG_DISPATCH_RUNTIME_MODE=production` を付けた `ai-config-doctor --repo-root . --json` を実行し、`dispatch_resolution` が `source=unavailable` になることを確認した
+  - isolated env (`C:\\Users\\tsytbns\\AppData\\Local\\Temp\\ai-config-phase23-20260408-000107`) で `ai-config` と `ai-config-dispatch` を install した状態では、同じ production doctor check の `dispatch_resolution` が `installed_binary` になることを確認した
+  - 同 isolated env で `AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=1` を付けても `dispatch_resolution.source=installed_binary` のままで、production では fallback が選ばれないことを確認した
+  - deploy docs に「current Cloud Run Dockerfile は selector-serving 用で `ai-config-dispatch` を同梱しない」「production doctor proof を取りたい場合は installed runtime を持つ validation image / build step を使う」「production では fallback を設定しない」を追記した
+  - required check 方針として、required にするのは main track job (`ai-config vs ai-config-dispatch@main`, `ai-config-dispatch vs ai-config@main`) のみ、stable track は conditional/manual 運用に留める案を docs に追記した
+  - stable track は release tag が無い間は exact SHA pin を使う案とし、今回の候補を `ai-config=49c4823a698732db58e1f0180fae4584c515e40b`、`ai-config-dispatch=2bdc9b541ffbb4e5bdf6408102fbbe5484c52d0f` とした
+  - local preflight として `ai-config-dispatch` 側 compatibility suite は `20 passed`、`ai-config` 側 suite は `tests/test_doctor.py::test_vendor_observability_checks_pass_with_extra_local` で `1 failed, 20 passed` になることを確認した
+- 制約:
+  - `gcloud auth list` は credentialed account なし
+  - `gh auth status` は未認証
+  - Docker daemon は未起動
+  - そのため actual Cloud Run 上での `ai-config-doctor` 実行と GitHub `workflow_dispatch` の本番トリガーはこのセッションでは未実施
+- 検証:
+  - `mcp__ai_config_selector__search_tools(query="skills or tools for planning operational validation GitHub workflow required checks cloud run deployment docs update ai-config-doctor stable track", top_k=10)`
+  - `mcp__ai_config_selector__get_tool_detail(tool_id="skill:github-actions-templates")`
+  - `.venv\Scripts\ai-config-dispatch.cmd "Phase 2-3 operational close validation for production dispatch resolution, required checks policy, stable-track verification, and docs evidence" --workflow dispatch-runtime-completion --dry-run --trace`
+  - `.venv\Scripts\python.exe -c "from ai_config.executor.plan_boundary import DispatchCLIPlanExecutor; from pathlib import Path; import json; print(json.dumps(DispatchCLIPlanExecutor(Path('.')).describe_runtime_resolution(), ensure_ascii=False))"`
+  - `AI_CONFIG_DISPATCH_RUNTIME_MODE=production .venv\Scripts\python.exe -c "from ai_config.executor.plan_boundary import DispatchCLIPlanExecutor; from pathlib import Path; import json; print(json.dumps(DispatchCLIPlanExecutor(Path('.')).describe_runtime_resolution(), ensure_ascii=False))"`
+  - `AI_CONFIG_DISPATCH_RUNTIME_MODE=production .venv\Scripts\ai-config-doctor --repo-root . --json`
+  - `gcloud auth list`
+  - `gh auth status`
+  - temp clone + install env で `ai-config` / `ai-config-dispatch` を install
+  - temp env `AI_CONFIG_DISPATCH_RUNTIME_MODE=production ai-config-doctor --repo-root <clone> --json`
+  - temp env `AI_CONFIG_DISPATCH_RUNTIME_MODE=production AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=1 ai-config-doctor --repo-root <clone> --json`
+  - temp env `python -m pytest <dispatch repo tests> -q`
+  - temp env `python -m pytest <ai-config repo tests> -q`
+  - `.venv\Scripts\python.exe -m pytest tests/test_plan_boundary.py tests/test_dispatch_compat_shim.py tests/test_cli_smoke.py tests/test_doctor.py -q`
+- 検証結果:
+  - current main 単体では production `dispatch_resolution` はまだ green ではなく、installed runtime を含む運用環境が必要
+  - installed runtime を持つ isolated env では production `dispatch_resolution=installed_binary` が確認でき、fallback env を付けても source は変わらなかった
+  - stable track の local preflight は `ai-config-dispatch` 側は green、`ai-config` 側は `tests/test_doctor.py` 1 件が赤のため required check promotion 前に扱い整理が必要
+  - actual Cloud Run / GitHub `workflow_dispatch` 実行は認証済み運用環境での follow-up が必要
+
 ## 2026-04-03 Product Direction Doc
 
 ### Plan

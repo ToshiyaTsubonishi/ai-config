@@ -39,6 +39,26 @@ gcloud run deploy ai-config-selector \
 - artifact 欠落や index contract mismatch がある場合は fail-fast で起動失敗します
 - runtime では `ai-config-vendor-skills sync-manifest` と `ai-config-index` を実行しません
 
+## Production dispatch verification
+
+`deploy/cloudrun/Dockerfile` は selector-serving 用の image で、`ai-config` 本体と build 済み `.index` は入れますが、`ai-config-dispatch` は install しません。
+そのため、この image だけでは production の `dispatch_resolution` 証跡は取りません。
+
+approved plan execution の production-safe path を GCP / Cloud Run で確認したい場合は、`ai-config-dispatch` も install した validation image か build step を別途用意して、次を実行します。
+
+```bash
+AI_CONFIG_DISPATCH_RUNTIME_MODE=production \
+ai-config-doctor --repo-root /app --json
+```
+
+確認条件:
+
+- `dispatch_resolution.details.source` が `installed_binary` か `installed_module`
+- `AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK` は設定しない
+- sibling checkout 解決に依存しない
+
+`AI_CONFIG_DISPATCH_CMD` は explicit override としては使えますが、production proof の主系は installed runtime に置きます。
+
 ## Smoke checks
 
 ```bash
@@ -164,6 +184,15 @@ curl -fsS \
   -H "Authorization: Bearer ${MCPO_API_KEY}" \
   "https://ai-config-mcpo-424287527578.asia-northeast1.run.app/openapi.json"
 ```
+
+dispatch runtime の production proof を取る場合:
+
+```bash
+AI_CONFIG_DISPATCH_RUNTIME_MODE=production \
+ai-config-doctor --repo-root /app --json
+```
+
+この確認では `AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK` を使いません。`dispatch_resolution` が `installed_binary` か `installed_module` であることだけを許容します。
 
 Open WebUI 側の注意点:
 
