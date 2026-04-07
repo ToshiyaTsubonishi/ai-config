@@ -328,11 +328,10 @@ def test_dispatch_cli_plan_executor_uses_installed_module_in_production(monkeypa
     assert result["execution_id"] == "exec-module"
 
 
-def test_dispatch_cli_plan_executor_requires_explicit_in_repo_fallback(monkeypatch, tmp_path: Path) -> None:
+def test_dispatch_cli_plan_executor_fails_fast_when_external_runtime_is_missing(monkeypatch, tmp_path: Path) -> None:
     request = _request(tmp_path)
 
     monkeypatch.setenv("AI_CONFIG_DISPATCH_RUNTIME_MODE", "local")
-    monkeypatch.delenv("AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK", raising=False)
     monkeypatch.setattr("ai_config.executor.plan_boundary.shutil.which", lambda _: None)
 
     executor = DispatchCLIPlanExecutor(repo_root=tmp_path)
@@ -342,53 +341,24 @@ def test_dispatch_cli_plan_executor_requires_explicit_in_repo_fallback(monkeypat
     result = executor.execute_request(request)
 
     assert result["status"] == "error"
-    assert "AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=1" in str(result["error"])
+    assert "AI_CONFIG_DISPATCH_CMD" in str(result["error"])
+    assert "ai-config-dispatch" in str(result["error"])
+    assert "AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK" not in str(result["error"])
 
 
-def test_dispatch_cli_plan_executor_allows_explicit_in_repo_fallback(monkeypatch, tmp_path: Path) -> None:
-    request = _request(tmp_path)
-    captured: dict[str, object] = {}
-
+def test_dispatch_cli_plan_executor_ignores_legacy_in_repo_fallback_flag(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setenv("AI_CONFIG_DISPATCH_RUNTIME_MODE", "local")
     monkeypatch.setenv("AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK", "1")
     monkeypatch.setattr("ai_config.executor.plan_boundary.shutil.which", lambda _: None)
-
-    def _fake_run(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
-        captured["command"] = command
-        return subprocess.CompletedProcess(
-            command,
-            0,
-            stdout=json.dumps(
-                {
-                    "kind": "ai-config.approved-plan-execution-result",
-                    "schema_version": "1.0.0",
-                    "request_kind": "ai-config.approved-plan-execution-request",
-                    "request_schema_version": "1.0.0",
-                    "plan_id": request.plan.plan_id,
-                    "plan_revision": request.plan.revision,
-                    "execution_id": "exec-fallback",
-                    "runtime": {"name": "ai-config-dispatch", "transport": "subprocess_json"},
-                    "status": "success",
-                    "final_report": "ok",
-                    "step_results": [{"step_id": "step-1", "status": "success"}],
-                    "error": None,
-                    "replan_request": None,
-                },
-                ensure_ascii=False,
-            ),
-            stderr="",
-        )
-
-    monkeypatch.setattr(subprocess, "run", _fake_run)
 
     executor = DispatchCLIPlanExecutor(repo_root=tmp_path)
     monkeypatch.setattr(executor, "_external_repo_root", lambda: None)
     monkeypatch.setattr(executor, "_installed_module_command", lambda: None)
 
-    result = executor.execute_request(request)
+    resolution = executor.describe_runtime_resolution()
 
-    assert captured["command"][:3] == [sys.executable, "-m", "ai_config.dispatch.cli"]
-    assert result["execution_id"] == "exec-fallback"
+    assert resolution["source"] == "unavailable"
+    assert "ai-config-dispatch" in str(resolution["message"])
 
 
 def test_dispatch_cli_plan_executor_rejects_invalid_runtime_mode(monkeypatch, tmp_path: Path) -> None:

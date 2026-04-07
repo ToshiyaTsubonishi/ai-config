@@ -21,7 +21,7 @@ src/ai_config/
 ├── mcp_server/      # selector MCP and selector-serving
 ├── orchestrator/    # planner library and planner-facing CLI
 ├── executor/        # local tool executor and dispatch boundary adapter
-├── dispatch/        # compatibility shim for external runtime package
+├── dispatch/        # deprecated import guard for the external runtime package
 ├── vendor/          # import / provenance / manifest ownership
 ├── doctor.py
 ├── build_index.py
@@ -72,8 +72,8 @@ bootstrap externalization:
 - `AI_CONFIG_DISPATCH_RUNTIME_MODE=production` では sibling checkout を探索しない
 - external repo は workflow assets / runtime docs / packaging と runtime package を所有する
 - shared contracts / executor / runtime env helper だけは当面 `ai-config` package に依存する
-- ai-config 内の `dispatch/` は deprecated compatibility shim に縮退し、runtime internal tests は external repo 側へ移した
-- deprecated in-repo shim は `AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=1` のときだけ boundary から使う
+- ai-config 内の `dispatch/` は deprecated import guard のみ残し、runtime internal tests は external repo 側へ移した
+- runtime が見つからなければ boundary で fail fast し、in-repo fallback は使わない
 
 result compatibility policy:
 
@@ -115,7 +115,7 @@ python -m ai_config.orchestrator.cli plan "codex で修正"
 python -m ai_config.orchestrator.cli execute-approved-plan --plan ./approved-plan.json
 python -m ai_config.orchestrator.cli schema approved-plan-execution-result
 
-# runtime surface
+# external runtime boundary surface
 python -m ai_config_dispatch.cli --execute-approved-plan ./approved-plan-request.json --json
 
 # serving surface
@@ -138,7 +138,7 @@ python -m ai_config.mcp_server.serving --repo-root . --index-dir ./.index
 
 ```bash
 .venv/bin/python -m pytest \
-  tests/test_dispatch_compat_shim.py \
+  tests/test_dispatch_import_guard.py \
   tests/test_orchestrator_plan_artifacts.py \
   tests/test_selector_serving.py -q
 ```
@@ -170,7 +170,7 @@ PYTHONPATH=src .venv/bin/python -m ai_config.evals.retrieval_eval \
 |---|---|
 | `test_approved_plan_contract.py` | stable contract defaults / schema / validation |
 | `test_plan_boundary.py` | subprocess execution boundary |
-| `test_dispatch_compat_shim.py` | in-repo compatibility shim resolves external runtime package |
+| `test_dispatch_import_guard.py` | deprecated `ai_config.dispatch` path fails with external-runtime guidance |
 | `test_cli_smoke.py` | planner CLI search / plan / execute surfaces |
 | `test_orchestrator_plan_artifacts.py` | planner artifact generation and validation |
 | `test_selector_serving.py` | selector-serving HTTP / readiness / fail-fast |
@@ -201,8 +201,7 @@ PYTHONPATH=src .venv/bin/python -m ai_config.evals.retrieval_eval \
 ## Notes on Legacy Paths
 
 - `orchestrator/plan_schema.py` と `orchestrator/validator.py` は compatibility wrapper
-- `dispatch/` は repo 内 compatibility shim
-- `dispatch/` は repo 内 compatibility shim
+- `dispatch/` は repo 内 runtime ではなく、external runtime への import guard
 - GCP / Cloud Run 本番では `AI_CONFIG_DISPATCH_RUNTIME_MODE=production` を使い、external runtime を image へ入れる
 - legacy flag CLI は移行期間の互換経路
 

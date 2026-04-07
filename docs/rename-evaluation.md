@@ -136,7 +136,7 @@ rename を再開する条件:
 
 1. `ai-config-dispatch` 依存が今より安定し、shared dependency 面が整理されている
 2. release tag / stable channel ができている
-3. in-repo compatibility shim をさらに薄くするか削除している
+3. repo 内 runtime path が削除され、`ai_config.dispatch` が import guard だけになっている
 4. external docs / install path / CI path が固まっている
 
 その時点での推奨プラン:

@@ -130,7 +130,6 @@ if ($pyLauncher) {
 
 Write-Host "Generating Windows runtime wrappers..."
 Write-ModuleWrapper -Name "ai-config-agent" -Module "ai_config.orchestrator.cli" -PythonVersionTag $venvVersionTag
-Write-ModuleWrapper -Name "ai-config-dispatch" -Module "ai_config.dispatch.cli" -PythonVersionTag $venvVersionTag
 Write-ModuleWrapper -Name "ai-config-doctor" -Module "ai_config.doctor" -PythonVersionTag $venvVersionTag
 Write-ModuleWrapper -Name "ai-config-index" -Module "ai_config.build_index" -PythonVersionTag $venvVersionTag
 Write-ModuleWrapper -Name "ai-config-mcp-server" -Module "ai_config.mcp_server.server" -PythonVersionTag $venvVersionTag

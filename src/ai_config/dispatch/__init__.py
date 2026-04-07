@@ -1,13 +1,12 @@
-"""Deprecated compatibility import shim for the external dispatch runtime package."""
+"""Deprecated entrypoint for the removed in-repo dispatch runtime."""
 
 from __future__ import annotations
 
-from typing import Any
+_REMOVED_MESSAGE = (
+    "ai_config.dispatch has been removed from ai-config. "
+    "Dispatch runtime now lives only in the external 'ai-config-dispatch' package. "
+    "Install ai-config-dispatch, point AI_CONFIG_DISPATCH_CMD at the external runtime, "
+    "or run python -m ai_config_dispatch.cli directly."
+)
 
-from ai_config.dispatch._compat import load_external_module
-
-
-def create_dispatch_agent(*args: Any, **kwargs: Any) -> Any:
-    return load_external_module("graph").create_dispatch_agent(*args, **kwargs)
-
-__all__ = ["create_dispatch_agent"]
+raise ImportError(_REMOVED_MESSAGE)

@@ -21,7 +21,6 @@ from ai_config.contracts.approved_plan import (
     validate_execution_result_against_request,
 )
 
-_TRUE_VALUES = {"1", "true", "yes", "on"}
 _PRODUCTION_HINT_ENV_KEYS = ("K_SERVICE", "K_REVISION", "CLOUD_RUN_JOB")
 
 
@@ -58,10 +57,6 @@ class DispatchCLIPlanExecutor:
         self.timeout_seconds = timeout_seconds
         self._ai_config_repo_root = Path(__file__).resolve().parents[3]
 
-    @staticmethod
-    def _flag_enabled(name: str) -> bool:
-        return os.getenv(name, "").strip().lower() in _TRUE_VALUES
-
     def _runtime_mode(self) -> str:
         configured = os.getenv("AI_CONFIG_DISPATCH_RUNTIME_MODE", "").strip().lower()
         if configured:
@@ -77,9 +72,6 @@ class DispatchCLIPlanExecutor:
         if any(os.getenv(name, "").strip() for name in _PRODUCTION_HINT_ENV_KEYS):
             return "production"
         return "local"
-
-    def _allow_in_repo_fallback(self) -> bool:
-        return self._flag_enabled("AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK")
 
     def _ai_config_checkout_root(self) -> Path:
         candidate = self.repo_root
@@ -157,24 +149,17 @@ class DispatchCLIPlanExecutor:
                 command_prefix=tuple(installed_module),
             )
 
-        if mode == "local" and self._allow_in_repo_fallback():
-            return DispatchRuntimeResolution(
-                mode=mode,
-                source="in_repo_fallback",
-                command_prefix=(sys.executable, "-m", "ai_config.dispatch.cli"),
-            )
-
         if mode == "production":
             message = (
                 "Dispatch runtime is unavailable in production mode. "
                 "Set AI_CONFIG_DISPATCH_CMD or install ai-config-dispatch in the image. "
-                "sibling checkout and in-repo fallback are disabled in production."
+                "sibling checkout and in-repo runtime are disabled in production."
             )
         else:
             message = (
                 "Dispatch runtime is unavailable in local mode. "
-                "Set AI_CONFIG_DISPATCH_CMD, clone ../ai-config-dispatch, install ai-config-dispatch, "
-                "or set AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=1 to use the deprecated in-repo shim."
+                "Set AI_CONFIG_DISPATCH_CMD, clone ../ai-config-dispatch, or install ai-config-dispatch. "
+                "The in-repo ai_config.dispatch runtime has been removed from ai-config."
             )
         return DispatchRuntimeResolution(
             mode=mode,

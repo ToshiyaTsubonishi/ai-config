@@ -55,8 +55,6 @@ AI_CONFIG_CODEX_CMD=codex
 AI_CONFIG_ANTIGRAVITY_CMD=antigravity
 AI_CONFIG_DISPATCH_CMD=/path/to/external/ai-config-dispatch
 AI_CONFIG_DISPATCH_RUNTIME_MODE=auto
-# deprecated local-only fallback
-AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=0
 ```
 
 `AI_CONFIG_DISPATCH_CMD` は、dispatch runtime を別 repo / 別 package に出した後も `ai-config-agent` 側を変えずに接続先だけ差し替えるための override です。
@@ -65,9 +63,7 @@ AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=0
 
 - `auto`: デフォルト。Cloud Run 系 env があれば production、それ以外は local
 - `local`: sibling checkout を含む開発用解決順を使う
-- `production`: sibling checkout と in-repo fallback を禁止し、installed runtime だけを使う
-
-`AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=1` は deprecated local shim を明示 opt-in するときだけ使います。production では使いません。
+- `production`: sibling checkout を禁止し、installed runtime だけを使う
 
 ## MCP Registration
 
@@ -167,26 +163,19 @@ ai-config-agent execute-approved-plan --plan ./approved-plan.json --index-dir ./
 
 互換のため、従来の `--execute-plan` も当面使えます。
 
-## Dispatch Runtime
+## External Runtime Connection
 
 `ai-config-dispatch` は execution runtime として扱います。
 
-### Prompt-based runtime
+runtime CLI / workflow / packaging / release docs は `ai-config-dispatch` repo を正本にしてください。`ai-config` 側には approved-plan boundary の接続方法だけを残します。
 
-```bash
-ai-config-dispatch "バグを修正してテストを実行して"
-ai-config-dispatch "テスト実行" --parallel
-ai-config-dispatch --list-workflows
-```
-
-### Approved plan execution runtime
+### Boundary invocation
 
 ```bash
 ai-config-dispatch --execute-approved-plan ./approved-plan-request.json --json
 ```
 
-この入口は ai-config core から見た stable runtime boundary です。
-repo 内には compatibility shim がありますが、主系は external runtime です。
+この入口は ai-config core から見た stable runtime boundary です。repo 内には runnable runtime は残っていません。
 
 local mode:
 
@@ -194,7 +183,7 @@ local mode:
 2. sibling repo `../ai-config-dispatch`
 3. installed `ai-config-dispatch`
 4. installed `python -m ai_config_dispatch.cli`
-5. in-repo compatibility shim only when `AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=1`
+5. fail fast
 
 GCP / Cloud Run production mode:
 
@@ -307,15 +296,14 @@ GCP / Cloud Run production 追加確認:
 
 1. `AI_CONFIG_DISPATCH_RUNTIME_MODE=production` を設定する
 2. image に `ai-config-dispatch` package か `python -m ai_config_dispatch.cli` 実行環境があることを確認する
-3. `AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK` を設定しない
-4. `ai-config-doctor --repo-root .` の `dispatch_resolution` が `installed_binary` か `installed_module` になっていることを確認する
+3. `ai-config-doctor --repo-root .` の `dispatch_resolution` が `installed_binary` か `installed_module` になっていることを確認する
 
 ownership decision:
 
 - workflow assets は dispatch repo 所有
 - runtime docs / packaging metadata は dispatch repo 所有
 - ai-config docs は contract と integration surface のみ持つ
-- ai-config package の `dispatch/` は compatibility shim のみ残す
+- ai-config package の `dispatch/` は import guard のみ残す
 
 ## Migration Notes
 

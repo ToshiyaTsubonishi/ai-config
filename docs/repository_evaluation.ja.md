@@ -52,7 +52,7 @@
 *   **評価:**
     `ApprovedPlan` 等のデータモデルが明確に定義され、実行エンジンへの橋渡しがサブプロセス（Subprocess）経由で疎結合に行われています。「Runtimeを抱え込まない」という `constitution.md` の宣言が、まさにこの実装によって具現化されており、アーキテクチャの白眉と言えます。
 *   **改善点:**
-    現在、互換性のために `src/ai_config/dispatch/` フォルダがリポジトリ内に残っています。ロードマップに沿って、これを別パッケージ（`ai-config-dispatch`）へと完全に外部化（Externalization）を完了させることが最終ステップです。
+    `src/ai_config/dispatch/` は runtime 実装ではなく、旧 import path に対する案内専用 guard に縮退しました。今後の改善対象は shim 削除ではなく、external runtime との contract / compatibility automation を維持し続けることです。
 
 ### ⑤ MCP Server / Serving層 (提供インターフェース)
 *   **役割:** 外部のAIエージェント（Open WebUI等）が `ai-config` を利用するための標準APIを提供する。

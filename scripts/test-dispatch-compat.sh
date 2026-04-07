@@ -20,6 +20,6 @@ export PYTHONPATH="$DISPATCH_ROOT/src:$REPO_ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
 "$PYTHON_BIN" -m ai_config_dispatch.cli --list-workflows >/dev/null
 "$PYTHON_BIN" -m pytest \
   tests/test_plan_boundary.py \
-  tests/test_dispatch_compat_shim.py \
+  tests/test_dispatch_import_guard.py \
   tests/test_cli_smoke.py \
   tests/test_doctor.py -q

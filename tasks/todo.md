@@ -1,5 +1,71 @@
 # TODO
 
+## 2026-04-08 Dispatch Runtime Shim Removal
+
+### Plan
+- [ ] `src/`, `tests/`, `scripts/`, `docs/` の `ai_config.dispatch` / runtime shim 依存を棚卸しし、削除 / external runtime 置換 / 互換維持に分類する
+- [ ] `src/ai_config/dispatch/*` を案内専用の deprecated entry に縮退し、runtime proxy module を削除する
+- [ ] `DispatchCLIPlanExecutor`、`ai-config-doctor`、setup / compatibility script を external runtime 唯一前提へ更新する
+- [ ] README / architecture / development / operations / dispatch workflow docs を新方針へ揃える
+- [ ] tests を import guard / boundary / doctor 前提に整理し、対象検証を実行する
+
+### Progress
+- [x] 指定ファイルと `rg` により shim surface の一次棚卸しを実施
+- [x] code changes
+- [x] docs updates
+- [x] tests and verification
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `README.md`
+  - `docs/architecture.md`
+  - `docs/constitution.md`
+  - `docs/development.md`
+  - `docs/dispatch-externalization-plan.md`
+  - `docs/dispatch-runtime-completion-workflow.md`
+  - `docs/operations.md`
+  - `docs/rename-evaluation.md`
+  - `docs/repository_evaluation.ja.md`
+  - `scripts/setup.ps1`
+  - `scripts/test-dispatch-compat.sh`
+  - `src/ai_config/dispatch/__init__.py`
+  - `src/ai_config/executor/plan_boundary.py`
+  - `tests/test_dispatch_import_guard.py`
+  - `tests/test_plan_boundary.py`
+  - `tasks/todo.md`
+- 削除ファイル:
+  - `src/ai_config/dispatch/_compat.py`
+  - `src/ai_config/dispatch/cli.py`
+  - `src/ai_config/dispatch/dispatcher.py`
+  - `src/ai_config/dispatch/evaluator.py`
+  - `src/ai_config/dispatch/graph.py`
+  - `src/ai_config/dispatch/planner.py`
+  - `src/ai_config/dispatch/state.py`
+  - `src/ai_config/dispatch/workflow.py`
+  - `tests/test_dispatch_compat_shim.py`
+- 実施内容:
+  - `src/ai_config/dispatch/*` の runtime proxy module を削除し、`ai_config.dispatch` は external `ai-config-dispatch` を案内する import guard のみ残した
+  - `DispatchCLIPlanExecutor` から `AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK` と `python -m ai_config.dispatch.cli` fallback を除去し、external runtime が無ければ fail-fast するようにした
+  - Windows setup wrapper から `ai-config-dispatch -> ai_config.dispatch.cli` の in-repo runtime entry を削除した
+  - shim test を import guard test に置換し、boundary test は legacy fallback 無効化を確認する形に更新した
+  - README / architecture / development / operations / workflow docs を external runtime 唯一前提へ更新し、runtime docs は external repo 正本であることを明示した
+- 検証:
+  - `.venv\Scripts\python.exe -m pytest tests\test_dispatch_import_guard.py tests\test_plan_boundary.py -q`
+  - `.venv\Scripts\python.exe -m pytest tests\test_approved_plan_contract.py tests\test_plan_boundary.py tests\test_dispatch_import_guard.py tests\test_cli_smoke.py -q`
+  - `.venv\Scripts\python.exe -m pytest tests\test_doctor.py -q -k dispatch_resolution`
+  - `rg -n "from ai_config\.dispatch|import ai_config\.dispatch|ai_config\.dispatch\." src tests`
+  - `git diff --check`
+- 検証結果:
+  - import guard / boundary / contract / CLI smoke は `22 passed`
+  - doctor の dispatch resolution tests は `2 passed, 3 deselected`
+  - `rg` 上、`ai_config.dispatch` の旧 import path は import guard test 以外に残っていない
+  - `git diff --check` は CRLF warning のみで終了した
+  - 追加確認として `tests/test_approved_plan_contract.py tests/test_plan_boundary.py tests/test_dispatch_import_guard.py tests/test_cli_smoke.py tests/test_doctor.py -q` を実行すると、今回の dispatch 変更とは無関係な `tests/test_doctor.py::test_vendor_observability_checks_pass_with_extra_local` が 1 件失敗した
+
 ## 2026-04-08 Phase 2-3 Operational Close (Operations-Only)
 
 ### Plan

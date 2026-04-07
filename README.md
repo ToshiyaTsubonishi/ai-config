@@ -96,11 +96,11 @@ ai-config-agent schema approved-plan-execution-result
 
 bootstrap migration status:
 
-- sibling repo `../ai-config-dispatch` を external runtime package bootstrap として作成済み
-- local 開発では sibling checkout を優先し、deprecated in-repo shim は `AI_CONFIG_DISPATCH_ALLOW_IN_REPO_FALLBACK=1` のときだけ使う
-- GCP / Cloud Run production では sibling checkout と in-repo fallback を無効化し、installed runtime か explicit override だけを許可する
+- sibling repo `../ai-config-dispatch` を local bootstrap runtime checkout として使える
+- local 開発では explicit override / sibling checkout / installed runtime の順で external runtime を解決する
+- GCP / Cloud Run production では sibling checkout を無効化し、installed runtime か explicit override だけを許可する
 - workflow assets / runtime docs / packaging / runtime package / runtime tests は external repo が正本を持つ
-- `src/ai_config/dispatch/*` は deprecated import compatibility shim としてのみ残す
+- `src/ai_config/dispatch/` は案内専用の deprecated import guard だけを残し、runtime proxy module は持たない
 - cross-repo compatibility automation は `.github/workflows/dispatch-compatibility.yml` で回し、local では `bash scripts/test-dispatch-compat.sh` を使う
 
 ## Setup
@@ -199,7 +199,7 @@ ai-config/
 │   ├── retriever/       # hybrid retrieval / RAG
 │   ├── orchestrator/    # planner library and CLI
 │   ├── executor/        # tool executor and execution boundary adapters
-│   ├── dispatch/        # in-repo compatibility shim
+│   ├── dispatch/        # deprecated import guard that points to ai-config-dispatch
 │   ├── vendor/          # external skill vendor layer
 │   ├── build_index.py
 │   ├── doctor.py

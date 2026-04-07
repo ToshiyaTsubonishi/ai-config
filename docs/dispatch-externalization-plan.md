@@ -17,7 +17,7 @@
 
 - request 側 contract は `ApprovedPlanExecutionRequest` まで fixed
 - `ai-config-agent execute-approved-plan` は subprocess boundary 経由で external `ai-config-dispatch` を呼ぶ
-- ai-config 内の `dispatch/` は compatibility shim へ縮退した
+- ai-config 内の `dispatch/` は案内専用 import guard に縮退した
 - response 側 contract は `ApprovedPlanExecutionResult@1.0.0` で固定した
 - bootstrap external repo `ai-config-dispatch` を sibling checkout として作成し、packaging / workflow assets / runtime docs / runtime package の ownership 移送を開始した
 
@@ -225,7 +225,7 @@ step-level `status`:
 - done: runtime package `ai_config_dispatch` を external repo に配置
 - done: runtime-only tests の正本を external repo に寄せた
 - done: ai-config boundary adapter が sibling external repo を優先解決
-- done: ai-config `dispatch/` は deprecated compatibility shim としてのみ残した
+- done: ai-config `dispatch/` は deprecated import guard としてのみ残した
 - done: external repo tests から `ai_config.orchestrator` / `ai_config.registry` 依存を除去した
 - done: boundary adapter に `AI_CONFIG_DISPATCH_RUNTIME_MODE` と explicit fallback policy を追加した
 - done: `ai-config-doctor` で dispatch resolution source を確認できるようにした
@@ -301,7 +301,7 @@ Acceptance:
 
 Deliverables:
 
-- delete in-repo runtime implementation
+- delete in-repo runtime implementation and leave only an import guard
 - retain contract tests and external integration smoke tests
 - final docs cleanup
 
