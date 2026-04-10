@@ -13,6 +13,7 @@ from starlette.responses import JSONResponse, Response
 
 from ai_config.mcp_server.runtime import RuntimeIndexStatus, validate_runtime_index
 from ai_config.mcp_server.server import create_server
+from ai_config.mcp_server.tools import ToolIndex
 from ai_config.registry.index_builder import DEFAULT_INDEX_DIR
 from ai_config.runtime_env import load_runtime_env
 
@@ -27,7 +28,7 @@ def _default_port() -> int:
         return 8080
 
 
-def _register_runtime_routes(mcp: object, readiness: RuntimeIndexStatus) -> None:
+def _register_runtime_routes(mcp: object, readiness: RuntimeIndexStatus, tool_index: ToolIndex) -> None:
     @mcp.custom_route("/healthz", methods=["GET"], include_in_schema=False)  # type: ignore[attr-defined]
     async def healthz(_request: Request) -> Response:
         return JSONResponse({"status": "ok"})
@@ -35,6 +36,36 @@ def _register_runtime_routes(mcp: object, readiness: RuntimeIndexStatus) -> None
     @mcp.custom_route("/readyz", methods=["GET"], include_in_schema=False)  # type: ignore[attr-defined]
     async def readyz(_request: Request) -> Response:
         return JSONResponse(readiness.to_readiness_payload())
+
+    @mcp.custom_route("/catalog/tool-detail", methods=["GET"], include_in_schema=False)  # type: ignore[attr-defined]
+    async def tool_detail(request: Request) -> Response:
+        tool_id = (request.query_params.get("tool_id") or "").strip()
+        if not tool_id:
+            return JSONResponse(
+                {
+                    "status": "error",
+                    "error": {
+                        "code": "MISSING_TOOL_ID",
+                        "message": "tool_id query parameter is required.",
+                    },
+                },
+                status_code=400,
+            )
+
+        detail = tool_index.get_detail(tool_id)
+        if detail is None:
+            return JSONResponse(
+                {
+                    "status": "error",
+                    "error": {
+                        "code": "TOOL_NOT_FOUND",
+                        "message": f"Tool '{tool_id}' not found.",
+                    },
+                },
+                status_code=404,
+            )
+
+        return JSONResponse({"status": "success", "tool": detail})
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -90,6 +121,7 @@ def main(argv: list[str] | None = None) -> None:
     logger.info("Transport: streamable-http")
     logger.info("HTTP path: %s", args.streamable_http_path)
 
+    tool_index = ToolIndex(index_dir)
     mcp = create_server(
         index_dir=index_dir,
         repo_root=repo_root,
@@ -99,7 +131,7 @@ def main(argv: list[str] | None = None) -> None:
         streamable_http_path=args.streamable_http_path,
         stateless_http=True,
     )
-    _register_runtime_routes(mcp, readiness)
+    _register_runtime_routes(mcp, readiness, tool_index)
     mcp.run(transport="streamable-http")
 
 

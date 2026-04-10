@@ -1,5 +1,73 @@
 # TODO
 
+## 2026-04-10 Selector-to-Provider Cloud Run Bridge
+
+### Plan
+- [ ] `ai-harness` の workflow / dry-run を踏まえて、selector (`ai-config`) と provider (`ai-config-provider`) の責務境界を固定する
+- [ ] `ai-config-selector-serving` に provider 向けの read-only tool detail lookup surface を追加する
+- [ ] `ai-config-provider` を remote selector lookup + local provider bundle load + streamable HTTP MCP server に作り替える
+- [ ] provider bundle の materialize 手順と Cloud Run deploy 導線を追加する
+- [ ] cross-repo の relevant tests を実行し、review を記録する
+
+### Progress
+- [x] `ai-config-selector` で関連 skill / MCP を確認
+- [x] `ai-harness` の `feature-build` workflow を dry-run で確認
+- [x] code changes
+- [x] docs updates
+- [x] tests and verification
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `README.md`
+  - `deploy/cloudrun/README.md`
+  - `src/ai_config/mcp_server/serving.py`
+  - `tests/test_selector_serving.py`
+  - `tasks/todo.md`
+  - `../ai-config-provider/README.md`
+  - `../ai-config-provider/.gitignore`
+  - `../ai-config-provider/Dockerfile`
+  - `../ai-config-provider/package.json`
+  - `../ai-config-provider/provider-bundle/.gitkeep`
+  - `../ai-config-provider/scripts/materialize-provider-bundle.ts`
+  - `../ai-config-provider/src/bundle.ts`
+  - `../ai-config-provider/src/config.ts`
+  - `../ai-config-provider/src/downstream.ts`
+  - `../ai-config-provider/src/index.ts`
+  - `../ai-config-provider/src/mcp-server.ts`
+  - `../ai-config-provider/src/record-resolver.ts`
+  - `../ai-config-provider/src/server.ts`
+  - `../ai-config-provider/src/tools.ts`
+  - `../ai-config-provider/src/types.ts`
+  - `../ai-config-provider/tests/bundle.test.ts`
+  - `../ai-config-provider/tests/helpers.ts`
+  - `../ai-config-provider/tests/integration.test.ts`
+  - `../ai-config-provider/tests/npm.test.ts`
+  - `../ai-config-provider/tests/server.test.ts`
+  - `../ai-config-provider/tests/fixtures/ai-config/skills/custom/test-mcp/package.json`
+- 実施内容:
+  - `ai-config-selector-serving` に provider 向け read-only route `/catalog/tool-detail?tool_id=...` を追加し、Cloud Run 上の `ai-config-provider` が選択済み `tool_id` を detail lookup できるようにした
+  - `ai-config-provider` を remote selector lookup + local provider bundle load 前提へ組み替え、`resolve_selected_tool` / `list_loaded_mcp_tools` を追加し、MCP surface を streamable HTTP `/mcp` に揃えた
+  - provider bundle を `../ai-config/.index/records.json` と `source_path` から materialize する script を追加し、Cloud Run image に `provider-bundle/` を同梱できるようにした
+  - `README.md` / `deploy/cloudrun/README.md` / `../ai-config-provider/README.md` に selector-provider 分離の運用と Cloud Run 導線を追記した
+  - `ai-harness` では `feature-build` と `code-review` workflow を dry-run で使い、設計と検証フェーズの流れを固定した
+- 検証:
+  - `npm test` in `../ai-config-provider`
+  - `.venv/bin/python -m pytest tests/test_selector_serving.py -q`
+  - `.venv/bin/python -m pytest tests/test_selector_serving.py tests/test_cloudrun_deploy_templates.py -q`
+  - `git -C /Users/tsytbns/Documents/GitHub/ai-config diff --check`
+  - `git -C /Users/tsytbns/Documents/GitHub/ai-config-provider diff --check`
+  - `cd ../ai-harness && PYTHONPATH=../ai-config/src:src .venv/bin/python -m ai_config_dispatch.cli --workflow feature-build --dry-run --trace "...selector chooses..." `
+  - `cd ../ai-harness && PYTHONPATH=../ai-config/src:src .venv/bin/python -m ai_config_dispatch.cli --workflow code-review --dry-run --trace "...Cloud Run bridge changes..." `
+- 検証結果:
+  - `../ai-config-provider` は `4 files, 10 tests` が green
+  - `ai-config` の selector-serving / Cloud Run docs tests は `11 passed`
+  - `git diff --check` は `ai-config` / `ai-config-provider` とも clean
+  - `ai-harness` の dry-run では feature-build / code-review workflow が利用可能で、今回の設計・検証フローにそのまま当てられることを確認した
+
 ## 2026-04-08 Dispatch Runtime Shim Removal
 
 ### Plan

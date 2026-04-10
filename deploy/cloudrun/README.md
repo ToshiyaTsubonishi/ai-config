@@ -35,9 +35,12 @@ gcloud run deploy ai-config-selector \
 - MCP endpoint は `/mcp`
 - liveness は `/healthz`
 - readiness は `/readyz`
+- provider bridge は `/catalog/tool-detail?tool_id=...`
 - startup 前に `.index/summary.json`、`.index/records.json`、`.index/bm25.pkl`、`.index/keyword_index.json`、`.index/faiss.bin` を検証します
 - artifact 欠落や index contract mismatch がある場合は fail-fast で起動失敗します
 - runtime では `ai-config-vendor-skills sync-manifest` と `ai-config-index` を実行しません
+
+`ai-config-provider` を別 Cloud Run service として置く場合は、provider 側に `AI_CONFIG_SELECTOR_BASE_URL=https://...run.app` を渡し、この route から選択済み `tool_id` の detail を引かせます。
 
 ## Production dispatch verification
 

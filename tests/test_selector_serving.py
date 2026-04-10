@@ -143,6 +143,7 @@ def test_selector_serving_exposes_read_only_http_mcp_and_health_endpoints(tmp_pa
     try:
         health = _wait_for_json(f"http://127.0.0.1:{port}/healthz", proc)
         readiness = _wait_for_json(f"http://127.0.0.1:{port}/readyz", proc)
+        catalog = _wait_for_json(f"http://127.0.0.1:{port}/catalog/tool-detail?tool_id=skill:demo-selector", proc)
         payload = anyio.run(_selector_serving_call, port)
     finally:
         _terminate(proc)
@@ -156,6 +157,9 @@ def test_selector_serving_exposes_read_only_http_mcp_and_health_endpoints(tmp_pa
     assert readiness["profile"] == "default"
     assert readiness["index_dir"] == str(index_dir.resolve())
     assert "summary.json" in readiness["required_artifacts"]
+    assert catalog["status"] == "success"
+    assert catalog["tool"]["id"] == "skill:demo-selector"
+    assert catalog["tool"]["source_path"] == "skills/shared/demo-selector/SKILL.md"
 
     assert set(payload["tool_names"]) == {
         "search_tools",

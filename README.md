@@ -57,8 +57,11 @@ AI agent 向けの **動的 Skill / MCP 選択基盤**。`ai-config` は selecto
 - endpoint: `/mcp`
 - health: `/healthz`
 - readiness: `/readyz`
+- provider bridge: `/catalog/tool-detail?tool_id=...`
 - runtime mode: read-only
 - startup で `.index` contract を fail-fast validation
+
+`/catalog/tool-detail` は `ai-config-provider` のような downstream loader が、agent に返した `tool_id` を read-only に再解決するための補助 route です。agent 向けの検索 / 選択は引き続き MCP tools (`search_tools`, `get_tool_detail`) を正本にします。
 
 ### Planner CLI
 
