@@ -1,5 +1,52 @@
 # TODO
 
+## 2026-04-10 Open WebUI Provider Wiring on Cloud Run
+
+### Plan
+- [x] Open WebUI / MCPO / ai-config-provider の接続責務を確認し、Cloud Run 上の最小トポロジーを固定する
+- [x] `ai-config-provider` 本体と provider 用 MCPO bridge の Cloud Run service template を追加する
+- [x] Open WebUI の `TOOL_SERVER_CONNECTIONS` サンプルと Cloud Run / GUI guide を selector + provider の二面構成に更新する
+- [x] relevant tests を実行し、review を記録する
+
+### Progress
+- [x] `ai-config-selector` で関連 skill / MCP を確認
+- [x] `ai-harness` `feature-build` workflow を dry-run で確認
+- [x] code changes
+- [x] docs updates
+- [x] tests and verification
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `deploy/cloudrun/README.md`
+  - `deploy/cloudrun/gcp-gui-setup-guide.ja.md`
+  - `deploy/cloudrun/open-webui.tool-server-connections.example.json`
+  - `deploy/cloudrun/ai-config-provider.service.yaml`
+  - `deploy/cloudrun/ai-config-provider-mcpo.service.yaml`
+  - `tests/test_cloudrun_deploy_templates.py`
+  - `tasks/todo.md`
+  - `../ai-config-provider/README.md`
+- 実施内容:
+  - Open WebUI が provider を直接受けられない前提を明文化し、`ai-config-provider` の `/mcp` を MCPO で OpenAPI 化する Cloud Run topology に整理した
+  - `ai-config-provider` 本体と provider 用 MCPO bridge の Cloud Run service template を追加した
+  - `OPENWEBUI_TOOL_SERVER_CONNECTIONS` のサンプルを selector 用 / provider 用の 2 接続構成に更新した
+  - Cloud Run README / GCP GUI guide / provider README を、provider-bundle materialize 手順と dual-MCPO 配線前提に更新した
+- 検証:
+  - `cd /Users/tsytbns/Documents/GitHub/ai-harness && .venv/bin/ai-config-dispatch --workflow feature-build --dry-run --trace --cwd /Users/tsytbns/Documents/GitHub/ai-config "Cloud Run deployed open-webui + mcpo + ai-config selector is working. Add ai-config-provider so Open WebUI can use it in production. Need Cloud Run service templates, MCPO bridge for provider, tool server connection examples, docs, and verification."`
+  - `.venv/bin/python -m pytest tests/test_cloudrun_deploy_templates.py -q`
+  - `.venv/bin/python -m pytest tests/test_selector_serving.py tests/test_cloudrun_deploy_templates.py -q`
+  - `npm test` in `../ai-config-provider`
+  - `git diff --check` in `ai-config`
+  - `git diff --check` in `../ai-config-provider`
+- 検証結果:
+  - Cloud Run deploy template / guide coverage tests は `9 passed`
+  - selector-serving + deploy template regression は `13 passed`
+  - `../ai-config-provider` の test suite は `4 files, 10 tests` が green
+  - `git diff --check` は `ai-config` / `ai-config-provider` とも clean
+
 ## 2026-04-10 Selector-to-Provider Cloud Run Bridge
 
 ### Plan
