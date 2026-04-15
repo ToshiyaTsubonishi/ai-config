@@ -1,0 +1,219 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: open-webui
+  namespace: "{{PROJECT_NUMBER}}"
+  labels:
+    cloud.googleapis.com/location: {{REGION}}
+  annotations:
+    run.googleapis.com/ingress: all
+    run.googleapis.com/invoker-iam-disabled: "true"
+    run.googleapis.com/maxScale: "1"
+spec:
+  template:
+    metadata:
+      labels:
+        run.googleapis.com/startupProbeType: Default
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        run.googleapis.com/execution-environment: gen2
+        run.googleapis.com/cloudsql-instances: {{CLOUDSQL_CONNECTION}}
+        run.googleapis.com/container-dependencies: '{"open-webui-1":["open-terminal-1","searxng-1"]}'
+        run.googleapis.com/startup-cpu-boost: "true"
+    spec:
+      containerConcurrency: 5
+      timeoutSeconds: 900
+      serviceAccountName: {{SERVICE_ACCOUNT}}
+      containers:
+      - name: open-webui-1
+        image: {{OPEN_WEBUI_IMAGE}}
+        ports:
+        - name: http1
+          containerPort: 8081
+        env:
+        - name: UVICORN_WORKERS
+          value: "1"
+        - name: WEBUI_URL
+          value: {{OPEN_WEBUI_URL}}
+        - name: ENABLE_PERSISTENT_CONFIG
+          value: "False"
+        - name: OPENID_PROVIDER_URL
+          value: https://accounts.google.com/.well-known/openid-configuration
+        - name: GOOGLE_REDIRECT_URI
+          value: {{GOOGLE_REDIRECT_URI}}
+        - name: ENABLE_OAUTH_GOOGLE
+          value: "True"
+        - name: ENABLE_OAUTH_SIGNUP
+          value: "True"
+        - name: ENABLE_OAUTH_PERSISTENT_CONFIG
+          value: "False"
+        - name: ENABLE_LOGIN_FORM
+          value: "False"
+        - name: GOOGLE_OAUTH_SCOPE
+          value: {{GOOGLE_OAUTH_SCOPE}}
+        - name: DEFAULT_USER_ROLE
+          value: user
+        - name: STORAGE_PROVIDER
+          value: gcs
+        - name: GCS_BUCKET_NAME
+          value: {{WEBUI_BUCKET}}
+        - name: ENABLE_OLLAMA_API
+          value: "False"
+        - name: ENABLE_OPENAI_API
+          value: "{{OPENAI_ENABLE}}"
+        - name: OPENAI_API_BASE_URLS
+          value: "{{OPENAI_API_BASE_URLS}}"
+        - name: OPENAI_API_KEYS
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: {{OPENAI_API_KEYS_SECRET}}
+        - name: OPENAI_API_CONFIGS
+          value: '{{OPENAI_API_CONFIGS_JSON}}'
+        - name: ENABLE_EVALUATION_ARENA_MODELS
+          value: "False"
+        - name: ENABLE_DIRECT_CONNECTIONS
+          value: "True"
+        - name: TOOL_SERVER_CONNECTIONS
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: {{OPENWEBUI_TOOL_SERVER_CONNECTIONS_SECRET}}
+        - name: ENABLE_WEB_SEARCH
+          value: "True"
+        - name: WEB_SEARCH_ENGINE
+          value: searxng
+        - name: WEB_SEARCH_CONCURRENT_REQUESTS
+          value: "1"
+        - name: WEB_LOADER_CONCURRENT_REQUESTS
+          value: "10"
+        - name: ENABLE_RAG_WEB_SEARCH
+          value: "True"
+        - name: RAG_WEB_SEARCH_ENGINE
+          value: searxng
+        - name: RAG_WEB_SEARCH_RESULT_COUNT
+          value: "3"
+        - name: RAG_WEB_SEARCH_CONCURRENT_REQUESTS
+          value: "10"
+        - name: SEARXNG_QUERY_URL
+          value: http://localhost:8080/search?q=<query>
+        - name: WEBUI_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: {{WEBUI_SECRET_KEY_SECRET}}
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: {{GEMINI_API_KEY_SECRET}}
+        - name: GOOGLE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: {{GOOGLE_CLIENT_ID_SECRET}}
+        - name: GOOGLE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: {{GOOGLE_CLIENT_SECRET_SECRET}}
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: {{DATABASE_URL_SECRET}}
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 2Gi
+        livenessProbe:
+          timeoutSeconds: 240
+          periodSeconds: 240
+          failureThreshold: 1
+          httpGet:
+            path: /health
+            port: 8081
+        startupProbe:
+          timeoutSeconds: 240
+          periodSeconds: 240
+          failureThreshold: 1
+          tcpSocket:
+            port: 8081
+      - name: open-terminal-1
+        image: {{OPEN_TERMINAL_IMAGE}}
+        args:
+        - run
+        - --cwd
+        - /home/user
+        - --host
+        - 0.0.0.0
+        - --port
+        - "8000"
+        env:
+        - name: OPEN_TERMINAL_MAX_SESSIONS
+          value: "4"
+        - name: OPEN_TERMINAL_ENABLE_TERMINAL
+          value: "true"
+        - name: OPEN_TERMINAL_ENABLE_NOTEBOOKS
+          value: "false"
+        - name: OPEN_TERMINAL_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: {{OPEN_TERMINAL_API_KEY_SECRET}}
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+        startupProbe:
+          timeoutSeconds: 1
+          periodSeconds: 10
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8000
+      - name: searxng-1
+        image: {{SEARXNG_IMAGE}}
+        env:
+        - name: SEARXNG_SETTINGS_PATH
+          value: /etc/searxng/settings.yml
+        - name: SEARXNG_HOSTNAME
+          value: localhost:8080
+        - name: SEARXNG_PORT
+          value: "8080"
+        - name: SEARXNG_BIND_ADDRESS
+          value: 0.0.0.0
+        - name: SEARXNG_STATIC_USE_HASH
+          value: "true"
+        - name: SEARXNG_LIMITER
+          value: "false"
+        - name: SEARXNG_IMAGE_PROXY
+          value: "true"
+        - name: SEARXNG_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: {{SEARXNG_SECRET_SECRET}}
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+        volumeMounts:
+        - name: gcs-1
+          readOnly: true
+          mountPath: /etc/searxng
+        startupProbe:
+          timeoutSeconds: 5
+          periodSeconds: 5
+          failureThreshold: 24
+          tcpSocket:
+            port: 8080
+      volumes:
+      - name: gcs-1
+        csi:
+          driver: gcsfuse.run.googleapis.com
+          volumeAttributes:
+            bucketName: {{SEARXNG_BUCKET}}
+  traffic:
+  - percent: 100
+    latestRevision: true

@@ -1,5 +1,41 @@
 # Lessons Learned
 
+## 2026-04-15: 制限付き production は prebuilt digest と release manifest を先に固める
+
+### ミス 14: staging が動いたあとも production の build/auth 制約を同じ熱量で固定していなかった
+
+- **状況**: staging stack は runtime/E2E まで通ったが、production 環境では `docker login` / `gcloud auth` / GitHub login ができないという制約が後から明示された
+- **期待動作**: 本番 deploy に進む前に、別の build-capable environment で selector/provider image を publish し、`@sha256:` の digest ref と commit/bundle provenance をまとめた release manifest を先に用意する
+- **実際の動作**: staging までは local build / gcloud / GUI の導線が中心で、production の zero-auth deploy path はまだ固定されていなかった
+- **ルール**: 企業環境の production で auth/build 制約がある場合は、Cloud Run 設定より先に `prebuilt GHCR image + pinned digest + release manifest + temporary package visibility rule` を定義する。deploy guide には tag ではなく digest ref を主系として書く
+
+## 2026-04-15: Open WebUI の tool server 検証だけでは chat E2E は保証されない
+
+### ミス 12: tool server 2 接続が見えても、chat model provider が無いと E2E が止まる
+
+- **状況**: staging Open WebUI で `TOOL_SERVER_CONNECTIONS` は正しく 2 件入り、`/api/v1/tools/` でも `server:ai-config-mcpo` / `server:ai-config-provider-mcpo` が見えていたが、`/api/models` は空だった
+- **期待動作**: Open WebUI で selector/provider の tool flow を chat まで検証したいなら、tool server 配線と同時に conversation model provider も render/deploy に含める
+- **実際の動作**: 当初の staging manifest は `GEMINI_API_KEY` だけ渡しており、OpenAI-compatible Gemini endpoint (`OPENAI_API_BASE_URLS` / `OPENAI_API_KEYS`) を設定していなかったため、tool server の存在確認までは通っても chat E2E は実行できなかった
+- **ルール**: Open WebUI staging を phase 完了に進めるときは、`tool server visibility` と `chat model availability` を別物として確認する。`/api/v1/configs/tool_servers` と `/api/models` の両方が埋まってから E2E を始める
+
+## 2026-04-15: Cloud Run の public probe path と internal liveness は分けて観測する
+
+### ミス 13: public `/healthz` 404 を見て route 未実装だと即断しやすい
+
+- **状況**: staging selector/provider の public HTTPS `/healthz` は Google Frontend で 404 だったが、Cloud Run の internal liveness probe と container logs では `/healthz` が 200 を返していた
+- **期待動作**: Cloud Run probe path の検証では、public curl 結果と container logs / probe logs を両方見て、app 自体の route と edge での挙動を分けて判断する
+- **実際の動作**: 最初は public 404 だけを見て contract break と見なしそうになったが、実際には internal liveness は成功していた
+- **ルール**: Cloud Run の health/readiness mismatch を見たら、`public curl`, `gcloud logging read` の probe log, `latestReadyRevisionName` を必ずセットで確認する。public contract が必要か、internal probe 成功で十分かを分けて結論を出す
+
+## 2026-04-15: GCP staging は runtime/E2E と provenance を揃えるまで完了扱いにしない
+
+### ミス 11: staging 実装と静的検証が通っても、runtime verification 前に完了感を出しやすい
+
+- **状況**: separate-project staging stack の renderable assets とローカル tests は green だったが、`gcloud` 未認証のため actual Cloud Run deploy / `/readyz` / OpenAPI / Open WebUI E2E は未実施だった
+- **期待動作**: GCP staging の task は、Cloud Run への実 deploy、runtime health/readiness、MCPO OpenAPI、Open WebUI tool server 可視化、selector/provider/E2E 実測まで揃って初めて phase 完了とみなす
+- **実際の動作**: 実装承認が出た時点で構成面は前進していたが、runtime evidence が無いまま次フェーズへ進みそうになった
+- **ルール**: Cloud Run / GCP staging の作業では、`code green` と `runtime green` を分けて扱う。さらに staging でも最初から image ref、commit SHA、provider-bundle version を revision annotation か `/readyz` で追えるようにしてから deploy に入る
+
 ## 2026-04-03: Eval CLI の可変引数は metric contract と一致させる
 
 ### ミス 10: `--top-k` を可変に見せつつ metric の一部を固定深さのままにした

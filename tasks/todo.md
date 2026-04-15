@@ -1,5 +1,226 @@
 # TODO
 
+## 2026-04-15 GHCR Release Path for Constrained Production
+
+### Plan
+- [x] production で build/login しない前提の GHCR publish path を定義する
+- [x] selector/provider をまとめて publish し、digest と provenance を manifest 化する asset を追加する
+- [x] Cloud Run / staging / provider docs を constrained production 向け release path に更新する
+- [x] tests と review を回して release path の整合性を確認する
+
+### Progress
+- [x] `deploy/cloudrun/release/publish_ghcr_release.py` を追加し、`ai-config-provider` の bundle materialize -> selector/provider buildx push -> release manifest 出力の流れを実装
+- [x] `deploy/cloudrun/release/README.md` と `.github/workflows/publish-ghcr-release.yml` を追加
+- [x] `deploy/cloudrun/README.md` / `deploy/cloudrun/staging/README.md` / `deploy/cloudrun/gcp-gui-setup-guide.ja.md` / `../ai-config-provider/README.md` を更新
+- [x] `tests/test_cloudrun_release_assets.py` を追加
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `.github/workflows/publish-ghcr-release.yml`
+  - `deploy/cloudrun/README.md`
+  - `deploy/cloudrun/gcp-gui-setup-guide.ja.md`
+  - `deploy/cloudrun/release/README.md`
+  - `deploy/cloudrun/release/publish_ghcr_release.py`
+  - `deploy/cloudrun/staging/README.md`
+  - `deploy/cloudrun/staging/stack.example.yaml`
+  - `tests/test_cloudrun_release_assets.py`
+  - `tasks/todo.md`
+  - `tasks/lessons.md`
+  - `../ai-config-provider/README.md`
+- 実施内容:
+  - constrained production 向けに、selector/provider をまとめて GHCR publish し、digest / commit SHA / provider-bundle version を `ghcr-release-manifest.json` に出す release script を追加した
+  - GitHub Actions から同じ flow を呼べる `publish-ghcr-release.yml` を追加し、private `ai-config-provider` checkout 用の `AI_CONFIG_PROVIDER_REPO_TOKEN` を使える形にした
+  - Cloud Run root README / GUI guide / staging README / provider README を、`production では build/login せず prebuilt digest を貼る` 方針に更新した
+  - release manifest を Cloud Run renderer の `images` / `provenance` に移す手順と、一時的な GitHub Packages public visibility の運用を文書化した
+- 検証:
+  - `cd /Users/tsytbns/Documents/GitHub/ai-config && .venv/bin/python -m pytest tests/test_cloudrun_release_assets.py tests/test_cloudrun_deploy_templates.py tests/test_cloudrun_staging_assets.py -q`
+  - `cd /Users/tsytbns/Documents/GitHub/ai-config && .venv/bin/python -m pytest tests/test_cloudrun_release_assets.py -q`
+  - `cd /Users/tsytbns/Documents/GitHub/ai-config && .venv/bin/python deploy/cloudrun/release/publish_ghcr_release.py --github-owner tsytbns --provider-repo ../ai-config-provider --dry-run --output .artifacts/ghcr-release-manifest.dry-run.json`
+  - `git -C /Users/tsytbns/Documents/GitHub/ai-config diff --check`
+  - `git -C /Users/tsytbns/Documents/GitHub/ai-config-provider diff --check`
+- 検証結果:
+  - release/doc coverage tests を含む Cloud Run deploy asset suite は `17 passed`
+  - release helper unit tests は `3 passed`
+  - `publish_ghcr_release.py --dry-run` は selector/provider の buildx command と manifest shape を正常に出力した
+  - `git diff --check` は `ai-config` / `ai-config-provider` とも clean
+
+## 2026-04-15 Runtime Verification on `abiding-aspect-457603-m8`
+
+### Plan
+- [x] staging project の 5 service を actual deploy し、latest ready revision / image ref / provenance を固定する
+- [x] selector / provider / MCPO の runtime surface と tool execution を実測する
+- [x] Open WebUI の tool server visibility / models / chat E2E を実測し、staging に残る設定へ戻す
+
+### Progress
+- [x] `gcloud` 認証 / project number / staging infra を確認
+- [x] selector / provider / MCPO / Open WebUI を Cloud Run に deploy
+- [x] provenance / OpenAPI / tool execution を実測
+- [x] Open WebUI に OpenAI-compatible Gemini provider を env で追加し、restart 後も `/api/models` が出る状態に補修
+- [x] temporary DB admin row と Cloud SQL authorized network を cleanup
+
+### Review
+- [x] deployed revisions and image refs
+- [x] runtime endpoint evidence
+- [x] Open WebUI E2E evidence
+
+- 更新ファイル:
+  - `deploy/cloudrun/staging/stack.example.yaml`
+  - `deploy/cloudrun/staging/render_stack.py`
+  - `deploy/cloudrun/staging/templates/open-webui.service.mcpo.yaml.tmpl`
+  - `tests/test_cloudrun_staging_assets.py`
+  - `tasks/todo.md`
+  - `tasks/lessons.md`
+- 実施内容:
+  - staging Cloud Run stack を `abiding-aspect-457603-m8` / `asia-northeast1` に actual deploy し、5 service を Ready にした
+  - Open WebUI は `ENABLE_PERSISTENT_CONFIG=False` のまま、env 由来の `OPENAI_API_BASE_URLS=https://generativelanguage.googleapis.com/v1beta/openai` と `OPENAI_API_KEYS <- GEMINI_API_KEY` を render/deploy に組み込み、restart 後も `/api/models` が空にならないようにした
+  - Open WebUI admin API で `TOOL_SERVER_CONNECTIONS` と `/api/v1/tools/` を確認し、`ai-config-mcpo` / `ai-config-provider-mcpo` の 2 接続が live config に載っていることを確認した
+  - selector MCPO で `search_tools` / `get_tool_detail`、provider MCPO で `resolve_selected_tool` / `read_skill_content`、bundled MCP として `mcp:microsoft-learn-mcp` の `list_loaded_mcp_tools` / `execute_mcp_tool` を実行した
+  - Open WebUI chat API では client-side tool loop を再現し、`search_tools -> get_tool_detail -> resolve_selected_tool -> read_skill_content` の順で `skill:codex` を解決して最終回答まで到達した
+- deploy/runtime evidence:
+  - `ai-config-selector`
+    - latest ready revision: `ai-config-selector-00003-p7q`
+    - commit SHA: `0fa50eb0b1ea05547ef6c9edaa534382ce7ff1a2`
+    - image ref: `asia-northeast1-docker.pkg.dev/abiding-aspect-457603-m8/ghcr/ai-config-selector-serving@sha256:9a47b87f512f572833b49023b7e1b6403c00681690e22cc255e471294261ee4a`
+    - `/readyz`: `status=ready`, `record_count=1513`, provenance revision `ai-config-selector-00003-p7q`
+  - `ai-config-provider`
+    - latest ready revision: `ai-config-provider-00001-nm4`
+    - commit SHA: `94f329dec68dfa02ff2323c1164ca68431942b49`
+    - image ref: `asia-northeast1-docker.pkg.dev/abiding-aspect-457603-m8/ghcr/ai-config-provider@sha256:7217f9e3b4e8c61a89b4cfa98b61f0c15534e3005f4fcb34a97d1fc0573a8cdb`
+    - provider bundle version: `0fa50eb0b1ea-7c12f6aae5b8`
+    - `/readyz`: `status=ready`, `selector.status=ok`, `record_resolution_order=["selector_http","local_index"]`
+  - `ai-config-mcpo`
+    - latest ready revision: `ai-config-mcpo-00002-xbh`
+    - image digest: `asia-northeast1-docker.pkg.dev/abiding-aspect-457603-m8/ghcr-remote/open-webui/mcpo@sha256:05ccaa3bb0de51eaa9d00a96c4583dde93897c1b45812b34ed3de3b033f06fbf`
+    - `/openapi.json` title: `ai-config-selector`
+    - paths: `/search_tools`, `/get_tool_detail`, `/list_categories`, `/get_tool_count`
+  - `ai-config-provider-mcpo`
+    - latest ready revision: `ai-config-provider-mcpo-00001-vn2`
+    - image digest: `asia-northeast1-docker.pkg.dev/abiding-aspect-457603-m8/ghcr-remote/open-webui/mcpo@sha256:05ccaa3bb0de51eaa9d00a96c4583dde93897c1b45812b34ed3de3b033f06fbf`
+    - `/openapi.json` title: `ai-config-provider`
+    - paths: `/resolve_selected_tool`, `/read_skill_content`, `/list_loaded_mcp_tools`, `/execute_mcp_tool`
+  - `open-webui`
+    - latest ready revision: `open-webui-00002-xgp`
+    - main image digest: `asia-northeast1-docker.pkg.dev/abiding-aspect-457603-m8/ghcr-remote/open-webui/open-webui@sha256:d6ac2a75e069cfca698b3e8ed895c0cf75f5698a31f3d9dc0713ed4af2cc3385`
+    - sidecars:
+      - `open-terminal@sha256:9d01fd7c3d569df5802b96e6027625751138282f2ba6e3928bd4c64e6c49205e`
+      - `searxng@sha256:5c9a6960c9b5fff8de5daf41e72232b205debdc162665d35ea768823ef1177e5`
+    - `/api/v1/configs/tool_servers` は `ai-config-mcpo` / `ai-config-provider-mcpo` の 2 接続を返した
+    - `/api/v1/tools/` は `server:ai-config-mcpo` / `server:ai-config-provider-mcpo` を返した
+    - `/api/models` は `models/gemini-2.5-flash` を含む Gemini OpenAI-compatible models を返した
+- 機能確認:
+  - selector `search_tools("codex skill")` は `skill:codex` を返した
+  - selector `get_tool_detail("skill:codex")` は `source_path=skills/imported/skills-sh/sources/softaworks__agent-toolkit/codex/SKILL.md` を返した
+  - provider `resolve_selected_tool("skill:codex")` は `provider_path=/app/provider-bundle/skills/imported/skills-sh/sources/softaworks__agent-toolkit/codex/SKILL.md` を返した
+  - provider `read_skill_content("skill:codex")` は `# Codex Skill Guide` を含む markdown を返した
+  - provider `list_loaded_mcp_tools("mcp:microsoft-learn-mcp")` は `microsoft_docs_search` / `microsoft_code_sample_search` / `microsoft_docs_fetch` を返した
+  - provider `execute_mcp_tool("mcp:microsoft-learn-mcp","microsoft_docs_search",{"query":"Cloud Run readiness probes"})` は Microsoft Learn の readiness probe doc results を返した
+  - Open WebUI chat API の tool loop では 5 step で `tool_search_tools_post -> tool_get_tool_detail_post -> tool_resolve_selected_tool_post -> tool_read_skill_content_post -> final answer` を辿り、最終回答として `skill:codex` / provider path / `Codex Skill Guide` を返した
+- 制約 / follow-up:
+  - public HTTPS からの `selector/provider /healthz` は Google Frontend で `404` になった一方、Cloud Run internal liveness probe と container logs では `/healthz` が `200 OK`。`/readyz` は public でも `200`。public `healthz` contract を厳密に要求するなら follow-up が必要
+  - Open WebUI の 2 接続可視化は Playwright MCP の local browser directory 制約で UI screenshot 化できず、admin API (`/api/v1/configs/tool_servers`, `/api/v1/tools/`) を証跡とした
+- 検証:
+  - `gcloud run services list --project=abiding-aspect-457603-m8 --region=asia-northeast1`
+  - `curl -fsS https://ai-config-selector-ho3weg4mmq-an.a.run.app/readyz`
+  - `curl -fsS https://ai-config-provider-ho3weg4mmq-an.a.run.app/readyz`
+  - `curl -fsS -H "Authorization: Bearer $MCPO_API_KEY" https://ai-config-mcpo-ho3weg4mmq-an.a.run.app/openapi.json`
+  - `curl -fsS -H "Authorization: Bearer $MCPO_API_KEY" https://ai-config-provider-mcpo-ho3weg4mmq-an.a.run.app/openapi.json`
+  - selector/provider/provider-MCP functional calls via MCPO HTTP endpoints
+  - `gcloud run services replace /tmp/ai-config-staging-rendered/open-webui.service.mcpo.yaml --project=abiding-aspect-457603-m8 --region=asia-northeast1`
+  - `curl -fsS -H "Authorization: Bearer <admin-jwt>" https://open-webui-ho3weg4mmq-an.a.run.app/api/v1/configs/tool_servers`
+  - `curl -fsS -H "Authorization: Bearer <admin-jwt>" https://open-webui-ho3weg4mmq-an.a.run.app/api/v1/tools/`
+  - `curl -fsS -H "Authorization: Bearer <admin-jwt>" https://open-webui-ho3weg4mmq-an.a.run.app/api/models`
+  - Open WebUI chat completion loop via `/api/chat/completions`
+- 検証結果:
+  - staging 5 service は `abiding-aspect-457603-m8` 上で Ready
+  - selector/provider provenance は annotation と `/readyz` の両方で確認できた
+  - MCPO 2 面と Open WebUI 2 接続構成は live config で確認できた
+  - bundled MCP execution と Open WebUI chat-based selector -> provider flow は実測で通った
+  - public `/healthz` のみ contract mismatch が残る
+
+## 2026-04-15 Separate GCP Staging Stack for ai-config / provider / Open WebUI
+
+### Plan
+- [ ] `abiding-aspect-457603-m8` 向けに、project 分離を前提とした Cloud Run staging stack の生成方法を固定する
+- [ ] selector / provider / MCPO / Open WebUI の staging manifest と secret payload を render できる資材を追加する
+- [ ] Cloud Run / GUI guide / provider README を staging 前提に更新する
+- [ ] `ai-harness` に phase-2 remote wrapper contract を追加し、phase 1 では Cloud Run execution を行わない方針を明文化する
+- [ ] relevant tests / dry-run / diff check を実行し、review を記録する
+
+### Progress
+- [x] `ai-config-selector` で関連 skill / MCP を確認
+- [x] repo rules / constitution / lessons / current Cloud Run topology を確認
+- [x] `ai-harness` `feature-build` workflow を dry-run で確認
+- [x] code changes
+- [x] docs updates
+- [x] tests and verification
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `deploy/cloudrun/README.md`
+  - `deploy/cloudrun/staging/README.md`
+  - `deploy/cloudrun/staging/stack.example.yaml`
+  - `deploy/cloudrun/staging/render_stack.py`
+  - `deploy/cloudrun/staging/apply_rendered_stack.sh`
+  - `deploy/cloudrun/staging/gcp-gui-setup-guide.ja.md`
+  - `deploy/cloudrun/staging/templates/ai-config-selector.service.yaml.tmpl`
+  - `deploy/cloudrun/staging/templates/ai-config-provider.service.yaml.tmpl`
+  - `deploy/cloudrun/staging/templates/ai-config-mcpo.service.yaml.tmpl`
+  - `deploy/cloudrun/staging/templates/ai-config-provider-mcpo.service.yaml.tmpl`
+  - `deploy/cloudrun/staging/templates/open-webui.service.mcpo.yaml.tmpl`
+  - `deploy/cloudrun/staging/templates/open-webui.tool-server-connections.json.tmpl`
+  - `src/ai_config/mcp_server/runtime.py`
+  - `tests/test_cloudrun_staging_assets.py`
+  - `tests/test_selector_serving.py`
+  - `tasks/todo.md`
+  - `tasks/lessons.md`
+  - `../ai-config-provider/README.md`
+  - `../ai-config-provider/src/bundle.ts`
+  - `../ai-config-provider/src/config.ts`
+  - `../ai-config-provider/src/server.ts`
+  - `../ai-config-provider/src/types.ts`
+  - `../ai-config-provider/tests/bundle.test.ts`
+  - `../ai-config-provider/tests/server.test.ts`
+  - `../ai-config-provider/tests/fixtures/ai-config/.index/provider-bundle-metadata.json`
+  - `../ai-harness/README.md`
+  - `../ai-harness/docs/remote-wrapper-contract.md`
+- 実施内容:
+  - `abiding-aspect-457603-m8` 向け separate-project staging stack を、固定 YAML のコピーではなく value file + renderer + template 群で再現できるようにした
+  - renderer が selector/provider/MCPO/Open WebUI の 5 service YAML と `OPENWEBUI_TOOL_SERVER_CONNECTIONS` 用 JSON、computed URL metadata を出力するようにした
+  - selector/provider の `/readyz` で image ref / commit SHA / provider-bundle version を確認できるように provenance surface を追加した
+  - provider bundle materialize 時に `provider-bundle-metadata.json` を生成し、bundle version と source `ai-config` commit を持たせた
+  - separate-project staging guide を追加し、root Cloud Run README と provider README から新導線へ辿れるようにした
+  - `ai-harness` には phase 2 thin HTTP wrapper の request/response contract と production-safe runtime rules を文書化し、phase 1 では Cloud Run execution を持たない方針を明文化した
+- 制約:
+  - このセッションでは `gcloud auth list` が `No credentialed accounts.` だったため、actual Cloud Run deploy / secret 作成 / live verification は未実施
+  - staging project number は repo から導出できないため、renderer は value file への明示入力を必須にした
+- 検証:
+  - `cd /Users/tsytbns/Documents/GitHub/ai-harness && PYTHONPATH=../ai-config/src:src .venv/bin/python -m ai_config_dispatch.cli --workflow feature-build --dry-run --trace "Implement a separate-project Cloud Run staging stack for ai-config selector/provider/Open WebUI in project abiding-aspect-457603-m8. Add reproducible staging manifests or renderable templates, docs, task tracking, and ai-harness phase-2 remote wrapper contract docs. Keep ai-harness out of Cloud Run execution for phase 1."`
+  - `cd /Users/tsytbns/Documents/GitHub/ai-harness && PYTHONPATH=../ai-config/src:src .venv/bin/python -m ai_config_dispatch.cli --workflow code-review --dry-run --trace "Review the separate-project Cloud Run staging assets for ai-config selector/provider/Open WebUI and the ai-harness remote wrapper contract docs. Focus on regressions, missing verification, and staging safety."`
+  - `cd /Users/tsytbns/Documents/GitHub/ai-config && .venv/bin/python -m pytest tests/test_selector_serving.py tests/test_cloudrun_deploy_templates.py tests/test_cloudrun_staging_assets.py -q`
+  - `cd /Users/tsytbns/Documents/GitHub/ai-config && .venv/bin/python -m pytest tests/test_selector_serving.py tests/test_cloudrun_staging_assets.py -q`
+  - `cd /Users/tsytbns/Documents/GitHub/ai-config-provider && npm test`
+  - `cd /Users/tsytbns/Documents/GitHub/ai-config-provider && npm run bundle:from-ai-config -- --ai-config-dir ../ai-config --output-dir provider-bundle`
+  - `bash -n /Users/tsytbns/Documents/GitHub/ai-config/deploy/cloudrun/staging/apply_rendered_stack.sh`
+  - `git -C /Users/tsytbns/Documents/GitHub/ai-config diff --check`
+  - `git -C /Users/tsytbns/Documents/GitHub/ai-config-provider diff --check`
+  - `git -C /Users/tsytbns/Documents/GitHub/ai-harness diff --check`
+- 検証結果:
+  - `ai-config` の selector-serving / deploy template / staging render tests は `17 passed`
+  - provenance 追加後の `ai-config` selector-serving / staging render tests は `9 passed`
+  - `ai-config-provider` の MCP/runtime suite は `4 files, 11 tests` が green
+  - provider bundle metadata は `bundleVersion=0fa50eb0b1ea-7c12f6aae5b8`, `sourceAiConfigCommitSha=0fa50eb0b1ea05547ef6c9edaa534382ce7ff1a2`
+  - staging deploy helper の shell syntax check は clean
+  - `git diff --check` は 3 repo とも clean
+  - live GCP deploy は `gcloud` / browser とも未認証のため follow-up が必要
+
 ## 2026-04-10 Open WebUI Provider Wiring on Cloud Run
 
 ### Plan

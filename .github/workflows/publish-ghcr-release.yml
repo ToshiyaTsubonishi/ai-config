@@ -1,0 +1,128 @@
+name: Publish GHCR Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      github_owner:
+        description: "GHCR namespace owner (user or org)"
+        required: true
+        type: string
+      provider_repository:
+        description: "Optional ai-config-provider repository. Defaults to <github_owner>/ai-config-provider."
+        required: false
+        default: ""
+        type: string
+      provider_ref:
+        description: "Branch, tag, or SHA for ai-config-provider"
+        required: false
+        default: "main"
+        type: string
+      selector_tag:
+        description: "Optional selector image tag override"
+        required: false
+        default: ""
+        type: string
+      provider_tag:
+        description: "Optional provider image tag override"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout ai-config
+        uses: actions/checkout@v4
+
+      - name: Resolve provider repository
+        id: provider-repo
+        env:
+          GITHUB_OWNER: ${{ inputs.github_owner }}
+          INPUT_REPOSITORY: ${{ inputs.provider_repository }}
+        run: |
+          repo="${INPUT_REPOSITORY:-$GITHUB_OWNER/ai-config-provider}"
+          echo "value=$repo" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout ai-config-provider
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.provider-repo.outputs.value }}
+          ref: ${{ inputs.provider_ref }}
+          path: ai-config-provider
+          token: ${{ secrets.AI_CONFIG_PROVIDER_REPO_TOKEN || github.token }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: ai-config-provider/package-lock.json
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish selector/provider images
+        env:
+          GITHUB_OWNER: ${{ inputs.github_owner }}
+          SELECTOR_TAG: ${{ inputs.selector_tag }}
+          PROVIDER_TAG: ${{ inputs.provider_tag }}
+        run: |
+          mkdir -p .artifacts
+          cmd=(
+            python deploy/cloudrun/release/publish_ghcr_release.py
+            --github-owner "$GITHUB_OWNER"
+            --provider-repo "$GITHUB_WORKSPACE/ai-config-provider"
+            --push
+            --output "$GITHUB_WORKSPACE/.artifacts/ghcr-release-manifest.json"
+          )
+          if [ -n "$SELECTOR_TAG" ]; then
+            cmd+=(--selector-tag "$SELECTOR_TAG")
+          fi
+          if [ -n "$PROVIDER_TAG" ]; then
+            cmd+=(--provider-tag "$PROVIDER_TAG")
+          fi
+          "${cmd[@]}"
+
+      - name: Upload release manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: ghcr-release-manifest
+          path: .artifacts/ghcr-release-manifest.json
+
+      - name: Write workflow summary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          manifest = json.loads(Path(".artifacts/ghcr-release-manifest.json").read_text(encoding="utf-8"))
+          summary = [
+              "## GHCR Release",
+              "",
+              f"- selector: `{manifest['selector']['image_ref']}`",
+              f"- provider: `{manifest['provider']['image_ref']}`",
+              f"- provider bundle version: `{manifest['provider']['bundle_version']}`",
+          ]
+          Path(__import__("os").environ["GITHUB_STEP_SUMMARY"]).write_text(
+              "\n".join(summary) + "\n",
+              encoding="utf-8",
+          )
+          PY

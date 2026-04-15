@@ -1,0 +1,36 @@
+[
+  {
+    "type": "openapi",
+    "url": "{{AI_CONFIG_MCPO_URL}}",
+    "spec_type": "url",
+    "spec": "",
+    "path": "openapi.json",
+    "auth_type": "bearer",
+    "key": "{{MCPO_API_KEY_VALUE}}",
+    "config": {
+      "enable": true
+    },
+    "info": {
+      "id": "ai-config-mcpo",
+      "name": "ai-config (MCPO)",
+      "description": "ai-config selector tools exposed through MCPO on Cloud Run"
+    }
+  },
+  {
+    "type": "openapi",
+    "url": "{{AI_CONFIG_PROVIDER_MCPO_URL}}",
+    "spec_type": "url",
+    "spec": "",
+    "path": "openapi.json",
+    "auth_type": "bearer",
+    "key": "{{MCPO_API_KEY_VALUE}}",
+    "config": {
+      "enable": true
+    },
+    "info": {
+      "id": "ai-config-provider-mcpo",
+      "name": "ai-config-provider (MCPO)",
+      "description": "ai-config provider tools exposed through MCPO on Cloud Run"
+    }
+  }
+]

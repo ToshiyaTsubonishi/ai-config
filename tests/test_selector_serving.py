@@ -67,6 +67,7 @@ def _build_valid_index(repo_root: Path, index_dir: Path) -> None:
 
 
 def _start_selector_serving(repo_root: Path, index_dir: Path, port: int) -> subprocess.Popen[str]:
+    env = _project_env()
     return subprocess.Popen(
         [
             sys.executable,
@@ -86,7 +87,7 @@ def _start_selector_serving(repo_root: Path, index_dir: Path, port: int) -> subp
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
-        env=_project_env(),
+        env=env,
     )
 
 
@@ -170,6 +171,58 @@ def test_selector_serving_exposes_read_only_http_mcp_and_health_endpoints(tmp_pa
     assert payload["search"]["count"] == 1
     assert payload["search"]["results"][0]["id"] == "skill:demo-selector"
     assert payload["detail"]["id"] == "skill:demo-selector"
+
+
+def test_selector_serving_readiness_includes_deploy_provenance(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    _build_repo(repo_root)
+    index_dir = tmp_path / "index"
+    _build_valid_index(repo_root, index_dir)
+
+    port = _free_port()
+    env = _project_env()
+    env.update(
+        {
+            "AI_CONFIG_DEPLOY_COMMIT_SHA": "selector-sha",
+            "AI_CONFIG_DEPLOY_IMAGE": "example.com/selector@sha256:def",
+            "K_SERVICE": "ai-config-selector",
+            "K_REVISION": "ai-config-selector-00001-abc",
+            "K_CONFIGURATION": "ai-config-selector",
+        }
+    )
+    proc = subprocess.Popen(
+        [
+            sys.executable,
+            "-m",
+            "ai_config.mcp_server.serving",
+            "--repo-root",
+            str(repo_root),
+            "--index-dir",
+            str(index_dir),
+            "--host",
+            "127.0.0.1",
+            "--port",
+            str(port),
+            "--streamable-http-path",
+            "/mcp",
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        env=env,
+    )
+    try:
+        readiness = _wait_for_json(f"http://127.0.0.1:{port}/readyz", proc)
+    finally:
+        _terminate(proc)
+
+    assert readiness["provenance"] == {
+        "commit_sha": "selector-sha",
+        "image_ref": "example.com/selector@sha256:def",
+        "service": "ai-config-selector",
+        "revision": "ai-config-selector-00001-abc",
+        "configuration": "ai-config-selector",
+    }
 
 
 def test_selector_serving_fails_fast_when_index_dir_missing(tmp_path: Path) -> None:

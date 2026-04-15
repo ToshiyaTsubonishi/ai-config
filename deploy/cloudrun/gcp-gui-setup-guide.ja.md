@@ -119,6 +119,33 @@ GCP コンソールで、次の API が有効か確認します。
 
 いちばん大事なのは「Cloud Run が pull できる完成済みイメージ URL を 2 本持っていること」です。
 
+### 3-0. constrained production では release manifest を先に作る
+
+今回のように production 側で `docker login` / `gcloud auth` / GitHub login ができないなら、
+手元または GitHub Actions で GHCR publish を済ませてから、Cloud Run には digest ref だけを渡す形が主系です。
+
+この repo にはそのための script があります。
+
+```bash
+python deploy/cloudrun/release/publish_ghcr_release.py \
+  --github-owner YOUR_GITHUB_USERNAME \
+  --provider-repo ../ai-config-provider \
+  --push \
+  --output .artifacts/ghcr-release-manifest.json
+```
+
+出力される `ghcr-release-manifest.json` には次が入ります。
+
+- selector/provider の `ghcr.io/...@sha256:...`
+- selector/provider の commit SHA
+- provider-bundle version
+
+GUI で Cloud Run に貼る image URL は、この manifest に出た `@sha256:` の URL を使ってください。
+tag のまま貼ると、後から repo と runtime surface の対応を追いにくくなります。
+
+また、production が GHCR に認証できない場合は、deploy の間だけ GitHub Packages を一時的に
+`public` にして pull させ、終わったら戻す運用にしてください。
+
 ### 3-1. まず決めること
 
 あなたが使うイメージ URL を 2 つ決めて、手元にメモしてください。

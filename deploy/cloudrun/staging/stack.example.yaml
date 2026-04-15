@@ -1,0 +1,56 @@
+project_id: abiding-aspect-457603-m8
+project_number: REPLACE_WITH_PROJECT_NUMBER
+region: asia-northeast1
+google_oauth_scope: openid email
+
+# Prefer the digest refs from deploy/cloudrun/release/ghcr-release-manifest.json.
+# Use image tags here only while iterating locally.
+
+service_account: open-webui-runner@abiding-aspect-457603-m8.iam.gserviceaccount.com
+cloudsql_instance: open-web-ui
+
+openai:
+  enable: true
+  api_base_urls:
+    - https://generativelanguage.googleapis.com/v1beta/openai
+  api_keys_secret: GEMINI_API_KEY
+  api_configs:
+    "0":
+      enable: true
+      tags: []
+      prefix_id: ""
+      model_ids: []
+      connection_type: external
+      auth_type: bearer
+
+images:
+  selector: asia-northeast1-docker.pkg.dev/abiding-aspect-457603-m8/ghcr/ai-config-selector-serving:staging
+  provider: asia-northeast1-docker.pkg.dev/abiding-aspect-457603-m8/ghcr/ai-config-provider:staging
+  open_webui: asia-northeast1-docker.pkg.dev/abiding-aspect-457603-m8/ghcr/open-webui/open-webui:main
+  open_terminal: asia-northeast1-docker.pkg.dev/abiding-aspect-457603-m8/ghcr/ghcr.io/open-webui/open-terminal:latest
+  searxng: asia-northeast1-docker.pkg.dev/abiding-aspect-457603-m8/ghcr/ghcr.io/searxng/searxng:latest
+  mcpo: ghcr.io/open-webui/mcpo:v0.0.20
+
+buckets:
+  open_webui: open-webui-abiding-aspect-457603-m8
+  searxng: searxng-abiding-aspect-457603-m8
+
+secrets:
+  mcpo_api_key: MCPO_API_KEY
+  tool_server_connections: OPENWEBUI_TOOL_SERVER_CONNECTIONS
+  webui_secret_key: WEBUI_SECRET_KEY
+  gemini_api_key: GEMINI_API_KEY
+  google_client_id: open_webui_oauth_client_id
+  google_client_secret: open_webui_oauth_client_secret
+  database_url: DATABASE_URL
+  open_terminal_api_key: OPEN_TERMINAL_API_KEY
+  searxng_secret: SEARXNG_SECRET
+
+tool_server_connections:
+  mcpo_api_key_placeholder: __REPLACE_WITH_MCPO_API_KEY__
+
+provenance:
+  selector_commit_sha: ""
+  provider_commit_sha: ""
+  provider_bundle_version: ""
+  provider_bundle_source_commit_sha: ""

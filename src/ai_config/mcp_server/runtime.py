@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -18,6 +19,21 @@ REQUIRED_INDEX_ARTIFACTS = (
 )
 
 
+def deployment_provenance_from_env() -> dict[str, str]:
+    provenance: dict[str, str] = {}
+    for env_key, payload_key in (
+        ("AI_CONFIG_DEPLOY_COMMIT_SHA", "commit_sha"),
+        ("AI_CONFIG_DEPLOY_IMAGE", "image_ref"),
+        ("K_SERVICE", "service"),
+        ("K_REVISION", "revision"),
+        ("K_CONFIGURATION", "configuration"),
+    ):
+        value = os.getenv(env_key, "").strip()
+        if value:
+            provenance[payload_key] = value
+    return provenance
+
+
 @dataclass(frozen=True)
 class RuntimeIndexStatus:
     """Validated runtime index metadata for health/readiness reporting."""
@@ -30,7 +46,7 @@ class RuntimeIndexStatus:
     vector_backend: str
 
     def to_readiness_payload(self) -> dict[str, Any]:
-        return {
+        payload = {
             "status": "ready",
             "surface": "selector-serving",
             "runtime_mode": "read_only",
@@ -42,6 +58,10 @@ class RuntimeIndexStatus:
             "vector_backend": self.vector_backend,
             "required_artifacts": list(REQUIRED_INDEX_ARTIFACTS),
         }
+        provenance = deployment_provenance_from_env()
+        if provenance:
+            payload["provenance"] = provenance
+        return payload
 
 
 def required_artifact_paths(index_dir: Path) -> list[Path]:
