@@ -47,6 +47,12 @@ python deploy/cloudrun/release/publish_ghcr_release.py \
 step 2 では `provider-bundle/.index/provider-bundle-metadata.json` も更新され、
 manifest にはその `bundle_version` と source `ai-config` commit SHA が入ります。
 
+clean checkout で `ai-config/.index/records.json` が存在しない場合でも、
+script は selector index を先に bootstrap してから provider bundle を作ります。
+
+もし local Docker が `DOCKER_CONFIG` の都合で `buildx` を見失う環境でも、
+script は `docker build` + `docker push` へ fallback します。
+
 ## 生成物
 
 manifest には次が入ります。

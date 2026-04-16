@@ -121,3 +121,12 @@
 - **期待動作**: `git status`、`git diff --cached --name-status`、`.git/MERGE_HEAD` まで見て、未コミット差分だけでなく staged remote changes / merge in progress を先に把握する
 - **実際の動作**: 初見では working tree の modified files だけ見えて、merge 途中であることと staged 側の大量差分を後から掴んだ
 - **ルール**: local と GitHub の統合作業では、最初に `git status` と `git diff --cached --name-status` と `MERGE_HEAD` の有無を必ず確認し、conflict marker 混入ファイルも検索してから統合方針を決める
+
+## 2026-04-16: release workflow は clean checkout 前提で index を自前生成する
+
+### ミス 10: local にある `.index` を暗黙前提にして GHCR publish workflow を組んだ
+
+- **状況**: `publish-ghcr-release.yml` を GitHub Actions で動かしたところ、`ai-config-provider` の bundle materialization が `ai-config/.index/records.json` 不在で落ちた
+- **期待動作**: release script / workflow は clean checkout でも完結し、local で生成済みの index や artifact に依存しない
+- **実際の動作**: local では `.index` が残っているため見えなかったが、CI では clean checkout のため provider bundle 生成前に必要な selector index が無かった
+- **ルール**: repo 外部へ publish する build/release workflow は、clean checkout で必要 artifact を全部自前生成する。特に provider bundle のように `.index/records.json` を読む処理がある場合は、release script 側で bootstrap を持つか、workflow に明示的な build step を入れる

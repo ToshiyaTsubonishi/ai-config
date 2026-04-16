@@ -138,6 +138,19 @@ def _run(cmd: list[str], *, cwd: Path, dry_run: bool) -> None:
     subprocess.run(cmd, cwd=cwd, check=True)
 
 
+def _run_capture(cmd: list[str], *, cwd: Path, dry_run: bool) -> subprocess.CompletedProcess[str] | None:
+    print(f"+ {shlex.join(cmd)}", file=sys.stderr)
+    if dry_run:
+        return None
+    return subprocess.run(
+        cmd,
+        cwd=cwd,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+
 def _materialize_provider_bundle(ai_config_repo: Path, provider_repo: Path, *, dry_run: bool) -> None:
     npm_install = ["npm", "ci"] if (provider_repo / "package-lock.json").exists() else ["npm", "install"]
     _run(npm_install, cwd=provider_repo, dry_run=dry_run)
@@ -170,6 +183,52 @@ def _load_provider_bundle_metadata(provider_repo: Path) -> dict[str, Any]:
     return payload
 
 
+def _ensure_selector_index(ai_config_repo: Path, *, dry_run: bool) -> None:
+    records_path = ai_config_repo / ".index" / "records.json"
+    if records_path.exists():
+        return
+
+    _run([sys.executable, "-m", "pip", "install", "."], cwd=ai_config_repo, dry_run=dry_run)
+    _run(
+        [
+            "ai-config-vendor-skills",
+            "--repo-root",
+            str(ai_config_repo),
+            "sync-manifest",
+        ],
+        cwd=ai_config_repo,
+        dry_run=dry_run,
+    )
+    _run(
+        [
+            "ai-config-index",
+            "--repo-root",
+            str(ai_config_repo),
+            "--profile",
+            "default",
+        ],
+        cwd=ai_config_repo,
+        dry_run=dry_run,
+    )
+
+
+def buildx_available() -> bool:
+    result = subprocess.run(
+        ["docker", "buildx", "build", "--platform", "linux/amd64", "--help"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    return result.returncode == 0
+
+
+def extract_push_digest(output: str) -> str | None:
+    match = re.search(r"digest:\s*(sha256:[a-f0-9]{64})", output)
+    if match:
+        return match.group(1)
+    return None
+
+
 def _docker_build(
     *,
     context_dir: Path,
@@ -181,6 +240,18 @@ def _docker_build(
     platform: str,
     dry_run: bool,
 ) -> str | None:
+    if not buildx_available():
+        return _docker_build_legacy(
+            context_dir=context_dir,
+            dockerfile=dockerfile,
+            image_repository=image_repository,
+            tag=tag,
+            labels=labels,
+            push=push,
+            platform=platform,
+            dry_run=dry_run,
+        )
+
     with tempfile.TemporaryDirectory(prefix="ai-config-ghcr-release-") as tmp_dir:
         metadata_path = Path(tmp_dir) / "buildx-metadata.json"
         cmd = [
@@ -201,7 +272,24 @@ def _docker_build(
             cmd.extend(["--label", f"{key}={value}"])
         cmd.append("--push" if push else "--load")
         cmd.append(str(context_dir))
-        _run(cmd, cwd=context_dir, dry_run=dry_run)
+        try:
+            _run(cmd, cwd=context_dir, dry_run=dry_run)
+        except subprocess.CalledProcessError as error:
+            print(
+                f"buildx path failed for {image_repository}:{tag}; falling back to docker build. "
+                f"stderr={error.stderr!r}",
+                file=sys.stderr,
+            )
+            return _docker_build_legacy(
+                context_dir=context_dir,
+                dockerfile=dockerfile,
+                image_repository=image_repository,
+                tag=tag,
+                labels=labels,
+                push=push,
+                platform=platform,
+                dry_run=dry_run,
+            )
         if dry_run:
             return None
         payload = json.loads(metadata_path.read_text(encoding="utf-8"))
@@ -209,6 +297,53 @@ def _docker_build(
         if push and digest is None:
             raise ValueError(f"buildx metadata did not contain a pushed digest for {image_repository}:{tag}")
         return digest
+
+
+def _docker_build_legacy(
+    *,
+    context_dir: Path,
+    dockerfile: Path,
+    image_repository: str,
+    tag: str,
+    labels: dict[str, str],
+    push: bool,
+    platform: str,
+    dry_run: bool,
+) -> str | None:
+    cmd = [
+        "docker",
+        "build",
+        "--platform",
+        platform,
+        "--file",
+        str(dockerfile),
+        "--tag",
+        f"{image_repository}:{tag}",
+        "--pull",
+    ]
+    for key, value in labels.items():
+        cmd.extend(["--label", f"{key}={value}"])
+    cmd.append(str(context_dir))
+    _run(cmd, cwd=context_dir, dry_run=dry_run)
+    if not push:
+        return None
+
+    push_cmd = [
+        "docker",
+        "push",
+        "--platform",
+        platform,
+        f"{image_repository}:{tag}",
+    ]
+    result = _run_capture(push_cmd, cwd=context_dir, dry_run=dry_run)
+    if dry_run or result is None:
+        return None
+
+    combined_output = f"{result.stdout}\n{result.stderr}"
+    digest = extract_push_digest(combined_output)
+    if digest is None:
+        raise ValueError(f"docker push output did not contain a digest for {image_repository}:{tag}")
+    return digest
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -250,6 +385,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         selector_commit_sha = _git_head(ai_config_repo)
         provider_commit_sha = _git_head(provider_repo)
+        _ensure_selector_index(ai_config_repo, dry_run=args.dry_run)
         _materialize_provider_bundle(ai_config_repo, provider_repo, dry_run=args.dry_run)
         if args.dry_run:
             try:

@@ -2099,3 +2099,35 @@
   - `~/.gemini/settings.json` と `~/.gemini/antigravity/mcp_config.json` は `ai-config-selector` のみを保持している
   - legacy skill ディレクトリ 3 つは削除済み
   - バックアップとして `~/.claude.json.bak.20260309-124350` などの退避ファイルを作成済み
+
+## 2026-04-16 GHCR Release Publish Hardening
+
+### Plan
+- [x] GHCR publish の失敗要因を切り分ける
+- [x] clean checkout でも provider bundle を作れるよう release script を補強する
+- [x] release test を更新して回帰を防ぐ
+- [ ] GitHub Actions で再 publish し、digest manifest を確定する
+- [ ] production 用 Cloud Run YAML を digest 固定で render する
+
+### Progress
+- [x] local Docker path の `write:packages` 不足を確認
+- [x] GitHub Actions workflow failure を確認
+- [x] `ai-config/.index/records.json` 不在で bundle materialization が落ちる根本原因を特定
+- [x] release script を修正
+- [x] release test を追加
+
+### Review
+- 更新ファイル:
+  - `deploy/cloudrun/release/publish_ghcr_release.py`
+  - `deploy/cloudrun/release/README.md`
+  - `tests/test_cloudrun_release_assets.py`
+- 実装要約:
+  - `publish_ghcr_release.py` に selector index bootstrap を追加し、clean checkout で `.index/records.json` が無い場合でも `pip install .` -> `ai-config-vendor-skills sync-manifest` -> `ai-config-index --profile default` を自動実行するようにした
+  - release README に clean checkout 対応を追記した
+  - release test に selector index bootstrap の回帰テストを追加した
+- 検証コマンド:
+  - `.venv/bin/python -m pytest tests/test_cloudrun_release_assets.py -q`
+  - `git diff --check`
+- 検証結果:
+  - `4 passed`
+  - `git diff --check` clean

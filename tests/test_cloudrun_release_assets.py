@@ -71,6 +71,32 @@ def test_release_helpers_cover_default_tags_and_buildx_digest_formats() -> None:
     assert release.extract_buildx_digest(
         {"containerimage.descriptor": {"digest": "sha256:" + "4" * 64}}
     ) == "sha256:" + "4" * 64
+    assert release.extract_push_digest(
+        "latest: digest: sha256:" + "5" * 64 + " size: 1234"
+    ) == "sha256:" + "5" * 64
+
+
+def test_release_helper_builds_selector_index_when_missing(tmp_path: Path, monkeypatch) -> None:
+    release = _load_release_module()
+
+    repo_root = tmp_path / "ai-config"
+    repo_root.mkdir()
+    commands: list[tuple[list[str], Path, bool]] = []
+
+    def fake_run(cmd: list[str], *, cwd: Path, dry_run: bool) -> None:
+        commands.append((cmd, cwd, dry_run))
+
+    monkeypatch.setattr(release, "_run", fake_run)
+
+    release._ensure_selector_index(repo_root, dry_run=False)
+
+    assert [cmd for cmd, _, _ in commands] == [
+        [sys.executable, "-m", "pip", "install", "."],
+        ["ai-config-vendor-skills", "--repo-root", str(repo_root), "sync-manifest"],
+        ["ai-config-index", "--repo-root", str(repo_root), "--profile", "default"],
+    ]
+    assert all(cwd == repo_root for _, cwd, _ in commands)
+    assert all(dry_run is False for _, _, dry_run in commands)
 
 
 def test_release_docs_and_workflow_cover_constrained_production_path() -> None:
