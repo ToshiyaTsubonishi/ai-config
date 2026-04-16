@@ -1,5 +1,55 @@
 # TODO
 
+## 2026-04-16 Production Cloud Run YAML for `sbi-art-auction`
+
+### Plan
+- [x] current prod exports と repo deploy assets を照合し、production 用 stack defaults を固定する
+- [x] `sbi-art-auction` 向けの renderable production YAML assets を追加する
+- [x] GitHub repo visibility の変更可否を確認し、可能なものは反映する
+- [x] tests / dry-run / review を記録する
+
+### Progress
+- [x] `open-we-ui.yaml` / `mcpo.yaml` / `ai-config-selector.yaml` と Open WebUI config export から prod 固定値を確認
+- [x] `deploy/cloudrun/production/` に stack example / renderer wrapper / apply wrapper / README を追加
+- [x] `gh repo view` で repo visibility を確認し、`ai-harness` を public 化
+- [x] production asset tests / wrapper validation を実行
+
+### Review
+- [x] updated files
+- [x] validation commands
+- [x] results
+
+- 更新ファイル:
+  - `deploy/cloudrun/README.md`
+  - `deploy/cloudrun/release/README.md`
+  - `deploy/cloudrun/production/README.md`
+  - `deploy/cloudrun/production/stack.example.yaml`
+  - `deploy/cloudrun/production/render_stack.py`
+  - `deploy/cloudrun/production/apply_rendered_stack.sh`
+  - `tests/test_cloudrun_production_assets.py`
+  - `tasks/todo.md`
+- 実施内容:
+  - current production project `sbi-art-auction` / `424287527578` の Cloud Run export と Open WebUI config export を読み、bucket / service account / OAuth scope / image defaults を production stack values に固定した
+  - staging renderer を再利用する production wrapper を追加し、GHCR release manifest の digest / provenance を差し込んで 5 service YAML を render できるようにした
+  - `apply_rendered_stack.sh` wrapper を追加し、production project / region 既定値で apply できるようにした
+  - GitHub visibility は `ai-config` / `ai-config-provider` が既に public、`ai-harness` は `gh repo edit ... --visibility public --accept-visibility-change-consequences` で public に変更した
+- 検証:
+  - `gh repo view ToshiyaTsubonishi/ai-config --json visibility,nameWithOwner`
+  - `gh repo view ToshiyaTsubonishi/ai-config-provider --json visibility,nameWithOwner`
+  - `gh repo view ToshiyaTsubonishi/ai-harness --json visibility,nameWithOwner`
+  - `cd /Users/tsytbns/Documents/GitHub/ai-harness && PYTHONPATH=../ai-config/src:src .venv/bin/python -m ai_config_dispatch.cli --workflow feature-build --dry-run --trace "Create production Cloud Run deployment assets that consume prebuilt GHCR digests for ai-config selector/provider/Open WebUI in project sbi-art-auction, while keeping ai-harness documented but out of phase-1 Cloud Run runtime. Also verify whether the GitHub repositories ai-config, ai-config-provider, and ai-harness can be made public from the current authenticated session."`
+  - `cd /Users/tsytbns/Documents/GitHub/ai-config && .venv/bin/python -m pytest tests/test_cloudrun_production_assets.py tests/test_cloudrun_release_assets.py tests/test_cloudrun_deploy_templates.py tests/test_cloudrun_staging_assets.py -q`
+  - `cd /Users/tsytbns/Documents/GitHub/ai-config && .venv/bin/python -m pytest tests/test_cloudrun_production_assets.py tests/test_cloudrun_release_assets.py -q`
+  - `bash -n /Users/tsytbns/Documents/GitHub/ai-config/deploy/cloudrun/production/apply_rendered_stack.sh`
+  - `cd /Users/tsytbns/Documents/GitHub/ai-config && .venv/bin/python deploy/cloudrun/production/render_stack.py --help >/dev/null`
+  - `git -C /Users/tsytbns/Documents/GitHub/ai-config diff --check`
+- 検証結果:
+  - production / release / deploy asset suite は `20 passed`
+  - focused production/release tests は `6 passed`
+  - production apply wrapper の shell syntax は clean
+  - production renderer wrapper は repo `.venv` から正常に help を表示した
+  - `ai-config` / `ai-config-provider` / `ai-harness` の GitHub visibility はすべて `PUBLIC`
+
 ## 2026-04-15 GHCR Release Path for Constrained Production
 
 ### Plan

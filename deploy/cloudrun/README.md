@@ -23,6 +23,22 @@ production と別 project に staging stack を立てる場合は、固定 YAML 
 separate-project staging では、Cloud SQL / GCS / Secret Manager / OAuth redirect URI
 も production と共有しません。
 
+## Production Project Assets
+
+既存 production project `sbi-art-auction` 向けには、`production/` 配下に
+GHCR digest 前提の renderable assets を追加しています。
+
+- `production/stack.example.yaml`
+  production project の固定値と、selector/provider の GHCR digest slot
+- `production/render_stack.py`
+  shared renderer を production defaults で呼び出す wrapper
+- `production/apply_rendered_stack.sh`
+  rendered 5 service を production project へ適用する wrapper
+- `production/README.md`
+  release manifest から digest / provenance を移して production YAML を作る手順
+
+production でも tag ではなく `@sha256:` digest ref を主系として使ってください。
+
 ## Constrained Production Release
 
 production 環境で `docker login` / `gcloud auth` / GitHub login ができない場合は、

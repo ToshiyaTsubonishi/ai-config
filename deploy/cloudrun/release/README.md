@@ -88,8 +88,9 @@ manifest には次が入ります。
 
 ## Cloud Run への渡し方
 
-- `deploy/cloudrun/staging/stack.example.yaml` の `images.selector` / `images.provider`
-  には manifest の digest ref を入れる
+- `deploy/cloudrun/staging/stack.example.yaml` または
+  `deploy/cloudrun/production/stack.example.yaml` の
+  `images.selector` / `images.provider` には manifest の digest ref を入れる
 - provenance も manifest の `cloudrun.provenance` をそのまま移す
 - production が GHCR に認証できない場合は、GitHub Packages の package visibility を
   一時的に `public` にして deploy し、完了後に戻す
