@@ -214,7 +214,7 @@ def _ensure_selector_index(ai_config_repo: Path, *, dry_run: bool) -> None:
 
 def buildx_available() -> bool:
     result = subprocess.run(
-        ["docker", "buildx", "build", "--platform", "linux/amd64", "--help"],
+        ["docker", "buildx", "version"],
         check=False,
         capture_output=True,
         text=True,

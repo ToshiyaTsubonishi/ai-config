@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import subprocess
 import sys
 from pathlib import Path
 
@@ -97,6 +98,20 @@ def test_release_helper_builds_selector_index_when_missing(tmp_path: Path, monke
     ]
     assert all(cwd == repo_root for _, cwd, _ in commands)
     assert all(dry_run is False for _, _, dry_run in commands)
+
+
+def test_buildx_detection_uses_version_command(monkeypatch) -> None:
+    release = _load_release_module()
+    seen: list[list[str]] = []
+
+    def fake_run(cmd: list[str], check: bool, capture_output: bool, text: bool):
+        seen.append(cmd)
+        return subprocess.CompletedProcess(cmd, 0, stdout="buildx ok", stderr="")
+
+    monkeypatch.setattr(release.subprocess, "run", fake_run)
+
+    assert release.buildx_available() is True
+    assert seen == [["docker", "buildx", "version"]]
 
 
 def test_release_docs_and_workflow_cover_constrained_production_path() -> None:
