@@ -25,31 +25,31 @@ def test_release_manifest_uses_digest_refs_and_provenance() -> None:
     release = _load_release_module()
 
     manifest = release.build_release_manifest(
-        github_owner="tsytbns",
+        github_owner="ToshiyaTsubonishi",
         generated_at="2026-04-15T00:00:00Z",
         selector=release.ImageRelease(
-            repository="ghcr.io/tsytbns/ai-config-selector-serving",
+            repository="ghcr.io/toshiyatsubonishi/ai-config-selector-serving",
             tag="selector-abc123def456",
             digest="sha256:" + "1" * 64,
             source_commit_sha="abc123def4567890",
-            source_repository="https://github.com/tsytbns/ai-config",
+            source_repository="https://github.com/ToshiyaTsubonishi/ai-config",
         ),
         provider=release.ImageRelease(
-            repository="ghcr.io/tsytbns/ai-config-provider",
+            repository="ghcr.io/toshiyatsubonishi/ai-config-provider",
             tag="provider-fedcba654321-bundle-v1",
             digest="sha256:" + "2" * 64,
             source_commit_sha="fedcba6543210987",
-            source_repository="https://github.com/tsytbns/ai-config-provider",
+            source_repository="https://github.com/ToshiyaTsubonishi/ai-config-provider",
             bundle_version="bundle-v1",
             bundle_source_commit_sha="abc123def4567890",
         ),
     )
 
     assert manifest["selector"]["image_ref"] == (
-        "ghcr.io/tsytbns/ai-config-selector-serving@sha256:" + "1" * 64
+        "ghcr.io/toshiyatsubonishi/ai-config-selector-serving@sha256:" + "1" * 64
     )
     assert manifest["provider"]["image_ref"] == (
-        "ghcr.io/tsytbns/ai-config-provider@sha256:" + "2" * 64
+        "ghcr.io/toshiyatsubonishi/ai-config-provider@sha256:" + "2" * 64
     )
     assert manifest["provider"]["bundle_version"] == "bundle-v1"
     assert manifest["cloudrun"]["images"]["selector"] == manifest["selector"]["image_ref"]

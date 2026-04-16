@@ -22,8 +22,8 @@ openai:
 
 images:
   # Replace both with the pinned digests from deploy/cloudrun/release/ghcr-release-manifest.json.
-  selector: ghcr.io/tsytbns/ai-config-selector-serving@sha256:REPLACE_WITH_SELECTOR_DIGEST
-  provider: ghcr.io/tsytbns/ai-config-provider@sha256:REPLACE_WITH_PROVIDER_DIGEST
+  selector: ghcr.io/toshiyatsubonishi/ai-config-selector-serving@sha256:REPLACE_WITH_SELECTOR_DIGEST
+  provider: ghcr.io/toshiyatsubonishi/ai-config-provider@sha256:REPLACE_WITH_PROVIDER_DIGEST
   open_webui: asia-northeast1-docker.pkg.dev/sbi-art-auction/ghcr/open-webui/open-webui:main
   open_terminal: asia-northeast1-docker.pkg.dev/sbi-art-auction/ghcr/ghcr.io/open-webui/open-terminal:latest
   searxng: asia-northeast1-docker.pkg.dev/sbi-art-auction/ghcr/ghcr.io/searxng/searxng:latest

@@ -222,13 +222,16 @@ gh auth status
 gh api user --jq '.login'
 ```
 
-たとえば login が `tsytbns` なら、image URL は次です。
+GitHub Actions の `GITHUB_TOKEN` で publish する場合は、repo owner を `--github-owner` に渡し、
+GHCR 上の image URL は lowercase namespace に正規化されます。
 
 ```text
-ghcr.io/tsytbns/ai-config-selector-serving:main
+ghcr.io/toshiyatsubonishi/ai-config-selector-serving:main
 ```
 
-`ghcr.io/ToshiyaTsubonishi/...` のように repo owner 側で push しようとして `denied` になる場合は、この namespace の違いを疑ってください。
+repo owner を mixed-case のまま `ghcr.io/ToshiyaTsubonishi/...` にすると、
+`repository name must be lowercase` で失敗します。
+release script / workflow を使う場合は、この正規化を自動で吸収します。
 
 もし token の権限が足りないと、push 時に次のようなエラーになります。
 

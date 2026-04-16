@@ -94,6 +94,7 @@ def build_release_manifest(
         "generated_at": generated_at,
         "registry": "ghcr.io",
         "github_owner": github_owner,
+        "registry_namespace": github_owner.lower(),
         "distribution": {
             "temporary_public_required_for_constrained_production": True,
             "note": "If production cannot authenticate to GHCR, temporarily switch the package visibility to public during deploy.",
@@ -405,8 +406,9 @@ def main(argv: list[str] | None = None) -> int:
         selector_tag = args.selector_tag or default_selector_tag(selector_commit_sha)
         provider_tag = args.provider_tag or default_provider_tag(provider_commit_sha, provider_bundle_version)
 
-        selector_repository = f"ghcr.io/{args.github_owner}/{args.selector_image_name}"
-        provider_repository = f"ghcr.io/{args.github_owner}/{args.provider_image_name}"
+        registry_namespace = args.github_owner.lower()
+        selector_repository = f"ghcr.io/{registry_namespace}/{args.selector_image_name}"
+        provider_repository = f"ghcr.io/{registry_namespace}/{args.provider_image_name}"
 
         selector_digest = _docker_build(
             context_dir=ai_config_repo,

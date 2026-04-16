@@ -57,7 +57,7 @@ Cloud Run に渡します。
 
 ```bash
 python deploy/cloudrun/release/publish_ghcr_release.py \
-  --github-owner tsytbns \
+  --github-owner ToshiyaTsubonishi \
   --provider-repo ../ai-config-provider \
   --push \
   --output .artifacts/ghcr-release-manifest.json

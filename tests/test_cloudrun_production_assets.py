@@ -40,8 +40,8 @@ def _write_fixture_config(path: Path) -> None:
                 "      connection_type: external",
                 "      auth_type: bearer",
                 "images:",
-                "  selector: ghcr.io/tsytbns/ai-config-selector-serving@sha256:1111111111111111111111111111111111111111111111111111111111111111",
-                "  provider: ghcr.io/tsytbns/ai-config-provider@sha256:2222222222222222222222222222222222222222222222222222222222222222",
+                "  selector: ghcr.io/toshiyatsubonishi/ai-config-selector-serving@sha256:1111111111111111111111111111111111111111111111111111111111111111",
+                "  provider: ghcr.io/toshiyatsubonishi/ai-config-provider@sha256:2222222222222222222222222222222222222222222222222222222222222222",
                 "  open_webui: asia-northeast1-docker.pkg.dev/sbi-art-auction/ghcr/open-webui/open-webui:main",
                 "  open_terminal: asia-northeast1-docker.pkg.dev/sbi-art-auction/ghcr/ghcr.io/open-webui/open-terminal:latest",
                 "  searxng: asia-northeast1-docker.pkg.dev/sbi-art-auction/ghcr/ghcr.io/searxng/searxng:latest",
@@ -83,8 +83,8 @@ def test_production_stack_example_targets_sbi_art_auction() -> None:
     assert config["cloudsql_instance"] == "open-web-ui"
     assert config["buckets"]["open_webui"] == "open-webui-sbiaa"
     assert config["buckets"]["searxng"] == "searxng-sbiaa"
-    assert config["images"]["selector"].startswith("ghcr.io/tsytbns/ai-config-selector-serving@sha256:")
-    assert config["images"]["provider"].startswith("ghcr.io/tsytbns/ai-config-provider@sha256:")
+    assert config["images"]["selector"].startswith("ghcr.io/toshiyatsubonishi/ai-config-selector-serving@sha256:")
+    assert config["images"]["provider"].startswith("ghcr.io/toshiyatsubonishi/ai-config-provider@sha256:")
 
 
 def test_production_wrapper_renders_prod_defaults(tmp_path: Path) -> None:
@@ -122,14 +122,14 @@ def test_production_wrapper_renders_prod_defaults(tmp_path: Path) -> None:
     assert selector["metadata"]["namespace"] == "424287527578"
     selector_container = selector["spec"]["template"]["spec"]["containers"][0]
     assert selector_container["image"] == (
-        "ghcr.io/tsytbns/ai-config-selector-serving@sha256:"
+        "ghcr.io/toshiyatsubonishi/ai-config-selector-serving@sha256:"
         "1111111111111111111111111111111111111111111111111111111111111111"
     )
 
     provider_container = provider["spec"]["template"]["spec"]["containers"][0]
     provider_env = {item["name"]: item for item in provider_container["env"]}
     assert provider_container["image"] == (
-        "ghcr.io/tsytbns/ai-config-provider@sha256:"
+        "ghcr.io/toshiyatsubonishi/ai-config-provider@sha256:"
         "2222222222222222222222222222222222222222222222222222222222222222"
     )
     assert provider_env["AI_CONFIG_SELECTOR_BASE_URL"]["value"] == (

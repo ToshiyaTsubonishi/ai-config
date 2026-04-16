@@ -4,8 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       github_owner:
-        description: "GHCR namespace owner (user or org)"
-        required: true
+        description: "Optional GHCR namespace owner. Defaults to the repository owner."
+        required: false
+        default: ""
         type: string
       provider_repository:
         description: "Optional ai-config-provider repository. Defaults to <github_owner>/ai-config-provider."
@@ -43,11 +44,22 @@ jobs:
       - name: Resolve provider repository
         id: provider-repo
         env:
-          GITHUB_OWNER: ${{ inputs.github_owner }}
+          INPUT_GITHUB_OWNER: ${{ inputs.github_owner }}
+          REPOSITORY_OWNER: ${{ github.repository_owner }}
           INPUT_REPOSITORY: ${{ inputs.provider_repository }}
         run: |
-          repo="${INPUT_REPOSITORY:-$GITHUB_OWNER/ai-config-provider}"
+          owner="${INPUT_GITHUB_OWNER:-$REPOSITORY_OWNER}"
+          repo="${INPUT_REPOSITORY:-$owner/ai-config-provider}"
           echo "value=$repo" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve GHCR owner
+        id: ghcr-owner
+        env:
+          INPUT_GITHUB_OWNER: ${{ inputs.github_owner }}
+          REPOSITORY_OWNER: ${{ github.repository_owner }}
+        run: |
+          owner="${INPUT_GITHUB_OWNER:-$REPOSITORY_OWNER}"
+          echo "value=$owner" >> "$GITHUB_OUTPUT"
 
       - name: Checkout ai-config-provider
         uses: actions/checkout@v4
@@ -81,7 +93,7 @@ jobs:
 
       - name: Publish selector/provider images
         env:
-          GITHUB_OWNER: ${{ inputs.github_owner }}
+          GITHUB_OWNER: ${{ steps.ghcr-owner.outputs.value }}
           SELECTOR_TAG: ${{ inputs.selector_tag }}
           PROVIDER_TAG: ${{ inputs.provider_tag }}
         run: |

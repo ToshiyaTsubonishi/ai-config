@@ -24,7 +24,7 @@ spec:
       serviceAccountName: open-webui-runner@sbi-art-auction.iam.gserviceaccount.com
       containers:
       - name: ai-config-selector-1
-        image: ghcr.io/tsytbns/ai-config-selector-serving@sha256:bd606a4de2c81e98fb99c5217b5e5a83fee817a1b856583b4017c0980c463eb8
+        image: ghcr.io/toshiyatsubonishi/ai-config-selector-serving@sha256:bd606a4de2c81e98fb99c5217b5e5a83fee817a1b856583b4017c0980c463eb8
         ports:
         - name: http1
           containerPort: 8080

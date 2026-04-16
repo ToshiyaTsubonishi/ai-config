@@ -31,7 +31,7 @@ deploy 前に別の build-capable environment で image を完成させ、digest
 cd /Users/tsytbns/Documents/GitHub/ai-config
 
 python deploy/cloudrun/release/publish_ghcr_release.py \
-  --github-owner tsytbns \
+  --github-owner ToshiyaTsubonishi \
   --provider-repo ../ai-config-provider \
   --push \
   --output .artifacts/ghcr-release-manifest.json
@@ -68,16 +68,16 @@ manifest には次が入ります。
 ```json
 {
   "selector": {
-    "image_ref": "ghcr.io/tsytbns/ai-config-selector-serving@sha256:..."
+    "image_ref": "ghcr.io/toshiyatsubonishi/ai-config-selector-serving@sha256:..."
   },
   "provider": {
-    "image_ref": "ghcr.io/tsytbns/ai-config-provider@sha256:...",
+    "image_ref": "ghcr.io/toshiyatsubonishi/ai-config-provider@sha256:...",
     "bundle_version": "0fa50eb0b1ea-7c12f6aae5b8"
   },
   "cloudrun": {
     "images": {
-      "selector": "ghcr.io/tsytbns/ai-config-selector-serving@sha256:...",
-      "provider": "ghcr.io/tsytbns/ai-config-provider@sha256:..."
+      "selector": "ghcr.io/toshiyatsubonishi/ai-config-selector-serving@sha256:...",
+      "provider": "ghcr.io/toshiyatsubonishi/ai-config-provider@sha256:..."
     },
     "provenance": {
       "selector_commit_sha": "...",
@@ -103,6 +103,9 @@ manifest には次が入ります。
 
 GUI deploy だけで進める場合も、Cloud Run に貼る image URL は tag ではなく
 `@sha256:` の digest ref を使ってください。
+
+`--github-owner` は GitHub owner 名をそのまま渡して問題ありませんが、
+GHCR 上の repository path は release script が lowercase に正規化します。
 
 ## GitHub Actions
 
