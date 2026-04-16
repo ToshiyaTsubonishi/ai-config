@@ -1,0 +1,46 @@
+project_id: sbi-art-auction
+project_number: 424287527578
+region: asia-northeast1
+google_oauth_scope: openid email profile
+service_account: open-webui-runner@sbi-art-auction.iam.gserviceaccount.com
+cloudsql_instance: open-web-ui
+openai:
+  enable: true
+  api_base_urls:
+  - https://generativelanguage.googleapis.com/v1beta/openai
+  api_keys_secret: GEMINI_API_KEY
+  api_configs:
+    '0':
+      enable: true
+      tags: []
+      prefix_id: ''
+      model_ids: []
+      connection_type: external
+      auth_type: bearer
+images:
+  selector: ghcr.io/toshiyatsubonishi/ai-config-selector-serving@sha256:09b6a1bebe7dcda681f2b50a0b628ce973866aea86bbf9917506b7530548e831
+  provider: ghcr.io/toshiyatsubonishi/ai-config-provider@sha256:35024d7c087142d4d2041acc317c19257856b8c3f62ca2e4b765a59f21fbcd51
+  open_webui: asia-northeast1-docker.pkg.dev/sbi-art-auction/ghcr/open-webui/open-webui:main
+  open_terminal: asia-northeast1-docker.pkg.dev/sbi-art-auction/ghcr/ghcr.io/open-webui/open-terminal:latest
+  searxng: asia-northeast1-docker.pkg.dev/sbi-art-auction/ghcr/ghcr.io/searxng/searxng:latest
+  mcpo: asia-northeast1-docker.pkg.dev/sbi-art-auction/ghcr/ghcr.io/open-webui/mcpo:latest
+buckets:
+  open_webui: open-webui-sbiaa
+  searxng: searxng-sbiaa
+secrets:
+  mcpo_api_key: MCPO_API_KEY
+  tool_server_connections: OPENWEBUI_TOOL_SERVER_CONNECTIONS
+  webui_secret_key: WEBUI_SECRET_KEY
+  gemini_api_key: GEMINI_API_KEY
+  google_client_id: open_webui_oauth_client_id
+  google_client_secret: open_webui_oauth_client_secret
+  database_url: DATABASE_URL
+  open_terminal_api_key: OPEN_TERMINAL_API_KEY
+  searxng_secret: SEARXNG_SECRET
+tool_server_connections:
+  mcpo_api_key_placeholder: __REPLACE_WITH_MCPO_API_KEY__
+provenance:
+  selector_commit_sha: 2947d12daaa9e53dff72c1281e3b2be25a9b2a4a
+  provider_commit_sha: d83d588afc43773b315aa5c03dc910f5eb0342c3
+  provider_bundle_version: 2947d12daaa9-cc594a4661cc
+  provider_bundle_source_commit_sha: 2947d12daaa9e53dff72c1281e3b2be25a9b2a4a
