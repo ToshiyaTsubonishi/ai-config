@@ -1,5 +1,14 @@
 # Lessons Learned
 
+## 2026-04-21: `sync-instructions.sh push` は全 pair を上書きするので lesson を先に pull する
+
+### ミス 15: Claude Code 導入時に `push` を単独実行して `tasks/lessons.md` を破壊しかけた
+
+- **状況**: `instructions/Claude.md` を `~/.claude/CLAUDE.md` に同期するだけのつもりで `bash scripts/sync-instructions.sh push` を実行した
+- **期待動作**: Claude pair だけが runtime に同期される
+- **実際の動作**: 全 pair が同時に同期され、古い `instructions/Lesson.md` が新しい `tasks/lessons.md` を 81 行分上書きした（`git checkout` で復元）
+- **ルール**: `sync-instructions.sh` / `.ps1` の `push` は全 pair 一括同期。`lesson` の正本は `tasks/lessons.md` 側なので、`push` 前に必ず `pull` で `instructions/Lesson.md` を最新化するか、個別 pair だけ同期したい場合は `cp` / `Copy-Item` で 1 ファイルだけ写す。他の agent pair（Agent/Gemini/Claude）を足すときも同じ罠がある
+
 ## 2026-04-15: 制限付き production は prebuilt digest と release manifest を先に固める
 
 ### ミス 14: staging が動いたあとも production の build/auth 制約を同じ熱量で固定していなかった
