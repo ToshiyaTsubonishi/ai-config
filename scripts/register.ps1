@@ -1,5 +1,5 @@
 param(
-    [ValidateSet("all", "codex", "gemini", "gemini_cli", "antigravity")]
+    [ValidateSet("all", "codex", "gemini", "gemini_cli", "antigravity", "claude")]
     [string]$Target = "all"
 )
 
@@ -115,6 +115,12 @@ function Register-Antigravity {
     Write-Host "[ok] Antigravity: $configPath"
 }
 
+function Register-Claude {
+    $configPath = Join-Path $HOME ".claude.json"
+    Merge-JsonMcpServer -ConfigPath $configPath
+    Write-Host "[ok] Claude Code: $configPath"
+}
+
 Write-Host "=== Registering ai-config-selector MCP ==="
 Write-Host "Server: $McpServer"
 Write-Host "Repo:   $RepoRoot"
@@ -125,10 +131,12 @@ switch ($Target) {
     "gemini" { Register-Gemini }
     "gemini_cli" { Register-Gemini }
     "antigravity" { Register-Antigravity }
+    "claude" { Register-Claude }
     "all" {
         Register-Codex
         Register-Gemini
         Register-Antigravity
+        Register-Claude
     }
 }
 

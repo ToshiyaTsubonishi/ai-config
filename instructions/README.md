@@ -6,6 +6,7 @@
 
 - `Agent.md`: Codex 向け運用ルール（同期先: `~/.codex/AGENTS.md`）
 - `Gemini.md`: Gemini CLI 向け運用ルール（同期先: `~/.gemini/GEMINI.md`）
+- `Claude.md`: Claude Code 向け運用ルール（同期先: `~/.claude/CLAUDE.md`）
 - `Lesson.md`: lessons の共有版（同期先: `tasks/lessons.md`）
 
 ## Sync

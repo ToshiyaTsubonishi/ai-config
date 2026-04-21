@@ -20,6 +20,11 @@ $pairs = @(
         Target = Join-Path $HOME ".gemini\GEMINI.md"
     },
     @{
+        Name = "claude"
+        Store = Join-Path $RepoRoot "instructions\Claude.md"
+        Target = Join-Path $HOME ".claude\CLAUDE.md"
+    },
+    @{
         Name = "lesson"
         Store = Join-Path $RepoRoot "instructions\Lesson.md"
         Target = Join-Path $RepoRoot "tasks\lessons.md"

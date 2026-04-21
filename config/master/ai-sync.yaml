@@ -29,6 +29,13 @@ targets:
       darwin:
         mcp_file: "${HOME}/.gemini/settings.json"
 
+  claude:
+    path_profiles:
+      windows:
+        mcp_file: "${USERPROFILE}\\.claude.json"
+      darwin:
+        mcp_file: "${HOME}/.claude.json"
+
 # ---------------------------------------------------------------------------
 # Managed MCP servers — indexed for dynamic selection
 # ---------------------------------------------------------------------------

@@ -14,6 +14,7 @@ Modes:
 Managed pairs:
   instructions/Agent.md   <-> ~/.codex/AGENTS.md
   instructions/Gemini.md  <-> ~/.gemini/GEMINI.md
+  instructions/Claude.md  <-> ~/.claude/CLAUDE.md
   instructions/Lesson.md  <-> tasks/lessons.md
 USAGE
 }
@@ -47,6 +48,7 @@ STORE_DIR="$REPO_ROOT/instructions"
 files=(
   "agent|$STORE_DIR/Agent.md|$HOME/.codex/AGENTS.md"
   "gemini|$STORE_DIR/Gemini.md|$HOME/.gemini/GEMINI.md"
+  "claude|$STORE_DIR/Claude.md|$HOME/.claude/CLAUDE.md"
   "lesson|$STORE_DIR/Lesson.md|$REPO_ROOT/tasks/lessons.md"
 )
 

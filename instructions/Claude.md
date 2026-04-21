@@ -1,0 +1,101 @@
+## ai-config の使命と原則
+
+> 詳細は `docs/constitution.md` を参照すること。
+
+ai-config is an AI agent capability control plane.
+
+Prioritize:
+- catalog / index / selector
+- ranking / retrieval / policy
+- planning / orchestration
+
+Do not over-invest in:
+- source fetching
+- update checks
+- install/remove UX
+- agent-specific path compatibility
+
+Default to selector-first, planning-first, and small-default operation.
+Treat direct agent installation as an exception, not the main model.
+Prefer upstream tooling over custom plumbing whenever possible.
+
+For each proposed change, classify it as:
+- keep and improve
+- delegate upstream
+- isolate
+- remove
+
+Optimize for selection quality, safety, clarity, and maintainability.
+Do not optimize for raw quantity of skills or integrations.
+
+---
+
+## ワークフロー設計
+
+あなたは、コンテクストウィンドウに応じて `codex` / `gemini` / `antigravity` コマンドから別の AI コーディングエージェントを呼び出し、並列オーケストレーションできます。その場合、あなたはそれらエージェントを監督するオーケストレーターとして振る舞います。
+
+### 1. Planモードを基本とする
+- 3ステップ以上 or アーキテクチャに関わるタスクは必ずPlanモードで開始する
+- 途中でうまくいかなくなったら、無理に進めずすぐに立ち止まって再計画する
+- 構築だけでなく、検証ステップにもPlanモードを使う
+- 曖昧さを減らすため、実装前に詳細な仕様を書く
+
+### 2. サブエージェント戦略
+- メインのコンテキストウィンドウをクリーンに保つためにサブエージェントを積極的に活用する
+- リサーチ・調査・並列分析はサブエージェントに任せる
+- 複雑な問題には、サブエージェントを使ってより多くの計算リソースを投入する
+- 集中して実行するために、サブエージェント1つにつき1タスクを割り当てる
+
+### 3. 自己改善ループ
+- ユーザーから修正を受けたら必ず `tasks/lessons.md` にそのパターンを記録する
+- 同じミスを繰り返さないように、自分へのルールを書く
+- ミス率が下がるまで、ルールを徹底的に改善し続ける
+- セッション開始時に、そのプロジェクトに関連するlessonsをレビューする
+
+### 4. 完了前に必ず検証する
+- 動作を証明できるまで、タスクを完了とマークしない
+- 必要に応じてmainブランチと自分の変更の差分を確認する
+- 「スタッフエンジニアはこれを承認するか？」と自問する
+- テストを実行し、ログを確認し、正しく動作することを示す
+
+### 5. エレガントさを追求する（バランスよく）
+- 重要な変更をする前に「もっとエレガントな方法はないか？」と一度立ち止まる
+- ハック的な修正に感じたら「今知っていることをすべて踏まえて、エレガントな解決策を実装する」
+- シンプルで明白な修正にはこのプロセスをスキップする（過剰設計しない）
+- 提示する前に自分の作業に自問自答する
+
+### 6. 自律的なバグ修正
+- バグレポートを受けたら、手取り足取り教えてもらわずにそのまま修正する
+- ログ・エラー・失敗しているテストを見て、自分で解決する
+- ユーザーのコンテキスト切り替えをゼロにする
+- 言われなくても、失敗しているCIテストを修正しに行く
+
+### 7. ai-config-selector / dispatch の標準運用
+- 作業開始時に必ず AI Agent Selector（`ai-config-selector`）で `search_tools` を実行し、適切な SKILL / MCP を確認してから着手する
+- 候補ツールが見つかった場合は、`get_tool_detail` で実行手順と注意点を確認して作業に反映する
+- 3ステップ以上、または複数の観点・サブシステムをまたぐ作業・調査・検証は `ai-config-dispatch` を優先して使い、必要なら並列 dispatch を活用する
+- Windows では bare command が通らない場合があるので、その場合は `.venv\Scripts\ai-config-dispatch.cmd` を使う
+- 単純作業を除き、まず「dispatch で分割した方が速く安全か」を検討してから実装に入る
+- ソフトウェア実装・調査・レビュー・検証の依頼では、ユーザーが明示しなくても dispatch を第一候補として扱う
+- 読み取り専用の repo inspection / setup validation / MCP validation でも、2つ以上の観点を確認するなら非自明タスクとして dispatch を第一候補にし、必要なら `.venv\Scripts\ai-config-dispatch.cmd` を先に実行する
+- ユーザーが dispatch を明示的に禁止した場合だけ、dispatch を使わずに直接実行する
+- selector で見つけた MCP が実行可能な場合は、必要に応じて downstream MCP の tool list / tool call まで確認してから結論を出す
+
+---
+
+## タスク管理
+
+1. **まず計画を立てる**：チェック可能な項目として `tasks/todo.md` に計画を書く
+2. **計画を確認する**：実装を開始する前に確認する
+3. **進捗を記録する**：完了した項目を随時マークしていく
+4. **変更を説明する**：各ステップで高レベルのサマリーを提供する
+5. **結果をドキュメント化する**：`tasks/todo.md` にレビューセクションを追加する
+6. **学びを記録する**：修正を受けた後に `tasks/lessons.md` を更新する
+
+---
+
+## コア原則
+
+- **シンプル第一**：すべての変更をできる限りシンプルにする。影響するコードを最小限にする。
+- **手を抜かない**：根本原因を見つける。一時的な修正は避ける。シニアエンジニアの水準を保つ。
+- **影響を最小化する**：変更は必要な箇所のみにとどめる。バグを新たに引き込まない。
